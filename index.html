@@ -412,7 +412,6 @@
   }
   .project-detail-hero{
     width:100%;
-    aspect-ratio: 5 / 3;
     border-radius: 4px;
     overflow:hidden;
     background: var(--grey-box);
@@ -1046,7 +1045,7 @@
     return `<div style="width:100%;height:100%;background:${projectColor(p.id)}"></div>`;
   }
 
-  renderHomeSlider('homeProjectSlider', PROJECTS, 'project', (box, p) => {
+  renderHomeSlider('homeProjectSlider', PROJECTS.slice().reverse(), 'project', (box, p) => {
     box.dataset.projectId = p.id;
     box.innerHTML = `
       ${projectVisualHTML(p)}
@@ -1072,7 +1071,7 @@
     const grid = document.getElementById('projectGrid');
     if(!grid) return;
     grid.innerHTML = '';
-    const list = PROJECTS.filter(p => activeProjectCat === 'all' || p.category.includes(activeProjectCat));
+    const list = PROJECTS.slice().reverse().filter(p => activeProjectCat === 'all' || p.category.includes(activeProjectCat));
     list.forEach(p => {
       const card = document.createElement('div');
       card.className = 'project-card';
@@ -1097,9 +1096,11 @@
     const hero = document.getElementById('projectDetailHero');
     if(p.thumb){
       hero.style.background = '';
-      hero.innerHTML = `<img src="${p.thumb}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+      hero.style.aspectRatio = '';
+      hero.innerHTML = `<img src="${p.thumb}" alt="${p.name}" style="width:100%;height:auto;display:block;">`;
     } else {
       hero.innerHTML = '';
+      hero.style.aspectRatio = '5 / 3';
       hero.style.background = projectColor(id);
     }
 
