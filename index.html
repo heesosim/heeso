@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>illustrator HEESO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<style>
+  :root{
+    --pink: #F4699A;
+    --pink-soft: #FDEFF3;
+    --pink-line: #F8C6D8;
+    --blue: #6FC3EE;
+    --blue-light: #B6E4F7;
+    --grey-box: #F0F0F0;
+    --ink: #3A3A3A;
+    --ink-soft: #6B6B6B;
+    --font-heading: 'Wanted Sans Variable', 'Wanted Sans', 'Noto Sans KR', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--ink);
+    background: #fff;
+    min-height:100vh;
+    position:relative;
+    overflow-x:hidden;
+    cursor: url('assets/cursor.png') 8 8, auto;
+  }
+  .mono{ font-family:'Space Mono', monospace; }
+  .menlo{ font-family:'Menlo', 'Space Mono', monospace; }
+  .rounded{ font-family: var(--font-heading); }
+
+  /* ---------- 배경 별 장식 ---------- */
+  .stars{
+    position:absolute; inset:0; pointer-events:none; z-index:0;
+    overflow:hidden;
+  }
+  .stars svg{ position:absolute; opacity:0.35; }
+
+  /* ---------- 레이아웃 ---------- */
+  .app{
+    position:relative; z-index:1;
+    max-width:1920px; margin:0 auto;
+    padding: 48px 60px 80px;
+    min-height:100vh;
+  }
+  .layout{
+    display:flex; gap:40px; align-items:flex-start;
+    margin-top: 56px;
+  }
+
+  /* ---------- 헤더(로고) ---------- */
+  header.brand{
+    display:flex; align-items:center; gap:20px;
+    cursor: url('assets/cursor.png') 8 8, pointer;
+    width:fit-content;
+  }
+  .logo-img{
+    height: 100px;
+    width: auto;
+    display:block;
+  }
+  .logo-fallback{
+    display:none;
+    flex-direction:column;
+    gap:2px;
+    line-height:1.1;
+  }
+  .logo-fallback-sub{
+    color: var(--pink);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+  }
+  .logo-fallback-main{
+    color: var(--pink);
+    font-weight:700;
+    font-size: 2.2rem;
+  }
+
+  /* ---------- 사이드 네비 ---------- */
+  nav.side{
+    width: 220px;
+    flex-shrink:0;
+    border-left: 2px solid var(--pink-line);
+    padding-left: 24px;
+  }
+  nav.side .label{
+    color: var(--pink);
+    font-size: 0.85rem;
+    margin-bottom: 22px;
+    display:block;
+  }
+  nav.side ul{ list-style:none; }
+  nav.side li{ margin-bottom: 18px; }
+  nav.side ul > li:last-child{ margin-bottom:0; }
+  nav.side a{
+    font-family: var(--font-heading);
+    font-weight:600;
+    font-size:1.6rem;
+    color: var(--pink);
+    text-decoration:none;
+    cursor: url('assets/cursor.png') 8 8, pointer;
+    transition: color .15s ease;
+  }
+  nav.side a:hover{ opacity:0.8; }
+  nav.side a.active{ color: var(--blue); }
+  .sub-nav{
+    list-style:none;
+    margin: 12px 0 0 4px;
+    display:none;
+  }
+  .sub-nav.expanded{ display:block; }
+  .sub-nav li{ margin-bottom:8px; }
+  .sub-nav li:last-child{ margin-bottom:0; }
+  nav.side .sub-nav a{ font-size: 1.12rem; font-weight:400; }
+  nav.side .sub-nav a.active{ color: var(--blue-light); }
+
+  /* ---------- 콘텐츠 공통 ---------- */
+  main{ flex-grow:1; min-width:0; }
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  /* ---------- 홈 ---------- */
+  .home-hero-block{
+    width: 100%;
+  }
+  .whatido-label{
+    color: var(--pink);
+    font-size: 0.85rem;
+    margin: 0 0 16px;
+    white-space: nowrap;
+  }
+  .hero-center{
+    display:flex;
+    justify-content:center;
+  }
+  .main-hero-img{
+    max-width: 100%;
+    width: 403px; /* 620px - 35% */
+    height: auto;
+  }
+
+  .home-slider-block{ margin-top: 64px; }
+  .section-label{
+    color: var(--pink);
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+  .home-slider-wrap{
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .home-slider-wrap::-webkit-scrollbar{ display:none; height:0; }
+
+  .custom-scrollbar{
+    position: relative;
+    height: 4px;
+    margin-top: 10px;
+    background: #FFE9F1;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .custom-scrollbar-thumb{
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 16.666%;
+    background: #FF97C1;
+    border-radius: 999px;
+    cursor: grab;
+  }
+  .custom-scrollbar-thumb:active{ cursor: grabbing; }
+  .home-slider{
+    display:flex; gap:20px;
+    width: fit-content;
+  }
+  .home-slide-item{
+    position:relative;
+    flex: 0 0 auto;
+    width: 220px;
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+    overflow:hidden;
+    background: var(--grey-box);
+    cursor: url('assets/cursor.png') 8 8, pointer;
+  }
+  .home-slide-item img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .home-slide-item .placeholder-label{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    color:#c9c9c9; font-size:0.8rem;
+  }
+  .home-more{
+    flex: 0 0 auto;
+    width: 220px;
+    aspect-ratio: 1 / 1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:10px;
+    cursor: url('assets/cursor.png') 8 8, pointer;
+  }
+  .home-more-icon{
+    width:56px; height:56px; border-radius:50%;
+    background: var(--pink-soft);
+    color: var(--pink); font-size:1.7rem;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .home-more-text{
+    color: var(--pink); font-size:0.8rem; font-weight:600;
+  }
+
+  /* ---------- 소개(About) ---------- */
+  .about-panel{
+    background: var(--pink-soft);
+    border-radius: 0;
+    padding: 72px 40px;
+    text-align:center;
+  }
+  .about-panel .eyebrow{
+    color: var(--pink); font-size:0.95rem; margin-bottom: 18px;
+  }
+  .about-panel h2{
+    font-family: var(--font-heading);
+    font-weight:600; color: var(--pink);
+    font-size: clamp(1.6rem, 2.8vw, 2.3rem);
+    margin-bottom: 10px;
+  }
+  .about-panel .subtitle{
+    color: var(--pink); margin-bottom: 40px;
+    font-size: 1rem;
+    font-family: var(--font-heading);
+  }
+  .about-panel .subtitle .thin{ font-weight:300; }
+  .about-panel .subtitle .bold{ font-weight:700; }
+  .about-panel p{
+    color: var(--ink); line-height:1.8; margin-bottom: 16px;
+    max-width: 640px; margin-left:auto; margin-right:auto;
+    font-size: 0.736rem;
+  }
+
+  /* ---------- 연락처(Contact) ---------- */
+  .contact-panel{
+    padding: 20px 0 0;
+  }
+  .contact-inner{ max-width: 720px; margin: 0 auto; }
+  .contact-info{
+    margin: 0 0 40px;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .contact-line{
+    display:flex; align-items:center; gap:10px;
+    color: var(--ink); font-size:0.95rem;
+  }
+  .contact-line a{ color:var(--ink); text-decoration:none; cursor: url('assets/cursor.png') 8 8, pointer; }
+  .contact-icon{ width:20px; height:20px; object-fit:contain; flex-shrink:0; }
+  .contact-sections{ text-align:left; }
+  .contact-sections h3{
+    font-size: 1.05rem; font-weight:700; color: var(--ink);
+    margin: 40px 0 12px;
+  }
+  .contact-sections h3:first-child{ margin-top:0; }
+  .contact-sections p{
+    font-size: 0.85rem; line-height:1.75; color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .contact-sections ul, .contact-sections ol{
+    margin: 0 0 12px 20px;
+  }
+  .contact-sections li{
+    font-size: 0.85rem; line-height:1.75; color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .contact-sections .note{
+    font-size: 0.8rem; color: var(--ink-soft); line-height:1.7;
+  }
+  .contact-sections a{ color: var(--pink); cursor: url('assets/cursor.png') 8 8, pointer; }
+
+  /* ---------- 공통 하단 카피라이트 ---------- */
+  .site-footer{
+    text-align:center;
+    color: var(--ink-soft);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    margin-top: 80px;
+    opacity: 0.75;
+  }
+
+  /* ---------- 작업물 그리드 (Illustration / Project) ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .grid-box{
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--grey-box);
+    border-radius: 4px;
+    cursor: url('assets/cursor.png') 8 8, pointer;
+    overflow: hidden;
+    transition: opacity .15s ease;
+  }
+  .grid-box img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .grid-box .placeholder-label{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    color:#c9c9c9; font-size:0.85rem;
+  }
+  .grid-overlay{
+    position:absolute; inset:0;
+    background: rgba(0,0,0,0);
+    opacity:0;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center;
+    padding: 14px;
+    transition: background .2s ease, opacity .2s ease;
+  }
+  .grid-box:hover .grid-overlay{
+    background: rgba(0,0,0,0.38);
+    opacity:1;
+  }
+  .grid-title{
+    color:#fff; font-size:1.02rem; font-weight:400;
+    line-height:1.4;
+  }
+
+  /* ---------- 프로젝트 페이지 ---------- */
+  .project-cats{
+    display:flex; flex-wrap:wrap; gap:10px;
+    margin-bottom: 32px;
+  }
+  .project-cat-btn{
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight:500;
+    padding: 9px 20px;
+    border-radius: 999px;
+    border: 1px solid #FFE9F1;
+    background: #fff;
+    color: #adadad;
+    cursor: url('assets/cursor.png') 8 8, pointer;
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .project-cat-btn.active{
+    background: #FFE9F1;
+    border-color: #FFE9F1;
+    color: #FF97C1;
+  }
+
+  .project-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px 24px;
+  }
+  .project-card{ cursor: url('assets/cursor.png') 8 8, pointer; }
+  .project-thumb{
+    aspect-ratio: 5 / 3;
+    background: var(--grey-box);
+    border-radius: 4px;
+    overflow:hidden;
+    position:relative;
+  }
+  .project-thumb .placeholder-label{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    color:#c9c9c9; font-size:0.85rem;
+  }
+  .project-meta{ margin-top: 14px; }
+  .project-name{
+    font-family: var(--font-heading);
+    font-weight:700; font-size: 1.05rem;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .project-client{
+    font-size: 0.88rem; color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .project-type{
+    font-size: 0.75rem; color: #adadad;
+  }
+
+  .project-detail-back{
+    display:inline-flex; align-items:center; justify-content:center;
+    background: var(--pink-soft);
+    color: var(--pink);
+    border:none; border-radius: 50%;
+    width:36px; height:36px;
+    padding:0;
+    line-height:1;
+    font-size: 0.95rem;
+    cursor: url('assets/cursor.png') 8 8, pointer;
+    margin-bottom: 28px;
+  }
+  .project-detail-back svg{
+    display:block;
+  }
+  .project-detail-title{
+    font-family: var(--font-heading);
+    font-weight:700; font-size: 1.4rem;
+    color: var(--ink);
+    margin: 28px 0 36px;
+  }
+  .project-detail-hero{
+    width:100%;
+    aspect-ratio: 5 / 3;
+    border-radius: 4px;
+    overflow:hidden;
+    background: var(--grey-box);
+    margin-bottom: 44px;
+  }
+  .project-detail-section{ margin-bottom: 36px; }
+  .project-detail-section h3{
+    font-family: var(--font-heading);
+    font-weight:700; font-size: 1.15rem;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .project-detail-section p{
+    font-size: 0.9rem; line-height:1.8; color: var(--ink);
+  }
+  .project-detail-section ul{ margin-left: 18px; }
+  .project-detail-section li{
+    font-size: 0.9rem; line-height:1.9; color: var(--ink);
+  }
+  .project-preview-list{
+    display:flex; flex-direction:column; gap: 20px;
+  }
+  .project-preview-list .preview-img{
+    width:100%;
+    border-radius: 4px;
+    aspect-ratio: 4 / 3;
+    background: var(--grey-box);
+  }
+
+  /* ---------- 라이트박스(작업물 팝업) ---------- */
+  .lightbox{
+    position:fixed; inset:0; z-index:300;
+    background: rgba(255,255,255,0.93);
+    display:none; align-items:center; justify-content:center;
+    padding: 40px;
+    cursor: url('assets/cursor.png') 8 8, pointer;
+  }
+  .lightbox.active{ display:flex; }
+  .lightbox-inner{
+    max-width: 92vw; max-height: 92vh;
+    text-align:center;
+    cursor: default;
+  }
+  .lightbox-inner img{
+    max-width: 92vw; max-height: 84vh;
+    border-radius: 0;
+    background:#fff;
+    display:block;
+    margin: 0 auto;
+  }
+  .lightbox-caption{
+    color: var(--ink); margin-top:12px; font-size:0.8rem;
+  }
+  .lightbox-close{
+    position:absolute; top:28px; right:36px;
+    color: var(--ink); font-size:2rem; font-weight:300;
+    cursor: url('assets/cursor.png') 8 8, pointer;
+    line-height:1;
+  }
+
+  /* ---------- 반응형 ---------- */
+  @media (max-width: 880px){
+    .app{ padding: 32px 24px 60px; }
+    .layout{ flex-direction:column; }
+    nav.side{ width:100%; border-left:none; border-top:2px solid var(--pink-line); padding-left:0; padding-top:20px; }
+    nav.side ul{ display:flex; gap:24px; flex-wrap:wrap; }
+    .grid{ grid-template-columns: repeat(2, 1fr); }
+    .project-grid{ grid-template-columns: repeat(1, 1fr); }
+    .project-cats{ gap:8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="app">
+
+  <header class="brand" id="logoHome">
+    <img class="logo-img" src="assets/logo.png" alt="ILLUSTRATOR HEESO" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='flex';">
+    <div class="logo-fallback" id="logoFallback">
+      <span class="logo-fallback-sub mono">ILLUSTRATOR</span>
+      <span class="logo-fallback-main rounded">HEESO</span>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <nav class="side">
+      <span class="label mono">category</span>
+      <ul>
+        <li><a class="nav-link active rounded" data-target="home">About</a></li>
+        <!-- 주의: 위 About 링크는 예시 상 첫 항목이 아니라, 실제로는 아래 4개 메뉴로 동작합니다 -->
+      </ul>
+    </nav>
+
+    <main>
+      <!-- HOME -->
+      <section class="view active" id="view-home">
+        <div class="home-hero-block">
+          <div class="whatido-label mono">What I do</div>
+          <div class="hero-center">
+            <img class="main-hero-img" src="assets/main-image.png" alt="Illustration, Design, Creation">
+          </div>
+        </div>
+
+        <div class="home-slider-block">
+          <div class="section-label mono">Illustration</div>
+          <div class="home-slider-wrap" id="homeIllustrationWrap">
+            <div class="home-slider" id="homeIllustrationSlider"></div>
+          </div>
+          <div class="custom-scrollbar" data-target="homeIllustrationWrap"><div class="custom-scrollbar-thumb"></div></div>
+        </div>
+
+        <div class="home-slider-block">
+          <div class="section-label mono">Project</div>
+          <div class="home-slider-wrap" id="homeProjectWrap">
+            <div class="home-slider" id="homeProjectSlider"></div>
+          </div>
+          <div class="custom-scrollbar" data-target="homeProjectWrap"><div class="custom-scrollbar-thumb"></div></div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="view" id="view-about">
+        <div class="about-panel">
+          <div class="eyebrow menlo">About Me</div>
+          <h2>ILLUSTRATOR HEESO</h2>
+          <div class="subtitle"><span class="thin">일러스트레이터</span> <span class="bold">희소</span></div>
+          <p>안녕하세요 일러스트레이터 희소입니다.<br>귀엽고 다정한 그림을 그립니다.</p>
+          <p>어도비 일러스트레이터를 기반으로,<br>깔끔하고 선명한 표현에 따뜻한 감성을 더한 일러스트를 그리고 있습니다.</p>
+          <p>키비주얼과 포스터를 비롯해 브랜딩, 인쇄물, 그림책, 어린이 삽화까지<br>다양한 매체에서 일러스트와 디자인 작업을 이어오고 있습니다.</p>
+          <p>천재교과서, 썬더키즈, 부산광역시청 등 다양한 기관 및 기업과 협업하며,<br>사람들의 일상에 자연스럽게 스며드는 따뜻한 그림을 전하고자 합니다.</p>
+        </div>
+      </section>
+
+      <!-- ILLUSTRATION -->
+      <section class="view" id="view-illustration">
+        <div class="grid" id="illustrationGrid"></div>
+      </section>
+
+      <!-- PROJECT -->
+      <section class="view" id="view-project">
+        <div class="project-cats" id="projectCats"></div>
+        <div class="project-grid" id="projectGrid"></div>
+      </section>
+
+      <!-- PROJECT DETAIL -->
+      <section class="view" id="view-project-detail">
+        <div class="project-cats" id="projectDetailCats"></div>
+        <button class="project-detail-back" id="projectBackBtn" aria-label="뒤로가기">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 3L6 8L10 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="project-detail-hero" id="projectDetailHero"></div>
+        <h2 class="project-detail-title" id="projectDetailTitle"></h2>
+        <div class="project-detail-section">
+          <h3>Concept</h3>
+          <p id="projectDetailConcept"></p>
+        </div>
+        <div class="project-detail-section">
+          <h3>Deliverables</h3>
+          <ul id="projectDetailDeliverables"></ul>
+        </div>
+        <div class="project-detail-section">
+          <h3>Preview</h3>
+          <div class="project-preview-list" id="projectDetailPreview"></div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="view" id="view-contact">
+        <div class="contact-panel">
+          <div class="contact-inner">
+
+            <div class="contact-info">
+              <div class="contact-line"><img class="contact-icon" src="assets/mail.png" alt="이메일" onerror="this.style.display='none';"><a href="mailto:bydidi96@daum.net">bydidi96@daum.net</a></div>
+              <div class="contact-line"><img class="contact-icon" src="assets/instagram.png" alt="인스타그램" onerror="this.style.display='none';"><a href="https://instagram.com/heesosim" target="_blank">instagram.com/heesosim</a></div>
+            </div>
+
+            <div class="contact-sections">
+
+              <h3>상담문의</h3>
+              <p>아래 항목을 함께 전달해 주시면 작업 내용 확인 및 빠른 견적 안내에 도움이 됩니다.</p>
+              <ol>
+                <li>성함 또는 업체명 / 연락처 / 이메일</li>
+                <li>작업물 내용 및 사용 용도 (포함되어야 할 내용, 텍스트, 레퍼런스 이미지 등을 최대한 구체적으로 전달해 주시면 정확한 견적 안내와 원활한 작업 진행에 도움이 됩니다.)</li>
+                <li>작업 사이즈</li>
+                <li>작업 기한 (정해진 기한이 없다면 생략 가능하며, 마감 일정이 있다면 함께 알려주세요.)</li>
+                <li>원본 파일 필요 유무 (최종 작업물은 JPG 또는 PDF 파일로 제공됩니다. 원본파일이 필요한 경우 추가 비용이 발생합니다.)</li>
+                <li>견적 (예산이 정해져 있으시다면 함께 알려주세요. 작업 범위와 견적을 보다 정확하게 안내드릴 수 있으며, 가능한 범위 내에서 함께 조율해 드립니다.)</li>
+                <li>기타 요청사항</li>
+              </ol>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GUIDE -->
+      <section class="view" id="view-guide">
+        <div class="contact-panel">
+          <div class="contact-inner">
+            <div class="contact-sections">
+
+              <h3>수정 안내</h3>
+              <ul>
+                <li>러프 스케치 단계 수정 2회, 본작업 이후 수정 2회가 기본 제공됩니다.</li>
+                <li>수정은 확정된 스케치 및 작업 방향을 유지하는 범위 내에서 진행되며, 세부적인 요소(색상, 위치 조정 등)의 수정이 가능합니다.</li>
+                <li>오탈자 및 간단한 텍스트 수정은 수정 횟수 차감 없이 가능합니다. 다만 문구 전체 변경, 내용 추가 등 작업 방향에 영향을 주는 수정은 별도 비용이 발생할 수 있습니다.</li>
+                <li>기본 수정 횟수 초과 시에도 수정 진행은 가능하며, 추가 비용이 발생합니다.</li>
+              </ul>
+              <p class="note">※ 단, 기존 컨셉에서 벗어난 전체 구도 변경, 새로운 컨셉 추가 등 처음부터 재작업이 필요한 수정 사항은 별도 비용이 발생합니다.</p>
+
+              <h3>추가 바리에이션 작업</h3>
+              <ul>
+                <li>제작한 키비주얼 디자인을 활용하여 리플렛, 브로슈어, 카드뉴스, 현수막, 엑스배너 등 다양한 형태의 홍보물 제작이 가능합니다.</li>
+                <li>기존 디자인 요소를 활용한 추가 작업으로 진행되며, 작업물 종류 및 난이도에 따라 비용이 상이할 수 있습니다. 결제 전 문의 부탁드립니다.</li>
+              </ul>
+              <p class="note">※ 새로운 디자인 제작이 필요한 경우 별도 견적으로 진행됩니다.</p>
+
+              <h3>사용 폰트</h3>
+              <ul>
+                <li>상업적 이용 가능한 무료/라이선스 보유 폰트를 사용합니다.</li>
+              </ul>
+
+              <h3>로고&amp;이미지</h3>
+              <ul>
+                <li>작업물에 로고, 제품 이미지, 사진 등이 삽입되어야 하는 경우 저작권에 문제 없는 파일을 전달 부탁드립니다.</li>
+              </ul>
+              <p class="note">(이미지·사진은 고화질 jpg/png 파일, 로고는 벡터 파일(ai) 전달을 권장드립니다.)</p>
+
+              <h3>원본 파일</h3>
+              <ul>
+                <li>최종 작업물은 기본적으로 jpg 또는 pdf 파일로 제공됩니다.</li>
+                <li>원본 Adobe illustrator 작업 파일 제공은 별도 비용이 발생합니다.</li>
+                <li>원본 파일 제공 이후 구매자가 직접 수정·재가공하거나, 협의되지 않은 용도로 활용하는 경우 별도 협의가 필요합니다.</li>
+                <li>제작된 일러스트를 활용한 굿즈 제작, 상품 판매, 패키지 적용 등 수익 창출을 목적으로 하는 2차 활용은 별도 라이선스 협의가 필요합니다.</li>
+              </ul>
+
+              <h3>저작권</h3>
+              <ul>
+                <li>작업물의 저작권은 디자이너에게 있으며, 구매자는 협의된 용도 내에서 사용 가능합니다.</li>
+                <li>작업물의 재판매, 2차 가공은 불가능합니다.</li>
+                <li>상업적 이용 범위가 변경되는 경우 별도 협의가 필요합니다.</li>
+                <li>채택되지 않은 시안은 디자이너 소유로, 의뢰인이 사용하실 수 없습니다.</li>
+                <li>작업물은 포트폴리오로 활용될 수 있습니다. 원치 않으실 경우 미리 말씀 부탁드립니다.</li>
+              </ul>
+
+              <h3>참고해 주세요</h3>
+              <ul>
+                <li>어도비 일러스트레이터를 활용한 깔끔하고 아기자기한 느낌의 디자인을 합니다. 상담 전 저의 포트폴리오에서 작업물을 확인해 보신 후 원하시는 스타일인지 확인해 주세요. (실사에 가까운 그림, 복잡한 인물 묘사 등은 상담 후 진행 여부 확인 부탁드립니다.)</li>
+                <li>최종 파일 전달 후 발견된 오탈자 등의 문제는 수정이 어렵습니다.</li>
+                <li>주의사항을 읽지 않아 발생되는 문제에 대해서는 책임지지 않습니다.</li>
+              </ul>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">Last update 2026.07.24<br>© 2026. HEESO All Rights Reserved.</footer>
+
+</div>
+
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" id="lightboxClose">&times;</span>
+  <div class="lightbox-inner">
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+</div>
+
+<script>
+  // 작업물 데이터 (번호-제목 순서대로)
+  const WORKS = [
+    {file:'001.jpg',title:'검은 토끼와 행운'},
+    {file:'002.jpg',title:'My favorite time'},
+    {file:'003.jpg',title:'Sweet valentine'},
+    {file:'004.jpg',title:'한복과 전통문양'},
+    {file:'005.jpg',title:'봄소풍'},
+    {file:'006.jpg',title:'냥집사의 하루'},
+    {file:'007.jpg',title:'붕어빵 공장'},
+    {file:'008.jpg',title:'풍선 타고 별까지'},
+    {file:'009.jpg',title:'시리얼'},
+    {file:'010.jpg',title:'빙수 만들기'},
+    {file:'011.jpg',title:'우주로 통하는 문'},
+    {file:'012.jpg',title:'바닷가 드라이브'},
+    {file:'013.jpg',title:'딸기 키우기'},
+    {file:'014.jpg',title:'봄을 찾아온 손님들'},
+    {file:'015.jpg',title:'꿈 마을 친구들'},
+    {file:'016.jpg',title:'바닷속 공놀이'},
+    {file:'017.jpg',title:'벚꽃놀이'},
+    {file:'018.jpg',title:'곰돌네 아이스크림 가게'},
+    {file:'019.jpg',title:'숲속 음악회'},
+    {file:'020.jpg',title:'청개구리 작은도서관'},
+    {file:'021.jpg',title:'지구의 날'},
+    {file:'022.jpg',title:'Puppy tea time'},
+    {file:'023.jpg',title:'비의 요정'},
+    {file:'024.jpg',title:'장난감 하우스'},
+    {file:'025.jpg',title:'봄날의 휴식'},
+    {file:'026.jpg',title:'행운상점'},
+    {file:'027.jpg',title:'어린이날'},
+    {file:'028.jpg',title:'우산을 쓴 친구들'},
+    {file:'029.jpg',title:'어버이날'},
+    {file:'030.jpg',title:'어항과 화분'},
+    {file:'031.jpg',title:'화분 가꾸기'},
+    {file:'032.jpg',title:'토마토 화분'},
+    {file:'033.jpg',title:'별이 쏟아지는 날'},
+    {file:'034.jpg',title:'여름 샐러드'},
+    {file:'035.jpg',title:'화창한 날의 피크닉'},
+    {file:'036.jpg',title:'우주행 열차'},
+    {file:'037.jpg',title:'숲속의 공중전화'},
+    {file:'038.jpg',title:'디저트 만들기'},
+    {file:'039.jpg',title:'디저트 트럭'},
+    {file:'040.jpg',title:'친구들과 휴식시간'},
+    {file:'041.jpg',title:'사진 꾸미기'},
+    {file:'042.jpg',title:'여름 대비하기'},
+    {file:'043.jpg',title:'초여름의 햇살'},
+    {file:'044.jpg',title:'축구 러버'},
+    {file:'045.jpg',title:'바글바글 브런치타임'},
+    {file:'046.jpg',title:'뚝딱뚝딱 여름간식 만들기'},
+    {file:'047.jpg',title:'창밖의 호수'},
+    {file:'048.jpg',title:'습도 100%'},
+    {file:'049.jpg',title:'창문에 낙서하기'},
+    {file:'050.jpg',title:'다람쥐 왕국과 해변'},
+    {file:'051.jpg',title:'멜론숲 탐험'},
+    {file:'052.jpg',title:'기차여행'},
+    {file:'053.jpg',title:'여름밤 숲속 영화제'},
+    {file:'054.jpg',title:'놀이공원 나들이'},
+    {file:'055.jpg',title:'나만의 방'},
+    {file:'056.jpg',title:'해피 추석'},
+    {file:'057.jpg',title:'독서의 계절'},
+    {file:'058.jpg',title:'우주의 마법사'},
+    {file:'059.jpg',title:'가을 낭만 찾기 대작전'},
+    {file:'060.jpg',title:'알록달록 놀이공원'},
+    {file:'061.jpg',title:'가을의 크리스마스'},
+    {file:'062.jpg',title:'산타우체국'},
+    {file:'063.jpg',title:'HAPPY NEW YEAR'},
+    {file:'064.jpg',title:'생일 축하해'},
+    {file:'065.jpg',title:'눈 내리던 날의 추억'},
+    {file:'066.jpg',title:'사과와 피넛버터'},
+    {file:'067.jpg',title:'봄이 왔다는 증거'},
+    {file:'068.jpg',title:'봄봄봄'},
+    {file:'069.jpg',title:'요즘 내가 좋아하는 것들'},
+    {file:'070.jpg',title:'나의 하루'},
+    {file:'071.jpg',title:'기린마을 버스정류장'},
+    {file:'072.jpg',title:'비 내리는 날'},
+    {file:'073.jpg',title:'우주의 문 너머 친구들'},
+    {file:'074.jpg',title:'바다에서 쓴 편지'},
+    {file:'075.jpg',title:'단풍나무 피크닉'},
+    {file:'076.jpg',title:'더파이홀의 빈티지 책상'},
+    {file:'077.jpg',title:'별종이접기'},
+    {file:'078.jpg',title:'가을은 간식의 계절'},
+    {file:'079.jpg',title:'해피 할로윈'},
+    {file:'080.jpg',title:'초록 물결이 톡톡 튀는 젊음처럼'},
+    {file:'081.jpg',title:'마들렌 굽기'},
+    {file:'082.jpg',title:'오즈의 마법사'},
+    {file:'083.jpg',title:'크리스마스 준비하기'},
+    {file:'084.jpg',title:'겨울놀이'},
+    {file:'085.jpg',title:'산타의 크리스마스 준비'},
+    {file:'086.jpg',title:'굿바이 2025'},
+    {file:'087.jpg',title:'해피 뉴 이어! 해피 2026!'},
+    {file:'088.jpg',title:'내가 잠든 사이에'},
+    {file:'089.jpg',title:'미술관이 살아있다'},
+    {file:'090.jpg',title:'빨래하는 날'},
+    {file:'091.jpg',title:'봄의 시작'},
+    {file:'092.jpg',title:'계란 상자 속에서 튀어나온 햄스터'},
+    {file:'093.jpg',title:'학교 가는 친구들'},
+    {file:'094.jpg',title:'사탕 만들기'},
+    {file:'095.jpg',title:'호숫가에서'},
+    {file:'096.jpg',title:'여름 채집'},
+    {file:'097.jpg',title:'비 내리던 날 밤'},
+    {file:'098.jpg',title:'나의 작은 옥상 텃밭'},
+    {file:'099.jpg',title:'여름 모자'}
+  ];
+</script>
+
+<script>
+  // 실제 네비게이션 메뉴 (위 HTML의 임시 About 항목을 대체)
+  const menuData = [
+    { key: 'home', label: 'About' },
+    { key: 'illustration', label: 'Illustration' },
+    { key: 'project', label: 'Project' },
+    { key: 'contact', label: 'Contact' }
+  ];
+  // 주석: 시안 기준 메뉴 순서는 About / Illustration / Project / Contact 입니다.
+  // 첫 번째 About은 "홈으로 이동" 이 아니라 소개 페이지를 가리키므로, home과 about을 구분해 아래처럼 재구성합니다.
+  const navList = document.querySelector('nav.side ul');
+  navList.innerHTML = `
+    <li><a class="nav-link rounded" data-target="about">About</a></li>
+    <li><a class="nav-link rounded" data-target="illustration">Illustration</a></li>
+    <li><a class="nav-link rounded" data-target="project">Project</a></li>
+    <li>
+      <a class="nav-link rounded" data-target="contact">Contact</a>
+      <ul class="sub-nav" id="subContact">
+        <li><a class="nav-link sub-link rounded" data-target="guide">Guide</a></li>
+      </ul>
+    </li>
+  `;
+
+  const views = document.querySelectorAll('.view');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const subContact = document.getElementById('subContact');
+
+  function showView(key){
+    views.forEach(v => v.classList.remove('active'));
+    navLinks.forEach(l => l.classList.remove('active'));
+    const target = document.getElementById('view-' + key);
+    if(target) target.classList.add('active');
+
+    const isContactGroup = (key === 'contact' || key === 'guide');
+    subContact.classList.toggle('expanded', isContactGroup);
+
+    let mainKey = key;
+    if(key === 'guide') mainKey = 'contact';
+    if(key === 'project-detail') mainKey = 'project';
+    const mainLink = document.querySelector(`.nav-link[data-target="${mainKey}"]`);
+    if(mainLink) mainLink.classList.add('active');
+
+    if(key === 'guide'){
+      const guideLink = document.querySelector(`.nav-link[data-target="guide"]`);
+      if(guideLink) guideLink.classList.add('active');
+    }
+
+    history.replaceState(null, '', '#' + key);
+  }
+
+  // 라이트박스(작업물 팝업) - 여백 없는 원본 비율 이미지 사용
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxCaption = document.getElementById('lightboxCaption');
+  const lightboxClose = document.getElementById('lightboxClose');
+
+  function openLightbox(file, title){
+    lightboxImg.src = 'assets/works/' + file;
+    lightboxImg.alt = title;
+    lightboxCaption.textContent = title;
+    lightbox.classList.add('active');
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('active');
+    lightboxImg.src = '';
+  }
+
+  // 홈 화면 대표 작업물 (지정된 순서 그대로 표시, Illustration 페이지의 원본 이미지와 연동)
+  const HOME_PICKS = [
+    { seqFile:'099.jpg', homeFile:'home-099.jpg', title:'여름 모자' },
+    { seqFile:'096.jpg', homeFile:'home-096.jpg', title:'여름 채집' },
+    { seqFile:'085.jpg', homeFile:'home-085.jpg', title:'산타의 크리스마스 준비' },
+    { seqFile:'071.jpg', homeFile:'home-071.jpg', title:'기린마을 버스정류장' },
+    { seqFile:'053.jpg', homeFile:'home-053.jpg', title:'여름밤 숲속 영화제' },
+    { seqFile:'065.jpg', homeFile:'home-065.jpg', title:'눈 내리던 날의 추억' }
+  ];
+
+  function renderHomeSlider(containerId, items, moreTargetKey, renderItemFn){
+    const el = document.getElementById(containerId);
+    if(!el) return;
+    el.innerHTML = '';
+
+    items.forEach(item => {
+      const box = document.createElement('div');
+      box.className = 'home-slide-item';
+      renderItemFn(box, item);
+      el.appendChild(box);
+    });
+
+    const more = document.createElement('div');
+    more.className = 'home-more';
+    more.dataset.moreTarget = moreTargetKey;
+    more.innerHTML = `<div class="home-more-icon">+</div><div class="home-more-text">MORE</div>`;
+    el.appendChild(more);
+  }
+
+  renderHomeSlider('homeIllustrationSlider', HOME_PICKS, 'illustration', (box, p) => {
+    box.dataset.file = p.seqFile;
+    box.dataset.title = p.title;
+    box.innerHTML = `
+      <img src="assets/home-square/${p.homeFile}" alt="${p.title}" loading="lazy">
+      <div class="grid-overlay"><span class="grid-title">${p.title}</span></div>
+    `;
+  });
+
+  document.addEventListener('click', (e) => {
+    const moreBtn = e.target.closest('.home-more');
+    if(moreBtn){
+      showView(moreBtn.dataset.moreTarget);
+      return;
+    }
+    const homeItem = e.target.closest('.home-slide-item');
+    if(homeItem && homeItem.dataset.projectId){
+      openProjectDetail(homeItem.dataset.projectId);
+      return;
+    }
+    if(homeItem && homeItem.dataset.file){
+      openLightbox(homeItem.dataset.file, homeItem.dataset.title);
+    }
+  });
+
+  // 작업물 그리드 렌더링 (WORKS 배열 기반, 번호 역순 = 최신이 먼저 오도록)
+  const illustrationGrid = document.getElementById('illustrationGrid');
+  if(illustrationGrid){
+    const orderedWorks = [...WORKS].reverse();
+    orderedWorks.forEach((work) => {
+      const box = document.createElement('div');
+      box.className = 'grid-box';
+      box.dataset.file = work.file;
+      box.dataset.title = work.title;
+      box.innerHTML = `
+        <img src="assets/works/${work.file}" alt="${work.title}" loading="lazy">
+        <div class="grid-overlay"><span class="grid-title">${work.title}</span></div>
+      `;
+      illustrationGrid.appendChild(box);
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    const box = e.target.closest('.grid-box');
+    if(box && box.dataset.file){
+      openLightbox(box.dataset.file, box.dataset.title);
+    }
+  });
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => {
+    if(e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') closeLightbox();
+  });
+
+  document.addEventListener('click', (e) => {
+    if(e.target.classList.contains('nav-link')){
+      showView(e.target.dataset.target);
+    }
+  });
+
+  document.getElementById('logoHome').addEventListener('click', () => {
+    showView('home');
+  });
+
+  // ---------- 프로젝트 페이지 (샘플 데이터: 실제 이미지 준비 전 단색 placeholder 사용) ----------
+  const PROJECT_CATEGORIES = [
+    { key:'all', label:'All' },
+    { key:'keyvisual', label:'Key Visual / Poster' },
+    { key:'illustration', label:'Illustration' },
+    { key:'cardnews', label:'Card News' },
+    { key:'leaflet', label:'Leaflet' },
+    { key:'promotion', label:'Promotion' }
+  ];
+
+  const PROJECT_COLORS = ['#F6D9E3','#D9EAF6','#F6EAD9','#E1F6D9','#EAD9F6','#F6D9D9'];
+
+  const PROJECTS = [
+    { id:'p1', name:'프로젝트 이름 01', client:'클라이언트명', type:'Key Visual Poster, Card News', category:['keyvisual','cardnews'],
+      concept:'설명 내용 여러줄 텍스트 예시 텍스트입니다. 프로젝트의 컨셉과 방향성을 이 자리에 정리합니다.',
+      deliverables:['Key Visual Poster','Card News 4종'], previewCount:3 },
+    { id:'p2', name:'프로젝트 이름 02', client:'클라이언트명', type:'Illustration', category:['illustration'],
+      concept:'설명 내용 여러줄 텍스트 예시 텍스트입니다. 프로젝트의 컨셉과 방향성을 이 자리에 정리합니다.',
+      deliverables:['Illustration Set'], previewCount:4 },
+    { id:'p3', name:'프로젝트 이름 03', client:'클라이언트명', type:'Card News', category:['cardnews'],
+      concept:'설명 내용 여러줄 텍스트 예시 텍스트입니다. 프로젝트의 컨셉과 방향성을 이 자리에 정리합니다.',
+      deliverables:['Card News 6종'], previewCount:6 },
+    { id:'p4', name:'프로젝트 이름 04', client:'클라이언트명', type:'Leaflet', category:['leaflet'],
+      concept:'설명 내용 여러줄 텍스트 예시 텍스트입니다. 프로젝트의 컨셉과 방향성을 이 자리에 정리합니다.',
+      deliverables:['Leaflet (2단 접지)'], previewCount:3 },
+    { id:'p5', name:'프로젝트 이름 05', client:'클라이언트명', type:'Promotion', category:['promotion'],
+      concept:'설명 내용 여러줄 텍스트 예시 텍스트입니다. 프로젝트의 컨셉과 방향성을 이 자리에 정리합니다.',
+      deliverables:['Promotion Banner'], previewCount:4 },
+    { id:'p6', name:'프로젝트 이름 06', client:'클라이언트명', type:'Key Visual Poster, Banner', category:['keyvisual','promotion'],
+      concept:'설명 내용 여러줄 텍스트 예시 텍스트입니다. 프로젝트의 컨셉과 방향성을 이 자리에 정리합니다.',
+      deliverables:['Key Visual Poster','X-Banner'], previewCount:3 }
+  ];
+
+  let activeProjectCat = 'all';
+  let currentProjectId = null;
+
+  function projectColor(id){
+    const idx = PROJECTS.findIndex(p => p.id === id);
+    return PROJECT_COLORS[idx % PROJECT_COLORS.length];
+  }
+
+  renderHomeSlider('homeProjectSlider', PROJECTS, 'project', (box, p) => {
+    box.dataset.projectId = p.id;
+    box.innerHTML = `
+      <div style="width:100%;height:100%;background:${projectColor(p.id)}"></div>
+      <div class="grid-overlay"><span class="grid-title">${p.name}</span></div>
+    `;
+  });
+
+  function renderProjectCats(containerId, onDetailPage){
+    const el = document.getElementById(containerId);
+    if(!el) return;
+    el.innerHTML = '';
+    PROJECT_CATEGORIES.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'project-cat-btn rounded' + (cat.key === activeProjectCat ? ' active' : '');
+      btn.textContent = cat.label;
+      btn.dataset.cat = cat.key;
+      btn.dataset.fromDetail = onDetailPage ? '1' : '0';
+      el.appendChild(btn);
+    });
+  }
+
+  function renderProjectGrid(){
+    const grid = document.getElementById('projectGrid');
+    if(!grid) return;
+    grid.innerHTML = '';
+    const list = PROJECTS.filter(p => activeProjectCat === 'all' || p.category.includes(activeProjectCat));
+    list.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'project-card';
+      card.dataset.projectId = p.id;
+      card.innerHTML = `
+        <div class="project-thumb" style="background:${projectColor(p.id)}"></div>
+        <div class="project-meta">
+          <div class="project-name">${p.name}</div>
+          <div class="project-client">${p.client}</div>
+          <div class="project-type">${p.type}</div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function openProjectDetail(id){
+    const p = PROJECTS.find(x => x.id === id);
+    if(!p) return;
+    currentProjectId = id;
+
+    document.getElementById('projectDetailHero').style.background = projectColor(id);
+    document.getElementById('projectDetailTitle').textContent = p.name;
+    document.getElementById('projectDetailConcept').textContent = p.concept;
+
+    const deliv = document.getElementById('projectDetailDeliverables');
+    deliv.innerHTML = '';
+    p.deliverables.forEach(d => {
+      const li = document.createElement('li');
+      li.textContent = d;
+      deliv.appendChild(li);
+    });
+
+    const preview = document.getElementById('projectDetailPreview');
+    preview.innerHTML = '';
+    for(let i=0; i<p.previewCount; i++){
+      const box = document.createElement('div');
+      box.className = 'preview-img';
+      box.style.background = projectColor(id);
+      box.style.opacity = 1 - (i * 0.12);
+      preview.appendChild(box);
+    }
+
+    renderProjectCats('projectDetailCats', true);
+    showView('project-detail');
+  }
+
+  renderProjectCats('projectCats', false);
+  renderProjectGrid();
+
+  document.addEventListener('click', (e) => {
+    const catBtn = e.target.closest('.project-cat-btn');
+    if(catBtn){
+      activeProjectCat = catBtn.dataset.cat;
+      renderProjectCats('projectCats', false);
+      renderProjectCats('projectDetailCats', true);
+      renderProjectGrid();
+      if(catBtn.dataset.fromDetail === '1'){
+        showView('project');
+      }
+      return;
+    }
+    const pCard = e.target.closest('.project-card');
+    if(pCard && pCard.dataset.projectId){
+      openProjectDetail(pCard.dataset.projectId);
+      return;
+    }
+    const backBtn = e.target.closest('#projectBackBtn');
+    if(backBtn){
+      showView('project');
+      return;
+    }
+  });
+
+  // ---------- 슬라이더 커스텀 스크롤바 (트랙 색 ffe9f1 / 썸 색 ff97c1, 길이 1/6 고정) ----------
+  function initCustomScrollbar(bar){
+    const wrap = document.getElementById(bar.dataset.target);
+    const thumb = bar.querySelector('.custom-scrollbar-thumb');
+    if(!wrap || !thumb) return;
+
+    function syncThumb(){
+      const maxScroll = wrap.scrollWidth - wrap.clientWidth;
+      const trackWidth = bar.clientWidth;
+      const thumbWidth = thumb.offsetWidth;
+      const maxThumbLeft = trackWidth - thumbWidth;
+      const ratio = maxScroll > 0 ? (wrap.scrollLeft / maxScroll) : 0;
+      thumb.style.left = (ratio * maxThumbLeft) + 'px';
+    }
+
+    wrap.addEventListener('scroll', syncThumb);
+    window.addEventListener('resize', syncThumb);
+
+    let dragging = false, startX = 0, startLeft = 0;
+    thumb.addEventListener('mousedown', (e) => {
+      dragging = true; startX = e.clientX; startLeft = thumb.offsetLeft;
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', (e) => {
+      if(!dragging) return;
+      const trackWidth = bar.clientWidth;
+      const thumbWidth = thumb.offsetWidth;
+      const maxThumbLeft = trackWidth - thumbWidth;
+      const maxScroll = wrap.scrollWidth - wrap.clientWidth;
+      let newLeft = startLeft + (e.clientX - startX);
+      newLeft = Math.max(0, Math.min(maxThumbLeft, newLeft));
+      thumb.style.left = newLeft + 'px';
+      wrap.scrollLeft = maxThumbLeft > 0 ? (newLeft / maxThumbLeft) * maxScroll : 0;
+    });
+    document.addEventListener('mouseup', () => { dragging = false; });
+
+    bar.addEventListener('click', (e) => {
+      if(e.target === thumb) return;
+      const trackWidth = bar.clientWidth;
+      const thumbWidth = thumb.offsetWidth;
+      const maxThumbLeft = trackWidth - thumbWidth;
+      const rect = bar.getBoundingClientRect();
+      let newLeft = (e.clientX - rect.left) - thumbWidth/2;
+      newLeft = Math.max(0, Math.min(maxThumbLeft, newLeft));
+      const maxScroll = wrap.scrollWidth - wrap.clientWidth;
+      thumb.style.left = newLeft + 'px';
+      wrap.scrollLeft = maxThumbLeft > 0 ? (newLeft / maxThumbLeft) * maxScroll : 0;
+    });
+
+    setTimeout(syncThumb, 50);
+  }
+
+  document.querySelectorAll('.custom-scrollbar').forEach(initCustomScrollbar);
+
+  // 초기 진입: 새로고침 시에도 주소의 해시(#about, #illustration 등)를 읽어 그 페이지를 유지
+  const validKeys = ['home','about','illustration','project','project-detail','contact','guide'];
+  const initialKey = (location.hash || '').replace('#','');
+  showView(validKeys.includes(initialKey) ? initialKey : 'home');
+
+  // 배경 별 장식 생성 (로고 옆 상단 영역에 불규칙하게, 로고와 겹치지 않게, 서로 겹치지 않게 배치)
+  function placeStars(){
+    const starsWrap = document.getElementById('stars');
+    starsWrap.innerHTML = '';
+    const STAR_SIZE = 29;
+    const containerW = document.documentElement.scrollWidth;
+    const topZoneHeight = 760; // 로고가 있는 상단 영역 정도의 높이 (세로 분포를 넓혀 더 불규칙하게)
+    const minDist = STAR_SIZE * 1.35;
+    const desiredCount = 20;
+    const placed = [];
+    let attempts = 0;
+
+    // 로고 영역과 사이드 카테고리 영역(여백 포함)은 별이 배치되지 않도록 제외
+    const logoEl = document.getElementById('logoHome');
+    const navEl = document.querySelector('nav.side');
+    const logoRect = logoEl.getBoundingClientRect();
+    const navRect = navEl.getBoundingClientRect();
+    const pad = 24;
+    const logoBox = {
+      left: logoRect.left + window.scrollX - pad,
+      right: logoRect.right + window.scrollX + pad,
+      top: logoRect.top + window.scrollY - pad,
+      bottom: logoRect.bottom + window.scrollY + pad
+    };
+    // Guide 서브메뉴가 펼쳐질 때를 대비해 하단에 여유 공간을 더 둠
+    const navBox = {
+      left: navRect.left + window.scrollX - pad,
+      right: navRect.right + window.scrollX + pad,
+      top: navRect.top + window.scrollY - pad,
+      bottom: navRect.bottom + window.scrollY + pad + 60
+    };
+
+    function overlapsAvoidZones(x, y){
+      const inLogo = x > logoBox.left && x < logoBox.right && y > logoBox.top && y < logoBox.bottom;
+      const inNav = x > navBox.left && x < navBox.right && y > navBox.top && y < navBox.bottom;
+      return inLogo || inNav;
+    }
+
+    while(placed.length < desiredCount && attempts < 1500){
+      attempts++;
+      const x = Math.random() * containerW;
+      const y = Math.random() * topZoneHeight;
+      if(overlapsAvoidZones(x, y)) continue;
+      const tooClose = placed.some(p => {
+        const dx = p.x - x, dy = p.y - y;
+        return Math.sqrt(dx*dx + dy*dy) < minDist;
+      });
+      if(!tooClose) placed.push({ x, y });
+    }
+
+    placed.forEach(p => {
+      const img = document.createElement('img');
+      img.src = 'assets/star.png';
+      img.onerror = function(){ this.style.display = 'none'; };
+      img.style.position = 'absolute';
+      img.style.left = (p.x - STAR_SIZE/2) + 'px';
+      img.style.top = (p.y - STAR_SIZE/2) + 'px';
+      img.style.width = STAR_SIZE + 'px';
+      img.style.transform = `rotate(${Math.random()*360 - 180}deg)`;
+      starsWrap.appendChild(img);
+    });
+  }
+  window.addEventListener('load', placeStars);
+</script>
+
+</body>
+</html>
