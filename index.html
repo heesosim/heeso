@@ -389,21 +389,6 @@
     font-size: 0.75rem; color: #adadad;
   }
 
-  .project-detail-back{
-    display:inline-flex; align-items:center; justify-content:center;
-    background: var(--pink-soft);
-    color: var(--pink);
-    border:none; border-radius: 50%;
-    width:36px; height:36px;
-    padding:0;
-    line-height:1;
-    font-size: 0.95rem;
-    cursor: url('assets/cursor.png') 8 8, pointer;
-    margin-bottom: 28px;
-  }
-  .project-detail-back svg{
-    display:block;
-  }
   .project-detail-title{
     font-family: var(--font-heading);
     font-weight:700; font-size: 1.4rem;
@@ -576,11 +561,6 @@
       <!-- PROJECT DETAIL -->
       <section class="view" id="view-project-detail">
         <div class="project-cats" id="projectDetailCats"></div>
-        <button class="project-detail-back" id="projectBackBtn" aria-label="뒤로가기">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 3L6 8L10 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
         <div class="project-detail-hero" id="projectDetailHero"></div>
         <h2 class="project-detail-title" id="projectDetailTitle"></h2>
         <div class="project-detail-section">
@@ -1009,49 +989,174 @@
   const PROJECT_COLORS = ['#F6D9E3','#D9EAF6','#F6EAD9','#E1F6D9','#EAD9F6','#F6D9D9'];
 
   const PROJECTS = [
-    { id:'p1', name:'2023 부스럭DAY 메인 포스터', client:'부산광역시', type:'Key Visual Poster, Banner', category:['keyvisual','banner'],
-      concept:[
-        "부산시 대표 캐릭터 '부기'를 메인으로 한 <2023 부스럭데이> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.",
-        "'부기 팬미팅'이라는 컨셉에 맞게 잡지를 오려 붙인 듯한 콜라주 기법과 종이 꽃가루 데코를 활용해 키치한 느낌을 살렸습니다.",
-        "메인 포스터를 활용한 엑스배너 2종 작업도 함께 진행했습니다."
-      ],
-      deliverables:['Key Visual Poster','Banner (based on KV)'],
-      thumb:'assets/projects/p1-hero.jpg',
-      previews:['assets/projects/p1-preview-1.jpg','assets/projects/p1-preview-2.jpg','assets/projects/p1-preview-3.jpg'] },
-    { id:'p2', name:'사내자료집 삽화', client:'천재교과서', type:'Illustration', category:['illustration'],
-      concept:[
+    { id:'n01', name:'2023 부스럭DAY 메인 키비주얼 포스터', year:2023, client:'부산광역시', type:'Banner, Key Visual / Poster', category:['banner','keyvisual'], concept:[
+        '부산시 대표 캐릭터 \'부기\'를 메인으로 한 <2023 부스럭데이> 메인 포스터입니다.\n\'부기 팬미팅\'이라는 컨셉에 맞게 잡지를 오려 붙인 듯한 콜라주 기법과 종이 꽃가루 데코를 활용해 키치한 느낌을 살렸습니다.',
+        '메인 포스터를 활용한 엑스배너 2종 작업도 함께 진행했습니다.'
+      ], deliverables:['Key Visual Poster','Banner (based on KV)'], thumb:'assets/projects/n01-hero.jpg', previews:['assets/projects/n01-preview-1.jpg','assets/projects/n01-preview-2.jpg','assets/projects/n01-preview-3.jpg'] },
+    { id:'n02', name:'사내자료집 삽화', year:2023, client:'천재교과서', type:'Book Illustration', category:['illustration'], concept:[
         '천재교과서 사내 교육 자료집에 수록되는 삽화 및 만화 일러스트 작업을 진행했습니다.',
         '교육 콘텐츠의 내용을 보다 쉽게 이해할 수 있도록 상황에 맞는 행동과 표정을 중심으로 시각적으로 설명력을 높이는 방향으로 작업했습니다.',
-        { text:'(보안상의 이유로 만화 텍스트는 제외한 상태로 업로드하였습니다.)', muted:true }
-      ],
-      deliverables:['Book Illustration'],
-      thumb:'assets/projects/p2-hero.jpg',
-      previews:['assets/projects/p2-preview-1.jpg'] },
-    { id:'p3', name:'야경&미식 여행 콘텐츠 크리에이터 모집 공모전 메인 포스터', client:'부산광역시 중구', type:'Key Visual Poster, Card News', category:['keyvisual','cardnews'],
-      concept:[
-        "부산 중구 <야경&미식 여행 콘텐츠 크리에이터 모집> 공모전의 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.",
-        "부산 중구 관광 콘텐츠 홍보 및 공모전 참여 유도를 목적으로 제작된 작업으로,지역의 야경과 미식 요소를 결합해 여행의 매력을 직관적으로 전달하는 데 초점을 두었습니다.",
-        "부산 중구의 대표 랜드마크인 부산타워와 지역의 대표 먹거리인 족발, 회를 소재로 한 일러스트 요소를 활용해 여행과 미식의 즐거움을 담은 포스터를 구성했습니다.\n지역 특색이 자연스럽게 전달될 수 있도록 활기찬 분위기와 친근한 이미지를 표현했습니다.",
-        "제작된 키비주얼을 기반으로 영문 포스터와 카드뉴스 디자인까지 확장 작업을 함께 진행했습니다."
-      ],
-      deliverables:['Key Visual Poster','Card News (based on KV)'],
-      thumb:'assets/projects/p3-hero.jpg',
-      previews:['assets/projects/p3-preview-1.jpg','assets/projects/p3-preview-2.jpg','assets/projects/p3-preview-3.jpg'] },
-    { id:'p4', name:"2023 부산-아세안주간 '미래세대 아세안 탐험대' 메인 포스터", client:'부산광역시, 부산글로벌도시재단', type:'Key Visual Poster, Card News, Banner', category:['keyvisual','cardnews','banner'],
-      concept:[
+        '(보안상의 이유로 만화 텍스트는 제외한 상태로 업로드하였습니다.)'
+      ], deliverables:['Book Illustration'], thumb:'assets/projects/n02-hero.jpg', previews:['assets/projects/n02-preview-1.jpg'] },
+    { id:'n03', name:'야경&미식 여행 콘텐츠 크리에이터 모집 공모전 메인 키비주얼 포스터', year:2023, client:'부산광역시 중구', type:'Card News, Key Visual / Poster', category:['cardnews','keyvisual'], concept:[
+        '부산 중구 <야경&미식 여행 콘텐츠 크리에이터 모집> 공모전의 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '부산 중구 관광 콘텐츠 홍보 및 공모전 참여 유도를 목적으로 제작된 작업으로,지역의 야경과 미식 요소를 결합해 여행의 매력을 직관적으로 전달하는 데 초점을 두었습니다.',
+        '부산 중구의 대표 랜드마크인 부산타워와 지역의 대표 먹거리인 족발, 회를 소재로 한 일러스트 요소를 활용해 여행과 미식의 즐거움을 담은 포스터를 구성했습니다.지역 특색이 자연스럽게 전달될 수 있도록 활기찬 분위기와 친근한 이미지를 표현했습니다.',
+        '제작된 키비주얼을 기반으로 영문 포스터와 카드뉴스 디자인까지 확장 작업을 함께 진행했습니다.'
+      ], deliverables:['Key Visual Poster','Card News (based on KV)'], thumb:'assets/projects/n03-hero.jpg', previews:['assets/projects/n03-preview-1.jpg','assets/projects/n03-preview-2.jpg'] },
+    { id:'n04', name:'2023 부산-아세안주간 ‘미래세대 아세안 탐험대’ 메인 키비주얼 포스터', year:2023, client:'부산광역시, 부산글로벌도시재단', type:'Banner, Card News, Key Visual / Poster', category:['banner','cardnews','keyvisual'], concept:[
         '2023 부산-아세안 주간 <미래세대 아세안 탐험대> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
         '아세안 문화 교류 행사 홍보를 목적으로, 다양한 국가의 전통 복식을 입은 인물과 축제의 분위기를 통해 각 나라의 문화를 시각적으로 전달하는 방향으로 구성했습니다.',
         '제작된 키비주얼을 기반으로 가로등 배너와 엑스배너 디자인까지 함께 확장 작업을 진행했습니다.'
-      ],
-      deliverables:['Key Visual Poster','Card News (based on KV)','Banner (based on KV)'],
-      thumb:'assets/projects/p4-hero.jpg',
-      previews:['assets/projects/p4-preview-1.jpg','assets/projects/p4-preview-2.jpg'] },
-    { id:'p5', name:'프로젝트 이름 05', client:'클라이언트명', type:'Promotion', category:['promotion'],
-      concept:['설명 내용 여러줄 텍스트 예시 텍스트입니다. 프로젝트의 컨셉과 방향성을 이 자리에 정리합니다.'],
-      deliverables:['Promotion Banner'], previewCount:4 },
-    { id:'p6', name:'프로젝트 이름 06', client:'클라이언트명', type:'Key Visual Poster, Banner', category:['keyvisual','banner'],
-      concept:['설명 내용 여러줄 텍스트 예시 텍스트입니다. 프로젝트의 컨셉과 방향성을 이 자리에 정리합니다.'],
-      deliverables:['Key Visual Poster','X-Banner'], previewCount:3 }
+      ], deliverables:['Key Visual Poster','Card News (based on KV)','Banner (based on KV)'], thumb:'assets/projects/n04-hero.jpg', previews:['assets/projects/n04-preview-1.jpg','assets/projects/n04-preview-2.jpg'] },
+    { id:'n05', name:'두시티톡 4-7월 메인 키비주얼 포스터', year:2023, client:'서울청년센터 금천오랑', type:'Card News, Key Visual / Poster', category:['cardnews','keyvisual'], concept:[
+        '서울청년센터 ‘금천오랑’ 2023 <두시티톡> 카드뉴스 및 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '매주 진행되는 ‘두시티톡’은 청년들의 고민과 일상 속 궁금증을 주제로 소통하고 다양한 체험을 이어가는 프로그램입니다. 이에 맞춰 주제별 메시지가 직관적으로 전달될 수 있도록 구성했습니다.',
+        '각 회차의 주제에 맞는 일러스트와 색감을 적용하여 콘텐츠의 분위기와 이해도를 높이는 방향으로 작업했습니다.'
+      ], deliverables:['Key Visual Poster','Card News (based on KV)'], thumb:'assets/projects/n05-hero.jpg', previews:['assets/projects/n05-preview-1.jpg'] },
+    { id:'n06', name:'두시티톡 8-10월 메인 키비주얼 포스터', year:2023, client:'서울청년센터 금천오랑', type:'Card News, Key Visual / Poster', category:['cardnews','keyvisual'], concept:[
+        '서울청년센터 ‘금천오랑’ 2023 <두시티톡> 카드뉴스 및 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '매주 진행되는 ‘두시티톡’은 청년들의 고민과 일상 속 궁금증을 주제로 소통하고 다양한 체험을 이어가는 프로그램입니다. 이에 맞춰 주제별 메시지가 직관적으로 전달될 수 있도록 구성했습니다.',
+        '각 회차의 주제에 맞는 일러스트와 색감을 적용하여 콘텐츠의 분위기와 이해도를 높이는 방향으로 작업했습니다.'
+      ], deliverables:['Key Visual Poster','Card News (based on KV)'], thumb:'assets/projects/n06-hero.jpg', previews:['assets/projects/n06-preview-1.jpg'] },
+    { id:'n07', name:'글로컬 문화 in 남산 ‘글로컬 발효스쿨 1기 모집’ 메인 키비주얼 포스터', year:2023, client:'부산광역시 금정구', type:'Banner, Card News, Key Visual / Poster', category:['banner','cardnews','keyvisual'], concept:[
+        '부산 금정구 \'글로컬 문화 in 남산\' 프로젝트 <글로컬 발효스쿨 1기 모집> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '발효식품 레시피를 직접 배우고 체험할 수 있다는 프로그램의 특성을 시각적으로 전달하기 위해, 관련 요소와 소재를 포스터 전반에 배치하여 이해도를 높이는 방향으로 구성했습니다.',
+        '카드뉴스는 초대 메시지의 성격에 맞춰 펼쳐진 편지지 형태의 레이아웃으로 전체 구조를 설계했습니다.',
+        '제작된 키비주얼 및 디자인 소스를 활용하여 엑스 배너와 현수막 디자인까지 함께 확장 작업을 진행했습니다.'
+      ], deliverables:['Key Visual Poster','Card News (based on KV)','Banner (based on KV)'], thumb:'assets/projects/n07-hero.jpg', previews:['assets/projects/n07-preview-1.jpg','assets/projects/n07-preview-2.jpg'] },
+    { id:'n08', name:'어린이 채식요리교실 레시피북', year:2023, client:'부산광역시교육청', type:'Leaflet, Promotion', category:['leaflet','promotion'], concept:[
+        '부산광역시교육청 캐릭터 <션>을 활용한 어린이 채식요리교실 레시피북 및 밀키트 일러스트·디자인 작업을 진행했습니다.',
+        '부산교육청 대표 캐릭터 <션>과 함께하는 가을 소풍을 콘셉트로, 직접 만든 요리를 즐기는 어린이들의 모습을 중심으로 따뜻하고 즐거운 분위기를 시각화했습니다.',
+        '레시피북 속지는 어린이들이 쉽게 이해하고 따라 할 수 있도록 단계별 그림과 텍스트를 균형 있게 배치하여 구성했습니다.'
+      ], deliverables:['Recipe Book','Meal Kit Package (based on KV)'], thumb:'assets/projects/n08-hero.jpg', previews:['assets/projects/n08-preview-1.jpg'] },
+    { id:'n09', name:'2023 광복로 겨울빛 트리축제 메인 키비주얼 포스터', year:2023, client:'부산광역시 중구', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '부산광역시 중구에서 열리는 <2023 광복로 겨울빛 트리축제> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '연말 행사의 분위기를 전달하기 위해 그린, 레드, 옐로우를 메인 컬러로 활용하여 따뜻하고 축제적인 무드를 표현했습니다.',
+        '올해 행사의 메인 트리를 중앙에 배치하고, 크리스마스 분위기를 연상시키는 오브젝트를 주변에 구성하여 전체적인 화면을 설계했습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n09-hero.jpg', previews:['assets/projects/n09-preview-1.jpg','assets/projects/n09-preview-2.jpg','assets/projects/n09-preview-3.jpg','assets/projects/n09-preview-4.jpg'] },
+    { id:'n10', name:'2023 산복하늘 빛의거리 점등식 초청장', year:2023, client:'부산광역시 중구', type:'Leaflet', category:['leaflet'], concept:[
+        '2023 광복로 겨울빛 트리축제의 연계 행사인 <2023 산복하늘 빛의거리 점등식> 초청장 일러스트·디자인 작업을 진행했습니다.',
+        '트리 축제의 메인 컬러와 배경 패턴을 활용하여 전체적인 톤 앤 매너를 통일하고, 행사 간 시각적 연속성을 유지하도록 구성했습니다. 점등식의 메인 트리는 도형화하여 중앙에 배치해 핵심 메시지가 직관적으로 전달되도록 설계했습니다.',
+        '크리스마스의 신비로운 분위기를 표현하기 위해 스노우볼 안에 들어간 듯한 연출로 화면을 구성했습니다.',
+        '뒷면은 정보 전달 중심의 가독성을 고려한 타이포그래피로 정리하고, 연말 편지의 감성을 더하기 위해 크리스마스 우표 요소를 포인트로 활용했습니다.'
+      ], deliverables:['Postcard'], thumb:'assets/projects/n10-hero.jpg', previews:['assets/projects/n10-preview-1.jpg','assets/projects/n10-preview-2.jpg'] },
+    { id:'n11', name:'2024 부스럭데이 ‘부기포차’ 메인 키비주얼 포스터', year:2024, client:'부산광역시', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '<2024 부스럭데이 부기포차> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '부산시 캐릭터 <부기>와 함께 부산의 대표 먹거리인 어묵과 씨앗호떡을 배치하여 지역성과 콘셉트가 자연스럽게 드러나도록 구성했습니다.',
+        '레트로한 분위기를 표현하기 위해 레드, 옐로우, 블루의 선명한 원색을 활용하여 시각적 임팩트를 강화했습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n11-hero.jpg', previews:['assets/projects/n11-preview-1.jpg','assets/projects/n11-preview-2.jpg'] },
+    { id:'n12', name:'반려견 유전자검사 결과보고서', year:2024, client:'myPETGENE', type:'Leaflet', category:['leaflet'], concept:[
+        '마이펫진 <반려견 유전자검사 결과보고서>의 표지 및 내지 일러스트·디자인 작업을 진행했습니다.',
+        '반려견과 함께하는 행복한 일상의 모습을 중심으로, 친근하고 따뜻한 분위기가 전달될 수 있도록 시각적으로 구성했습니다.',
+        '내지는 보안상의 이유로 일부 내용을 제외하고 업로드하였으며, 각 검사 결과에 맞는 텍스트와 픽토그램을 배치하여 정보 전달성과 가독성을 높이는 방향으로 디자인했습니다.'
+      ], deliverables:['Leaflet'], thumb:'assets/projects/n12-hero.jpg', previews:['assets/projects/n12-preview-1.jpg','assets/projects/n12-preview-2.jpg','assets/projects/n12-preview-3.jpg'] },
+    { id:'n13', name:'2024 유라리 건맥축제 메인 키비주얼 포스터', year:2024, client:'부산광역시 중구', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '부산중구 <2024 유라리 건맥축제> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '축제의 콘셉트에 맞춰 건어물과 맥주를 활용한 캐릭터를 중심 요소로 배치하여 유쾌하고 직관적인 분위기를 표현했습니다.',
+        '하단에는 축제를 즐기는 시민들의 모습을 배치하여 현장의 활기와 분위기를 시각적으로 전달했습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n13-hero.jpg', previews:['assets/projects/n13-preview-1.jpg','assets/projects/n13-preview-2.jpg','assets/projects/n13-preview-3.jpg'] },
+    { id:'n14', name:'중구 부산항 펀&펑 페스티벌 메인 키비주얼 포스터', year:2024, client:'부산광역시 중구', type:'Key Visual / Poster, Leaflet', category:['keyvisual','leaflet'], concept:[
+        '부산중구 <중구 부산항 펀&펑 페스티벌> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '밤하늘에는 페스티벌의 메인 이벤트인 불꽃 드론쇼를 표현하고, 중앙에는 부산항에서 축제를 즐기는 시민들의 모습을 배치하여 축제의 분위기와 현장감을 시각적으로 전달했습니다.',
+        '제작된 키비주얼을 활용하여 부채형 리플렛과 초청장 디자인도 함께 진행했습니다.'
+      ], deliverables:['Key Visual Poster','Leaflet (based on KV)'], thumb:'assets/projects/n14-hero.jpg', previews:['assets/projects/n14-preview-1.jpg','assets/projects/n14-preview-2.jpg','assets/projects/n14-preview-3.jpg'] },
+    { id:'n15', name:'2024 부산유엔위크 ‘한국전쟁 영웅들의 이야기’ 아웃도어 미션 프로그램 메인 키비주얼 포스터', year:2024, client:'부산광역시, 부산글로벌도시재단', type:'Card News, Key Visual / Poster', category:['cardnews','keyvisual'], concept:[
+        '2024 부산유엔위크 \'한국전쟁 영웅들의 이야기\' 아웃도어 미션 프로그램의 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '유엔기념공원에서 진행되는 프로그램의 취지에 맞춰 공원의 풍경과 헌화하는 인물들을 중심으로 구성하여 장소성과 메시지가 자연스럽게 전달되도록 시각화했습니다.',
+        '포스터 하단에는 암호 해독 미션의 주제 요소인 전쟁기념비와 노란 수선화를 배치하여 프로그램의 상징성을 강화했습니다.',
+        '카드뉴스는 웹 플라이어로도 활용될 수 있도록 하단으로 자연스럽게 이어지는 레이아웃 구조로 설계했습니다.'
+      ], deliverables:['Key Visual Poster','Card News (based on KV)'], thumb:'assets/projects/n15-hero.jpg', previews:['assets/projects/n15-preview-1.jpg','assets/projects/n15-preview-2.jpg','assets/projects/n15-preview-3.jpg'] },
+    { id:'n16', name:'2024 글로컬 문화 in 남산 페스티벌 메인 키비주얼 포스터', year:2024, client:'부산광역시 금정구', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '2023년에 이어 2024년에도 부산 금정구 <2024 글로컬 문화 in 남산 페스티벌> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행하게 되었습니다.',
+        '남산로 일대에서 진행되는 이번 페스티벌은 플리마켓, 푸드트럭, 무대 등 주민과 상인들이 함께 참여하는 지역 축제로, 모두가 자연스럽게 어울릴 수 있는 분위기를 시각적으로 담는 데 중점을 두었습니다.',
+        '음식을 즐기는 사람들과 무대에서 공연하는 인물들을 배치하여 축제의 활기와 현장감을 표현했습니다.',
+        '하단에는 축제 장소를 안내하는 약도와 주요 프로그램 정보, QR코드를 함께 구성하여 정보 전달성을 높였습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n16-hero.jpg', previews:['assets/projects/n16-preview-1.jpg','assets/projects/n16-preview-2.jpg'] },
+    { id:'n17', name:'커넥트현대 ‘소셜 커넥트 마켓’ 메인 키비주얼 포스터', year:2024, client:'중소벤처기업부', type:'Banner, Key Visual / Poster', category:['banner','keyvisual'], concept:[
+        '커넥트 현대에서 진행되는 사회적경제기업제품 특별판매전 <소셜 커넥트 마켓> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '소셜 커넥트 마켓은 사회적경제 기업과 함께하는 플리마켓형 팝업스토어로, 친환경적이고 따뜻한 브랜드 경험을 전달하는 데 목적이 있습니다.\n이에 맞춰 전체적으로 자연스럽고 따스한 분위기의 일러스트 요소를 활용해 화면을 구성했습니다.',
+        '제작된 키비주얼을 활용하여 현수막과 입간판 디자인까지 함께 확장 작업을 진행했습니다.'
+      ], deliverables:['Key Visual Poster','Banner (based on KV)'], thumb:'assets/projects/n17-hero.jpg', previews:['assets/projects/n17-preview-1.jpg','assets/projects/n17-preview-2.jpg','assets/projects/n17-preview-3.jpg'] },
+    { id:'n18', name:'2025 부스럭데이 메인 키비주얼 포스터', year:2025, client:'부산광역시', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '부산시 <2025 부스럭데이> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '화창한 봄날의 수영강변과 영화의전당을 배경으로, 부산시 캐릭터 <부기>와 함께 달리는 프로그램 ‘부기런’을 중심 콘셉트로 구성하여 활기찬 분위기를 시각화했습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n18-hero.jpg', previews:['assets/projects/n18-preview-1.jpg','assets/projects/n18-preview-2.jpg','assets/projects/n18-preview-3.jpg'] },
+    { id:'n19', name:'2025 부산 상수도사업본부 순수 365 홍보 팝업스토어 ‘캠크닉 with 순수365’ 메인 키비주얼 포스터', year:2025, client:'부산광역시 상수도사업본부', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '2025 부산 상수도사업본부 순수 365 홍보 팝업스토어 <캠크닉 with 순수365> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '부산시 상수도사업본부 대표 캐릭터 ‘한방울’을 활용해 캠핑을 즐기는 장면을 중심으로 구성했습니다.',
+        '깨끗하고 안전한 먹는 물 ‘순수365’와 함께 캠핑 푸드를 만들어 즐기는 모습을 통해 제품의 특성과 경험 요소가 자연스럽게 전달되도록 시각화했습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n19-hero.jpg', previews:['assets/projects/n19-preview-1.jpg','assets/projects/n19-preview-2.jpg'] },
+    { id:'n20', name:'수영팔도 미식 페스타 메인 키비주얼 포스터', year:2025, client:'부산광역시', type:'Card News, Key Visual / Poster', category:['cardnews','keyvisual'], concept:[
+        '부산시 <수영팔도 미식 페스타> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '수영구 팔도수영시장에서 열린 이번 미식 페스타는 시장 상인과 방문객이 함께 어우러지는 다양한 프로그램으로 구성된 행사입니다.',
+        '그중 시장 식재료로 만든 밀키트를 활용한 ‘원 팬 마켓’ 부스와 직접 구매한 음식을 즐길 수 있는 ‘미식 광장’을 중심으로 축제의 분위기를 시각화했습니다.',
+        '시장 특유의 활기와 시민들이 함께 즐기는 현장감을 담기 위해 밝고 생동감 있는 톤으로 구성했습니다.',
+        '또한 ‘팔도미식 원팬 마켓’ 프로그램 소개 카드뉴스와 ‘팔도상품권’ 구매 안내 카드뉴스를 별도로 디자인했습니다.'
+      ], deliverables:['Key Visual Poster','Card News'], thumb:'assets/projects/n20-hero.jpg', previews:['assets/projects/n20-preview-1.jpg','assets/projects/n20-preview-2.jpg','assets/projects/n20-preview-3.jpg'] },
+    { id:'n21', name:'1학년 교과서랑 친해지는 가로세로 낱말 퍼즐 표지 및 내지 삽화', year:2025, client:'썬더키즈', type:'Book Illustration', category:['illustration'], concept:[
+        '출판사 ‘썬더키즈’ <1학년 교과서랑 친해지는 가로세로 낱말 퍼즐> 삽화 작업을 진행했습니다.',
+        '초등 저학년 대상 학습 콘텐츠에 맞춰 아이들이 친숙하게 느낄 수 있는 아기자기한 삽화를 중심으로 구성했습니다.'
+      ], deliverables:['Book Illustration'], thumb:'assets/projects/n21-hero.jpg', previews:['assets/projects/n21-preview-1.jpg','assets/projects/n21-preview-2.jpg','assets/projects/n21-preview-3.jpg','assets/projects/n21-preview-4.jpg','assets/projects/n21-preview-5.jpg'] },
+    { id:'n22', name:'친절한 정치 신문 표지 및 내지 삽화', year:2025, client:'썬더키즈', type:'Book Illustration', category:['illustration'], concept:[
+        '출판사 ‘썬더키즈’ <친절한 정치 신문> 책의 삽화 작업을 진행했습니다.',
+        '각 장의 주제에 맞춰 이해를 돕는 삽화를 제작했으며, 내용이 쉽게 전달될 수 있도록 구성했습니다.'
+      ], deliverables:['Book Illustration'], thumb:'assets/projects/n22-hero.jpg', previews:['assets/projects/n22-preview-1.jpg','assets/projects/n22-preview-2.jpg','assets/projects/n22-preview-3.jpg','assets/projects/n22-preview-4.jpg','assets/projects/n22-preview-5.jpg','assets/projects/n22-preview-6.jpg','assets/projects/n22-preview-7.jpg','assets/projects/n22-preview-8.jpg'] },
+    { id:'n23', name:'제3회 유라리 건맥축제 메인 키비주얼 포스터', year:2025, client:'부산광역시 중구', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '부산중구 <제3회 유라리 건맥축제> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '해질녘에 열리는 축제의 분위기를 담기 위해 노을이 진 하늘을 배경으로 활용하여 시간대의 감성을 강조했습니다.\n축제의 핵심 요소인 시원한 맥주의 청량감을 중심으로 구성하고, 주변에는 건어물을 배치하여 ‘건어물+맥주 축제’라는 콘셉트가 직관적으로 전달되도록 표현했습니다.\n또한 부산 중구의 대표적인 풍경을 함께 배치하여 지역의 정체성과 축제의 현장감이 자연스럽게 드러나도록 디자인했습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n23-hero.jpg', previews:['assets/projects/n23-preview-1.jpg','assets/projects/n23-preview-2.jpg','assets/projects/n23-preview-3.jpg'] },
+    { id:'n24', name:'제13회 한중일어린이아트페어 시트지', year:2025, client:'부산글로벌도시재단', type:'Banner', category:['banner'], concept:[
+        '제13회 한중일어린이아트페어에 활용될 벽면 시트지 일러스트 디자인 작업을 진행했습니다.',
+        '아이들의 그림이 자연스럽게 어우러지도록 주변을 아기자기한 일러스트로 구성했으며, 한국·중국·일본의 전통 의상을 입은 어린이 캐릭터를 함께 배치해 행사 주제를 시각적으로 표현했습니다.'
+      ], deliverables:['Wall Illustration'], thumb:'assets/projects/n24-hero.jpg', previews:['assets/projects/n24-preview-1.jpg'] },
+    { id:'n25', name:'신사업창업사관학교 플리마켓 리플렛', year:2025, client:'중소벤처기업부, 소상공인시장진흥공단', type:'Leaflet', category:['leaflet'], concept:[
+        '중소벤처기업부, 소상공인시장진흥공단과 함께하는 <신사업창업사관학교 플리마켓> 리플렛 일러스트·디자인 작업을 진행했습니다.',
+        '신사업 아이디어를 가진 예비 창업자를 지원하는 프로그램의 취지에 맞춰, 타이틀 하단에 전구 일러스트를 배치해 ‘창의적인 아이디어와 가능성’을 시각적으로 표현했습니다.',
+        '또한 주변에는 소상공인들의 판매 품목을 일러스트로 구성해 따뜻하고 친근한 분위기를 더했습니다.',
+        '판매 안내 페이지는 플리마켓 천막 형태의 레이아웃을 활용하여 그 안에 정보와 이미지를 구성했습니다.'
+      ], deliverables:['Leaflet'], thumb:'assets/projects/n25-hero.jpg', previews:['assets/projects/n25-preview-1.jpg','assets/projects/n25-preview-2.jpg'] },
+    { id:'n26', name:'2025 글로컬 문화 in 남산 페스티벌 메인 키비주얼 포스터', year:2025, client:'부산광역시 금정구', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '부산 금정구 <2025 글로컬 문화 in 남산 페스티벌> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '금정구 남산로 골목길에서 펼쳐지는 행사의 취지를 담아, 포스터 전체를 하나의 큰 약도처럼 구성하여 공간과 프로그램이 자연스럽게 연결되도록 시각화했습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n26-hero.jpg', previews:['assets/projects/n26-preview-1.jpg','assets/projects/n26-preview-2.jpg','assets/projects/n26-preview-3.jpg'] },
+    { id:'n27', name:'2025 부산 상수도사업본부 순수 365 홍보 팝업스토어 메인 키비주얼 포스터', year:2025, client:'부산광역시 상수도사업본부', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '<2025 부산 상수도사업본부 순수 365 홍보 팝업스토어> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '부산시 상수도사업본부 대표 캐릭터 ‘한방울’을 활용하여 OX 퀴즈, 시음 행사 등 다양한 프로그램을 즐기는 모습을 중심으로 구성했습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n27-hero.jpg', previews:['assets/projects/n27-preview-1.jpg','assets/projects/n27-preview-2.jpg'] },
+    { id:'n28', name:'2025 해리단길 스위트살롱 in 우일맨션 메인 키비주얼 포스터', year:2025, client:'부산경제진흥원, 부산광역시', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '부산경제진흥원과 부산광역시가 함께하는 <2025 해리단길 스위트살롱 in 우일맨션> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '주거지역과 골목상권이 공존하는 복합 공간 ‘우일맨션’의 독특한 분위기를 표현하기 위해, 이곳의 주민들과 팝업을 즐기러 온 방문객들의 모습을 한 장면에 담아 구성했습니다.',
+        '디저트 팝업의 달콤한 분위기를 살리기 위해 알록달록한 파스텔 톤 컬러를 사용하여 전체적인 무드를 완성했습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n28-hero.jpg' },
+    { id:'n29', name:'사상 가로공원 벚꽃야장(野/夜) 페스티벌 메인 키비주얼 포스터', year:2026, client:'부산경제진흥원, 부산광역시', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '부산경제진흥원과 부산광역시가 함께한 <사상 가로공원 벚꽃야장(野/夜) 페스티벌> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '벚꽃이 활짝 핀 봄 저녁, 거리에서 야장의 분위기를 만끽하는 장면을 가로공원 대표 캐릭터 ‘가로미’와 ‘새로미’를 활용해 표현했습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n29-hero.jpg' },
+    { id:'n30', name:'2026 부스럭데이 메인 키비주얼 포스터', year:2026, client:'부산광역시, 영화의전당', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '<2026 부스럭데이> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '이번 부스럭데이의 메인 프로그램 ‘부기런’을 중심으로 마라톤을 뛰는 부기의 모습을 메인 비주얼로 구성했습니다. 빈티지한 카툰 무드를 표현하기 위해 쨍한 컬러와 도트 요소를 활용했습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n30-hero.jpg' },
+    { id:'n31', name:'글로컬 문화 in 남산 \'글로컬 발효스쿨 4기 모집\' 메인 키비주얼 포스터', year:2026, client:'부산광역시 금정구', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '부산 금정구 <글로컬 문화 in 남산 ‘글로컬 발효스쿨 4기 모집’> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
+        '글로컬 발효스쿨은 1기 모집 포스터를 작업한 경험이 있어 더욱 반갑게 참여한 프로젝트입니다.',
+        '1기에서는 막걸리, 치즈 등 발효식품을 중심으로 구성했다면, 이번 4기는 메인 커리큘럼인 빵과 디저트를 중심으로 발효의 따뜻한 이미지를 표현했습니다.',
+        '따뜻한 색감을 활용해 발효빵 특유의 포근한 분위기가 느껴지도록 시각적으로 구성했습니다.'
+      ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n31-hero.jpg' },
+    { id:'n32', name:'로컬 비즈니스 활성화 프로젝트 메인 키비주얼 포스터', year:2023, client:'서울신용보증재단, 금천구 청년공간 청춘삘딩', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '‘서울신용보증재단’과 금천구 청년공간 ‘청춘삘딩’이 함께하는 <로컬 비즈니스 활성화 프로젝트>에 참여했습니다. 서울시 금천구 독산동 정훈단지를 대상으로 진행된 본 프로젝트에서, 과거 활기 넘치던 지역의 기억을 재해석한 키비주얼 일러스트를 제작했습니다.',
+        '정훈단지의 90~2000년대 초 일상을 바탕으로, 가상의 캐릭터 ‘정훈’과 ‘정아’를 설정해 당시의 생활 풍경을 키비주얼로 구성했습니다. 사우나, 문구점, 학원, 분식집 등 일상의 장면을 통해 지역의 기억과 정서를 시각화했습니다.',
+        '완성된 키비주얼 일러스트 4종은 축제 <정훈 이즈 백>의 포토존 및 굿즈 등에 활용되었습니다.'
+      ], deliverables:['Key Visual Poster','Postcard','Sticker','Keyring'], thumb:'assets/projects/n32-hero.jpg', previews:['assets/projects/n32-preview-1.jpg'] },
+    { id:'n33', name:'2025 영화관 옆 도서관 요가&싱잉볼 프로그램 카드뉴스', year:2025, client:'영화의전당', type:'Card News', category:['cardnews'], concept:[
+        '2025 영화관 옆 도서관 카드뉴스 일러스트·디자인 작업을 진행했습니다.',
+        '책과 함께하는 요가&싱잉볼 체험 프로그램의 편안한 분위기를 전달하기 위해, 숲속 공간과 책, 휴식을 즐기는 사람들의 모습을 중심으로 일러스트를 구성했습니다.'
+      ], deliverables:['Card News'], thumb:'assets/projects/n33-hero.jpg', previews:['assets/projects/n33-preview-1.jpg'] },
+    { id:'n34', name:'부기랑 운동하장 인포그래픽', year:2024, client:'부산광역시', type:'Leaflet', category:['leaflet'], concept:[
+        '생활체육 천국도시 부산 팝업 캠페인 <부기랑 운동하장> 인포그래픽 디자인 작업을 진행했습니다.',
+        '운동 정보를 재미있고 쉽게 전달할 수 있도록 캐릭터 일러스트와 아이콘을 활용해 지루하지 않은 정보 콘텐츠로 구성했으며, 표와 레이아웃을 활용해 내용을 직관적으로 정리했습니다.',
+        '(제작된 키비주얼을 기반으로 정보 전달을 위한 인포그래픽 콘텐츠 디자인을 진행했습니다.)'
+      ], deliverables:['Infographic Design'], thumb:'assets/projects/n34-hero.jpg', previews:['assets/projects/n34-preview-1.jpg','assets/projects/n34-preview-2.jpg'] },
   ];
 
   let activeProjectCat = 'all';
@@ -1060,6 +1165,11 @@
   function projectColor(id){
     const idx = PROJECTS.findIndex(p => p.id === id);
     return PROJECT_COLORS[idx % PROJECT_COLORS.length];
+  }
+
+  // 썸네일/상세페이지 타이틀 뒤에 ", 2023" 처럼 연도를 붙여 표시
+  function projectDisplayName(p){
+    return p.year ? `${p.name}, ${p.year}` : p.name;
   }
 
   // 대표 이미지(thumb)가 있으면 이미지를, 없으면 샘플 단색 블록을 채우는 공용 헬퍼
@@ -1074,7 +1184,7 @@
     box.dataset.projectId = p.id;
     box.innerHTML = `
       ${projectVisualHTML(p)}
-      <div class="grid-overlay"><span class="grid-title">${p.name}</span></div>
+      <div class="grid-overlay"><span class="grid-title">${projectDisplayName(p)}</span></div>
     `;
   });
 
@@ -1104,7 +1214,7 @@
       card.innerHTML = `
         <div class="project-thumb">${projectVisualHTML(p)}</div>
         <div class="project-meta">
-          <div class="project-name">${p.name}</div>
+          <div class="project-name">${projectDisplayName(p)}</div>
           <div class="project-client">${p.client}</div>
           <div class="project-type">${p.type}</div>
         </div>
@@ -1129,7 +1239,7 @@
       hero.style.background = projectColor(id);
     }
 
-    document.getElementById('projectDetailTitle').textContent = p.name;
+    document.getElementById('projectDetailTitle').textContent = projectDisplayName(p);
     const conceptEl = document.getElementById('projectDetailConcept');
     conceptEl.innerHTML = '';
     p.concept.forEach(para => {
@@ -1195,11 +1305,6 @@
     const pCard = e.target.closest('.project-card');
     if(pCard && pCard.dataset.projectId){
       openProjectDetail(pCard.dataset.projectId);
-      return;
-    }
-    const backBtn = e.target.closest('#projectBackBtn');
-    if(backBtn){
-      showView('project');
       return;
     }
   });
