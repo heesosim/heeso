@@ -438,6 +438,7 @@
   }
   .project-preview-list img.preview-img{
     height:auto;
+    cursor: url('assets/cursor.png') 8 8, pointer;
   }
 
   /* ---------- 라이트박스(작업물 팝업) ---------- */
@@ -465,8 +466,13 @@
     color: var(--ink); margin-top:12px; font-size:0.8rem;
   }
   .lightbox-close{
-    position:absolute; top:28px; right:36px;
-    color: var(--ink); font-size:2rem; font-weight:300;
+    position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
+    display:flex; align-items:center; justify-content:center;
+    width:44px; height:44px;
+    border-radius:50%;
+    background: var(--pink-soft);
+    color: var(--pink);
+    font-size:1.6rem; font-weight:300;
     cursor: url('assets/cursor.png') 8 8, pointer;
     line-height:1;
   }
@@ -862,12 +868,12 @@
   const lightboxCaption = document.getElementById('lightboxCaption');
   const lightboxClose = document.getElementById('lightboxClose');
 
-  function openLightbox(file, title){
-    lightboxImg.src = 'assets/works/' + file;
-    lightboxImg.alt = title;
-    lightboxCaption.textContent = title;
+  function openLightbox(src, title){
+    lightboxImg.src = src;
+    lightboxImg.alt = title || '';
+    lightboxCaption.textContent = title || '';
     lightbox.classList.add('active');
-    safePushState({ lightbox: true, file, title });
+    safePushState({ lightbox: true, src, title });
   }
   function closeLightbox(){
     if(lightbox.classList.contains('active')){
@@ -930,7 +936,7 @@
       return;
     }
     if(homeItem && homeItem.dataset.file){
-      openLightbox(homeItem.dataset.file, homeItem.dataset.title);
+      openLightbox('assets/works/' + homeItem.dataset.file, homeItem.dataset.title);
     }
   });
 
@@ -952,9 +958,14 @@
   }
 
   document.addEventListener('click', (e) => {
+    const previewImg = e.target.closest('.project-preview-list img.preview-img');
+    if(previewImg){
+      openLightbox(previewImg.getAttribute('src'), previewImg.alt);
+      return;
+    }
     const box = e.target.closest('.grid-box');
     if(box && box.dataset.file){
-      openLightbox(box.dataset.file, box.dataset.title);
+      openLightbox('assets/works/' + box.dataset.file, box.dataset.title);
     }
   });
   lightboxClose.addEventListener('click', closeLightbox);
@@ -1030,12 +1041,17 @@
         '부산교육청 대표 캐릭터 <션>과 함께하는 가을 소풍을 콘셉트로, 직접 만든 요리를 즐기는 어린이들의 모습을 중심으로 따뜻하고 즐거운 분위기를 시각화했습니다.',
         '레시피북 속지는 어린이들이 쉽게 이해하고 따라 할 수 있도록 단계별 그림과 텍스트를 균형 있게 배치하여 구성했습니다.'
       ], deliverables:['Recipe Book','Meal Kit Package (based on KV)'], thumb:'assets/projects/n08-hero.jpg', previews:['assets/projects/n08-preview-1.jpg'] },
+    { id:'n32', name:'로컬 비즈니스 활성화 프로젝트 메인 키비주얼 포스터', year:2023, client:'서울신용보증재단, 금천구 청년공간 청춘삘딩', type:'Key Visual / Poster', category:['keyvisual'], concept:[
+        '‘서울신용보증재단’과 금천구 청년공간 ‘청춘삘딩’이 함께하는 <로컬 비즈니스 활성화 프로젝트>에 참여했습니다. 서울시 금천구 독산동 정훈단지를 대상으로 진행된 본 프로젝트에서, 과거 활기 넘치던 지역의 기억을 재해석한 키비주얼 일러스트를 제작했습니다.',
+        '정훈단지의 90~2000년대 초 일상을 바탕으로, 가상의 캐릭터 ‘정훈’과 ‘정아’를 설정해 당시의 생활 풍경을 키비주얼로 구성했습니다. 사우나, 문구점, 학원, 분식집 등 일상의 장면을 통해 지역의 기억과 정서를 시각화했습니다.',
+        '완성된 키비주얼 일러스트 4종은 축제 <정훈 이즈 백>의 포토존 및 굿즈 등에 활용되었습니다.'
+      ], deliverables:['Key Visual Poster','Postcard','Sticker','Keyring'], thumb:'assets/projects/n32-hero.jpg', previews:['assets/projects/n32-preview-1.jpg'] },
     { id:'n09', name:'2023 광복로 겨울빛 트리축제 메인 키비주얼 포스터', year:2023, client:'부산광역시 중구', type:'Key Visual / Poster', category:['keyvisual'], concept:[
         '부산광역시 중구에서 열리는 <2023 광복로 겨울빛 트리축제> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
         '연말 행사의 분위기를 전달하기 위해 그린, 레드, 옐로우를 메인 컬러로 활용하여 따뜻하고 축제적인 무드를 표현했습니다.',
         '올해 행사의 메인 트리를 중앙에 배치하고, 크리스마스 분위기를 연상시키는 오브젝트를 주변에 구성하여 전체적인 화면을 설계했습니다.'
       ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n09-hero.jpg', previews:['assets/projects/n09-preview-1.jpg','assets/projects/n09-preview-2.jpg','assets/projects/n09-preview-3.jpg','assets/projects/n09-preview-4.jpg'] },
-    { id:'n10', name:'2023 산복하늘 빛의거리 점등식 초청장', year:2023, client:'부산광역시 중구', type:'Leaflet', category:['leaflet'], concept:[
+    { id:'n10', name:'2023 산복하늘 빛의거리 점등식 초청장', year:2023, client:'부산광역시 중구', type:'Leaflet', category:['leaflet'], concept:[
         '2023 광복로 겨울빛 트리축제의 연계 행사인 <2023 산복하늘 빛의거리 점등식> 초청장 일러스트·디자인 작업을 진행했습니다.',
         '트리 축제의 메인 컬러와 배경 패턴을 활용하여 전체적인 톤 앤 매너를 통일하고, 행사 간 시각적 연속성을 유지하도록 구성했습니다. 점등식의 메인 트리는 도형화하여 중앙에 배치해 핵심 메시지가 직관적으로 전달되도록 설계했습니다.',
         '크리스마스의 신비로운 분위기를 표현하기 위해 스노우볼 안에 들어간 듯한 연출로 화면을 구성했습니다.',
@@ -1078,6 +1094,11 @@
         '소셜 커넥트 마켓은 사회적경제 기업과 함께하는 플리마켓형 팝업스토어로, 친환경적이고 따뜻한 브랜드 경험을 전달하는 데 목적이 있습니다.\n이에 맞춰 전체적으로 자연스럽고 따스한 분위기의 일러스트 요소를 활용해 화면을 구성했습니다.',
         '제작된 키비주얼을 활용하여 현수막과 입간판 디자인까지 함께 확장 작업을 진행했습니다.'
       ], deliverables:['Key Visual Poster','Banner (based on KV)'], thumb:'assets/projects/n17-hero.jpg', previews:['assets/projects/n17-preview-1.jpg','assets/projects/n17-preview-2.jpg','assets/projects/n17-preview-3.jpg'] },
+    { id:'n34', name:'부기랑 운동하장 인포그래픽', year:2024, client:'부산광역시', type:'Leaflet', category:['leaflet'], concept:[
+        '생활체육 천국도시 부산 팝업 캠페인 <부기랑 운동하장> 인포그래픽 디자인 작업을 진행했습니다.',
+        '운동 정보를 재미있고 쉽게 전달할 수 있도록 캐릭터 일러스트와 아이콘을 활용해 지루하지 않은 정보 콘텐츠로 구성했으며, 표와 레이아웃을 활용해 내용을 직관적으로 정리했습니다.',
+        '(제작된 키비주얼을 기반으로 정보 전달을 위한 인포그래픽 콘텐츠 디자인을 진행했습니다.)'
+      ], deliverables:['Infographic Design'], thumb:'assets/projects/n34-hero.jpg', previews:['assets/projects/n34-preview-1.jpg','assets/projects/n34-preview-2.jpg'] },
     { id:'n18', name:'2025 부스럭데이 메인 키비주얼 포스터', year:2025, client:'부산광역시', type:'Key Visual / Poster', category:['keyvisual'], concept:[
         '부산시 <2025 부스럭데이> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
         '화창한 봄날의 수영강변과 영화의전당을 배경으로, 부산시 캐릭터 <부기>와 함께 달리는 프로그램 ‘부기런’을 중심 콘셉트로 구성하여 활기찬 분위기를 시각화했습니다.'
@@ -1106,7 +1127,7 @@
         '부산중구 <제3회 유라리 건맥축제> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
         '해질녘에 열리는 축제의 분위기를 담기 위해 노을이 진 하늘을 배경으로 활용하여 시간대의 감성을 강조했습니다.\n축제의 핵심 요소인 시원한 맥주의 청량감을 중심으로 구성하고, 주변에는 건어물을 배치하여 ‘건어물+맥주 축제’라는 콘셉트가 직관적으로 전달되도록 표현했습니다.\n또한 부산 중구의 대표적인 풍경을 함께 배치하여 지역의 정체성과 축제의 현장감이 자연스럽게 드러나도록 디자인했습니다.'
       ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n23-hero.jpg', previews:['assets/projects/n23-preview-1.jpg','assets/projects/n23-preview-2.jpg','assets/projects/n23-preview-3.jpg'] },
-    { id:'n24', name:'제13회 한중일어린이아트페어 시트지', year:2025, client:'부산글로벌도시재단', type:'Banner', category:['banner'], concept:[
+    { id:'n24', name:'제13회 한중일어린이아트페어 시트지', year:2025, client:'부산글로벌도시재단', type:'Banner', category:['banner'], concept:[
         '제13회 한중일어린이아트페어에 활용될 벽면 시트지 일러스트 디자인 작업을 진행했습니다.',
         '아이들의 그림이 자연스럽게 어우러지도록 주변을 아기자기한 일러스트로 구성했으며, 한국·중국·일본의 전통 의상을 입은 어린이 캐릭터를 함께 배치해 행사 주제를 시각적으로 표현했습니다.'
       ], deliverables:['Wall Illustration'], thumb:'assets/projects/n24-hero.jpg', previews:['assets/projects/n24-preview-1.jpg'] },
@@ -1116,6 +1137,10 @@
         '또한 주변에는 소상공인들의 판매 품목을 일러스트로 구성해 따뜻하고 친근한 분위기를 더했습니다.',
         '판매 안내 페이지는 플리마켓 천막 형태의 레이아웃을 활용하여 그 안에 정보와 이미지를 구성했습니다.'
       ], deliverables:['Leaflet'], thumb:'assets/projects/n25-hero.jpg', previews:['assets/projects/n25-preview-1.jpg','assets/projects/n25-preview-2.jpg'] },
+    { id:'n33', name:'2025 영화관 옆 도서관 요가&싱잉볼 프로그램 카드뉴스', year:2025, client:'영화의전당', type:'Card News', category:['cardnews'], concept:[
+        '2025 영화관 옆 도서관 카드뉴스 일러스트·디자인 작업을 진행했습니다.',
+        '책과 함께하는 요가&싱잉볼 체험 프로그램의 편안한 분위기를 전달하기 위해, 숲속 공간과 책, 휴식을 즐기는 사람들의 모습을 중심으로 일러스트를 구성했습니다.'
+      ], deliverables:['Card News'], thumb:'assets/projects/n33-hero.jpg', previews:['assets/projects/n33-preview-1.jpg'] },
     { id:'n26', name:'2025 글로컬 문화 in 남산 페스티벌 메인 키비주얼 포스터', year:2025, client:'부산광역시 금정구', type:'Key Visual / Poster', category:['keyvisual'], concept:[
         '부산 금정구 <2025 글로컬 문화 in 남산 페스티벌> 키비주얼 및 메인 포스터 일러스트·디자인 작업을 진행했습니다.',
         '금정구 남산로 골목길에서 펼쳐지는 행사의 취지를 담아, 포스터 전체를 하나의 큰 약도처럼 구성하여 공간과 프로그램이 자연스럽게 연결되도록 시각화했습니다.'
@@ -1143,20 +1168,6 @@
         '1기에서는 막걸리, 치즈 등 발효식품을 중심으로 구성했다면, 이번 4기는 메인 커리큘럼인 빵과 디저트를 중심으로 발효의 따뜻한 이미지를 표현했습니다.',
         '따뜻한 색감을 활용해 발효빵 특유의 포근한 분위기가 느껴지도록 시각적으로 구성했습니다.'
       ], deliverables:['Key Visual Poster'], thumb:'assets/projects/n31-hero.jpg' },
-    { id:'n32', name:'로컬 비즈니스 활성화 프로젝트 메인 키비주얼 포스터', year:2023, client:'서울신용보증재단, 금천구 청년공간 청춘삘딩', type:'Key Visual / Poster', category:['keyvisual'], concept:[
-        '‘서울신용보증재단’과 금천구 청년공간 ‘청춘삘딩’이 함께하는 <로컬 비즈니스 활성화 프로젝트>에 참여했습니다. 서울시 금천구 독산동 정훈단지를 대상으로 진행된 본 프로젝트에서, 과거 활기 넘치던 지역의 기억을 재해석한 키비주얼 일러스트를 제작했습니다.',
-        '정훈단지의 90~2000년대 초 일상을 바탕으로, 가상의 캐릭터 ‘정훈’과 ‘정아’를 설정해 당시의 생활 풍경을 키비주얼로 구성했습니다. 사우나, 문구점, 학원, 분식집 등 일상의 장면을 통해 지역의 기억과 정서를 시각화했습니다.',
-        '완성된 키비주얼 일러스트 4종은 축제 <정훈 이즈 백>의 포토존 및 굿즈 등에 활용되었습니다.'
-      ], deliverables:['Key Visual Poster','Postcard','Sticker','Keyring'], thumb:'assets/projects/n32-hero.jpg', previews:['assets/projects/n32-preview-1.jpg'] },
-    { id:'n33', name:'2025 영화관 옆 도서관 요가&싱잉볼 프로그램 카드뉴스', year:2025, client:'영화의전당', type:'Card News', category:['cardnews'], concept:[
-        '2025 영화관 옆 도서관 카드뉴스 일러스트·디자인 작업을 진행했습니다.',
-        '책과 함께하는 요가&싱잉볼 체험 프로그램의 편안한 분위기를 전달하기 위해, 숲속 공간과 책, 휴식을 즐기는 사람들의 모습을 중심으로 일러스트를 구성했습니다.'
-      ], deliverables:['Card News'], thumb:'assets/projects/n33-hero.jpg', previews:['assets/projects/n33-preview-1.jpg'] },
-    { id:'n34', name:'부기랑 운동하장 인포그래픽', year:2024, client:'부산광역시', type:'Leaflet', category:['leaflet'], concept:[
-        '생활체육 천국도시 부산 팝업 캠페인 <부기랑 운동하장> 인포그래픽 디자인 작업을 진행했습니다.',
-        '운동 정보를 재미있고 쉽게 전달할 수 있도록 캐릭터 일러스트와 아이콘을 활용해 지루하지 않은 정보 콘텐츠로 구성했으며, 표와 레이아웃을 활용해 내용을 직관적으로 정리했습니다.',
-        '(제작된 키비주얼을 기반으로 정보 전달을 위한 인포그래픽 콘텐츠 디자인을 진행했습니다.)'
-      ], deliverables:['Infographic Design'], thumb:'assets/projects/n34-hero.jpg', previews:['assets/projects/n34-preview-1.jpg','assets/projects/n34-preview-2.jpg'] },
   ];
 
   let activeProjectCat = 'all';
@@ -1376,9 +1387,9 @@
     const state = e.state;
 
     if(state && state.lightbox){
-      lightboxImg.src = 'assets/works/' + state.file;
-      lightboxImg.alt = state.title;
-      lightboxCaption.textContent = state.title;
+      lightboxImg.src = state.src;
+      lightboxImg.alt = state.title || '';
+      lightboxCaption.textContent = state.title || '';
       lightbox.classList.add('active');
       return;
     }
