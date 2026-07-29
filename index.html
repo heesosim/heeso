@@ -356,6 +356,20 @@
     color: #FF97C1;
   }
 
+  /* 카테고리별 색상: 클릭 전엔 라인만, 클릭하면 전체 채움 (All은 기존 핑크 유지) */
+  .project-cat-btn.cat-keyvisual{ border-color:#7FB6E8; color:#adadad; }
+  .project-cat-btn.cat-keyvisual.active{ background:#DCEEFB; border-color:#DCEEFB; color:var(--ink); }
+  .project-cat-btn.cat-illustration{ border-color:#EE8FAE; color:#adadad; }
+  .project-cat-btn.cat-illustration.active{ background:#FBE1EA; border-color:#FBE1EA; color:var(--ink); }
+  .project-cat-btn.cat-cardnews{ border-color:#7FCB6E; color:#adadad; }
+  .project-cat-btn.cat-cardnews.active{ background:#E2F7D9; border-color:#E2F7D9; color:var(--ink); }
+  .project-cat-btn.cat-leaflet{ border-color:#AD84E0; color:#adadad; }
+  .project-cat-btn.cat-leaflet.active{ background:#EBE0FA; border-color:#EBE0FA; color:var(--ink); }
+  .project-cat-btn.cat-banner{ border-color:#EAB03D; color:#adadad; }
+  .project-cat-btn.cat-banner.active{ background:#FCEACB; border-color:#FCEACB; color:var(--ink); }
+  .project-cat-btn.cat-promotion{ border-color:#E8825F; color:#adadad; }
+  .project-cat-btn.cat-promotion.active{ background:#FBE2D6; border-color:#FBE2D6; color:var(--ink); }
+
   .project-grid{
     display:grid;
     grid-template-columns: repeat(3, 1fr);
@@ -386,8 +400,20 @@
     margin-bottom: 4px;
   }
   .project-type{
-    font-size: 0.75rem; color: #adadad;
+    display:flex; flex-wrap:wrap; gap:6px;
   }
+  .type-badge{
+    font-size: 0.675rem;
+    padding: 2px 10px;
+    border-radius: 999px;
+    color: var(--ink);
+  }
+  .type-badge.cat-keyvisual{ background:#DCEEFB; }
+  .type-badge.cat-illustration{ background:#FBE1EA; }
+  .type-badge.cat-cardnews{ background:#E2F7D9; }
+  .type-badge.cat-leaflet{ background:#EBE0FA; }
+  .type-badge.cat-banner{ background:#FCEACB; }
+  .type-badge.cat-promotion{ background:#FBE2D6; }
 
   .project-detail-title{
     font-family: var(--font-heading);
@@ -581,6 +607,12 @@
           <h3>Preview</h3>
           <div class="project-preview-list" id="projectDetailPreview"></div>
         </div>
+      </section>
+
+      <!-- PROJECT (전시/청년예술가 활동) -->
+      <section class="view" id="view-activity">
+        <div class="section-label mono">Project</div>
+        <p style="font-size:0.9rem; color:#adadad; line-height:1.8;">전시회 및 청년예술가 활동 내용이 곧 채워질 예정입니다.</p>
       </section>
 
       <!-- CONTACT -->
@@ -808,7 +840,8 @@
   navList.innerHTML = `
     <li><a class="nav-link rounded" data-target="about">About</a></li>
     <li><a class="nav-link rounded" data-target="illustration">Illustration</a></li>
-    <li><a class="nav-link rounded" data-target="project">Project</a></li>
+    <li><a class="nav-link rounded" data-target="project">Work</a></li>
+    <li><a class="nav-link rounded" data-target="activity">Project</a></li>
     <li>
       <a class="nav-link rounded" data-target="contact">Contact</a>
       <ul class="sub-nav" id="subContact">
@@ -1209,12 +1242,26 @@
     el.innerHTML = '';
     PROJECT_CATEGORIES.forEach(cat => {
       const btn = document.createElement('button');
-      btn.className = 'project-cat-btn rounded' + (cat.key === activeProjectCat ? ' active' : '');
+      const catClass = cat.key === 'all' ? '' : ` cat-${cat.key}`;
+      btn.className = 'project-cat-btn rounded' + catClass + (cat.key === activeProjectCat ? ' active' : '');
       btn.textContent = cat.label;
       btn.dataset.cat = cat.key;
       btn.dataset.fromDetail = onDetailPage ? '1' : '0';
       el.appendChild(btn);
     });
+  }
+
+  function categoryBadgesHTML(categories){
+    const sorted = categories.slice().sort((a, b) => {
+      if(a === 'keyvisual') return -1;
+      if(b === 'keyvisual') return 1;
+      return 0;
+    });
+    return sorted.map(key => {
+      const cat = PROJECT_CATEGORIES.find(c => c.key === key);
+      const label = cat ? cat.label : key;
+      return `<span class="type-badge cat-${key}">${label}</span>`;
+    }).join('');
   }
 
   function renderProjectGrid(){
@@ -1231,7 +1278,7 @@
         <div class="project-meta">
           <div class="project-name">${projectDisplayName(p)}</div>
           <div class="project-client">${p.client}</div>
-          <div class="project-type">${p.type}</div>
+          <div class="project-type">${categoryBadgesHTML(p.category)}</div>
         </div>
       `;
       grid.appendChild(card);
@@ -1379,7 +1426,7 @@
   document.querySelectorAll('.custom-scrollbar').forEach(initCustomScrollbar);
 
   // 초기 진입: 새로고침 시에도 주소의 해시(#about, #illustration 등)를 읽어 그 페이지를 유지
-  const validKeys = ['home','about','illustration','project','project-detail','contact','guide'];
+  const validKeys = ['home','about','illustration','project','project-detail','activity','contact','guide'];
   const initialKey = (location.hash || '').replace('#','');
   const startKey = validKeys.includes(initialKey) ? initialKey : 'home';
   renderView(startKey);
