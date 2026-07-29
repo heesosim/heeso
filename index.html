@@ -155,6 +155,10 @@
     padding-bottom: 4px;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    cursor: grab;
+  }
+  .home-slider-wrap.dragging{
+    cursor: grabbing;
   }
   .home-slider-wrap::-webkit-scrollbar{ display:none; height:0; }
 
@@ -560,7 +564,7 @@
         </div>
 
         <div class="home-slider-block">
-          <div class="section-label mono">Project</div>
+          <div class="section-label mono">Work</div>
           <div class="home-slider-wrap" id="homeProjectWrap">
             <div class="home-slider" id="homeProjectSlider"></div>
           </div>
@@ -914,6 +918,10 @@
   const lightboxClose = document.getElementById('lightboxClose');
 
   function openLightbox(src, title){
+    // 팝업을 열기 전, 지금 스크롤 위치를 현재 히스토리 항목에 저장해 둔다 (닫을 때 복원용)
+    if(history.state){
+      safeReplaceState(Object.assign({}, history.state, { scrollY: window.scrollY }));
+    }
     lightboxImg.src = src;
     lightboxImg.alt = title || '';
     lightboxCaption.textContent = title || '';
@@ -1006,6 +1014,11 @@
     const previewImg = e.target.closest('.project-preview-list img.preview-img');
     if(previewImg){
       openLightbox(previewImg.getAttribute('src'), previewImg.alt);
+      return;
+    }
+    const heroImg = e.target.closest('#projectDetailHero img');
+    if(heroImg){
+      openLightbox(heroImg.getAttribute('src'), heroImg.alt);
       return;
     }
     const box = e.target.closest('.grid-box');
@@ -1301,7 +1314,7 @@
     if(p.thumb){
       hero.style.background = '';
       hero.style.aspectRatio = '';
-      hero.innerHTML = `<img src="${p.thumb}" alt="${p.name}" style="width:100%;height:auto;display:block;">`;
+      hero.innerHTML = `<img src="${p.thumb}" alt="${p.name}" style="width:100%;height:auto;display:block;cursor:url('assets/cursor.png') 8 8, pointer;">`;
     } else {
       hero.innerHTML = '';
       hero.style.aspectRatio = '5 / 3';
@@ -1431,6 +1444,39 @@
   }
 
   document.querySelectorAll('.custom-scrollbar').forEach(initCustomScrollbar);
+
+  // 슬라이더 이미지 영역을 직접 눌러서 옆으로 끌면 스크롤되는 기능 (스크롤바 드래그와는 별개)
+  function initDragScroll(wrap){
+    let isDown = false, startX = 0, startScrollLeft = 0, moved = false;
+
+    wrap.addEventListener('mousedown', (e) => {
+      isDown = true;
+      moved = false;
+      startX = e.clientX;
+      startScrollLeft = wrap.scrollLeft;
+      wrap.classList.add('dragging');
+    });
+    window.addEventListener('mousemove', (e) => {
+      if(!isDown) return;
+      const dx = e.clientX - startX;
+      if(Math.abs(dx) > 4) moved = true;
+      wrap.scrollLeft = startScrollLeft - dx;
+    });
+    window.addEventListener('mouseup', () => {
+      isDown = false;
+      wrap.classList.remove('dragging');
+    });
+    // 드래그로 끌었을 때는 마지막에 놓는 순간 이미지 클릭(팝업 열림)으로 이어지지 않도록 차단
+    wrap.addEventListener('click', (e) => {
+      if(moved){
+        e.stopPropagation();
+        e.preventDefault();
+        moved = false;
+      }
+    }, true);
+  }
+
+  document.querySelectorAll('.home-slider-wrap').forEach(initDragScroll);
 
   // 초기 진입: 새로고침 시에도 주소의 해시(#about, #illustration 등)를 읽어 그 페이지를 유지
   const validKeys = ['home','about','illustration','project','project-detail','activity','contact','guide'];
