@@ -421,6 +421,10 @@
   .type-badge.cat-banner{ background:#FCEACB; }
   .type-badge.cat-promotion{ background:#FBE2D6; }
 
+  .activity-preview-list{
+    margin-top: 8px;
+  }
+
   .project-detail-title{
     font-family: var(--font-heading);
     font-weight:700; font-size: 1.4rem;
@@ -617,8 +621,17 @@
 
       <!-- PROJECT (전시/청년예술가 활동) -->
       <section class="view" id="view-activity">
-        <div class="section-label mono">Project</div>
-        <p style="font-size:0.9rem; color:#adadad; line-height:1.8;">전시회 및 청년예술가 활동 내용이 곧 채워질 예정입니다.</p>
+        <div class="project-grid" id="activityGrid"></div>
+      </section>
+
+      <!-- PROJECT DETAIL (전시/청년예술가 활동 상세) -->
+      <section class="view" id="view-activity-detail">
+        <div class="project-detail-hero" id="activityDetailHero"></div>
+        <h2 class="project-detail-title" id="activityDetailTitle"></h2>
+        <div class="project-detail-section">
+          <div class="concept-body" id="activityDetailDescription"></div>
+        </div>
+        <div class="project-preview-list activity-preview-list" id="activityDetailPreview"></div>
       </section>
 
       <!-- CONTACT -->
@@ -890,6 +903,7 @@
     let mainKey = key;
     if(key === 'guide') mainKey = 'contact';
     if(key === 'project-detail') mainKey = 'project';
+    if(key === 'activity-detail') mainKey = 'activity';
     const mainLink = document.querySelector(`.nav-link[data-target="${mainKey}"]`);
     if(mainLink) mainLink.classList.add('active');
 
@@ -1016,7 +1030,7 @@
       openLightbox(previewImg.getAttribute('src'), previewImg.alt);
       return;
     }
-    const heroImg = e.target.closest('#projectDetailHero img');
+    const heroImg = e.target.closest('.project-detail-hero img');
     if(heroImg){
       openLightbox(heroImg.getAttribute('src'), heroImg.alt);
       return;
@@ -1372,6 +1386,114 @@
   renderProjectCats('projectCats', false);
   renderProjectGrid();
 
+  // ---------- PROJECT (전시/청년예술가 활동) ----------
+  const ACTIVITY_COLORS = ['#F6D9E3','#D9EAF6','#F6EAD9','#E1F6D9','#EAD9F6','#F6D9D9'];
+
+  const ACTIVITIES = [
+    { id:'a1', name:"청년 활동공간 '청춘삘딩' 청년문화예술인지원사업 '두잇 아트'",
+      description:[
+        "금천구 청년공간 '청춘삘딩'에서 진행한 청년 예술가 지원 프로젝트 <두잇 아트>에 참여했습니다.",
+        "2023년 프로젝트의 주제는 '독산동'으로, 독산동의 풍경을 담은 일러스트 3종과 프로젝트에 참여한 청년 예술가들을 소개하는 메인 포스터 및 청춘삘딩 홍보 포스터를 함께 제작했습니다.",
+        "일러스트는 서울시 금천구 독산동의 평범한 일상과 지역만의 매력을 담는 데 집중했습니다.\n옛 모습과 현재가 공존하는 정훈단지, 통창 너머 자연 풍경 속에서 누구나 편안하게 책을 읽을 수 있는 독산도서관, 운동과 산책을 즐기는 주민들의 일상이 담긴 금천한내교와 안양천의 모습을 따뜻한 시선으로 표현했습니다.",
+        "또한 글, 음악, 미디어아트, 회화, 일러스트 등 다양한 분야에서 활동하는 청년 예술가들을 소개하는 포스터를 제작하고, 이를 활용한 청춘삘딩 홍보 포스터를 함께 디자인했습니다.",
+        "다양한 예술 분야가 하나의 프로젝트 안에서 어우러진다는 점을 시각적으로 전달할 수 있도록 구성했으며, 방문객들이 참여 예술가들을 쉽고 친근하게 만날 수 있는 디자인을 목표로 했습니다.",
+        "[금천구 청년활동공간 청춘삘딩의 2023년 청년시민지원사업 '두잇'의 지원을 받아 제작되었습니다.]"
+      ] },
+    { id:'a2', name:"서울신용보증재단X청춘삘딩 '로컬 비즈니스 활성화 프로젝트' 청년 예술인",
+      description:[
+        "'서울신용보증재단'과 금천구 청년공간 '청춘삘딩'이 함께하는 <로컬 비즈니스 활성화 프로젝트>에 청년 예술인으로 참여했습니다.",
+        "서울시 금천구 독산동 정훈단지를 대상으로, 과거 활기를 띠었던 지역의 기억과 정서를 재해석한 키비주얼 일러스트를 제작했습니다.",
+        "1990년대부터 2000년대 초반까지의 정훈단지 주민들의 일상을 바탕으로 가상의 캐릭터 '정훈'과 '정아'를 기획하고, 당시의 생활 풍경을 담은 키비주얼을 구성했습니다.",
+        "사우나, 문구점, 학원, 분식집 등 주민들의 일상적인 공간과 추억을 소재로 지역의 정체성과 향수를 시각적으로 표현했습니다.",
+        "완성된 키비주얼 일러스트 4종은 축제 <정훈 이즈 백>의 포토존과 굿즈 등 다양한 홍보 콘텐츠에 활용되었습니다."
+      ] },
+    { id:'a3', name:'PREE 뒤죽박죽 전시회 (스튜디오 미개척지)',
+      description:[
+        '예술 커뮤니티 PREE가 주최한 <PREE 7th Exhibition: 뒤죽박죽 전시회>에 참여했습니다.',
+        '스튜디오 미개척지에서 열린 이번 전시는 회화, 일러스트, 디지털, 음악, 영상, 조형 등 다양한 분야의 아티스트 40명이 함께한 프로젝트로, 각자의 개성과 표현 방식을 자유롭게 선보이는 전시였습니다.',
+        '저는 <별이 쏟아지는 날>을 출품했으며, 별이 쏟아지는 밤, 가장 편안한 나만의 공간에서 책을 읽고 음악을 들으며 온전한 쉼을 누리는 순간을 따뜻한 색감과 아기자기한 오브제로 표현했습니다.',
+        '이번 전시를 통해 다양한 분야의 창작자들과 교류하고, 관람객들과 작품을 공유하는 뜻깊은 경험을 쌓았습니다.'
+      ] }
+  ];
+
+  function activityColor(id){
+    const idx = ACTIVITIES.findIndex(a => a.id === id);
+    return ACTIVITY_COLORS[idx % ACTIVITY_COLORS.length];
+  }
+
+  function activityVisualHTML(a){
+    if(a.thumb){
+      return `<img src="${a.thumb}" alt="${a.name}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">`;
+    }
+    return `<div style="width:100%;height:100%;background:${activityColor(a.id)}"></div>`;
+  }
+
+  function renderActivityGrid(){
+    const grid = document.getElementById('activityGrid');
+    if(!grid) return;
+    grid.innerHTML = '';
+    ACTIVITIES.slice().reverse().forEach(a => {
+      const card = document.createElement('div');
+      card.className = 'project-card';
+      card.dataset.activityId = a.id;
+      card.innerHTML = `
+        <div class="project-thumb">${activityVisualHTML(a)}</div>
+        <div class="project-meta">
+          <div class="project-name">${a.name}</div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function openActivityDetail(id){
+    const a = ACTIVITIES.find(x => x.id === id);
+    if(!a) return;
+
+    const hero = document.getElementById('activityDetailHero');
+    if(a.thumb){
+      hero.style.background = '';
+      hero.style.aspectRatio = '';
+      hero.innerHTML = `<img src="${a.thumb}" alt="${a.name}" style="width:100%;height:auto;display:block;cursor:url('assets/cursor.png') 8 8, pointer;">`;
+    } else {
+      hero.innerHTML = '';
+      hero.style.aspectRatio = '5 / 3';
+      hero.style.background = activityColor(id);
+    }
+
+    document.getElementById('activityDetailTitle').textContent = a.name;
+
+    const descEl = document.getElementById('activityDetailDescription');
+    descEl.innerHTML = '';
+    a.description.forEach(para => {
+      const el = document.createElement('p');
+      if(typeof para === 'object'){
+        el.textContent = para.text;
+        if(para.muted) el.classList.add('concept-muted');
+      } else {
+        el.textContent = para;
+      }
+      descEl.appendChild(el);
+    });
+
+    const preview = document.getElementById('activityDetailPreview');
+    preview.innerHTML = '';
+    if(a.previews && a.previews.length){
+      a.previews.forEach(src => {
+        const img = document.createElement('img');
+        img.className = 'preview-img';
+        img.src = src;
+        img.alt = a.name;
+        img.loading = 'lazy';
+        preview.appendChild(img);
+      });
+    }
+
+    showView('activity-detail');
+  }
+
+  renderActivityGrid();
+
   document.addEventListener('click', (e) => {
     const catBtn = e.target.closest('.project-cat-btn');
     if(catBtn){
@@ -1387,6 +1509,10 @@
     const pCard = e.target.closest('.project-card');
     if(pCard && pCard.dataset.projectId){
       openProjectDetail(pCard.dataset.projectId);
+      return;
+    }
+    if(pCard && pCard.dataset.activityId){
+      openActivityDetail(pCard.dataset.activityId);
       return;
     }
   });
@@ -1479,7 +1605,7 @@
   document.querySelectorAll('.home-slider-wrap').forEach(initDragScroll);
 
   // 초기 진입: 새로고침 시에도 주소의 해시(#about, #illustration 등)를 읽어 그 페이지를 유지
-  const validKeys = ['home','about','illustration','project','project-detail','activity','contact','guide'];
+  const validKeys = ['home','about','illustration','project','project-detail','activity','activity-detail','contact','guide'];
   const initialKey = (location.hash || '').replace('#','');
   const startKey = validKeys.includes(initialKey) ? initialKey : 'home';
   renderView(startKey);
