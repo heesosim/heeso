@@ -99,10 +99,10 @@
   .bizcard-btn{
     display:inline-block;
     font-family: var(--font-heading);
-    font-size: 0.55rem;
+    font-size: 0.715rem;
     font-weight:600;
     padding: 4px 8px;
-    margin-top: 90px;
+    margin-top: 45px;
     margin-left: 24px;
     border-radius: 999px;
     border: 1px solid var(--pink);
@@ -536,17 +536,15 @@
   /* ---------- 명함 인쇄 애니메이션 ---------- */
   .print-overlay{
     display:none;
-    position:fixed; inset:0;
-    background: rgba(255,255,255,0.96);
-    z-index: 999;
-    align-items:center; justify-content:center;
+    margin-top: 10px;
+    margin-left: 24px;
   }
-  .print-overlay.active{ display:flex; }
+  .print-overlay.active{ display:block; }
   .printer-scene{
-    display:flex; flex-direction:column; align-items:center;
+    display:flex; flex-direction:column; align-items:flex-start;
   }
   .printer-frame-img{
-    width: 300px;
+    width: 150px;
     height: auto;
     display:block;
   }
@@ -589,6 +587,11 @@
         </ul>
       </div>
       <button type="button" id="bizcardBtn" class="rounded bizcard-btn">Download Business Card</button>
+      <div class="print-overlay" id="printOverlay">
+        <div class="printer-scene">
+          <img class="printer-frame-img" id="printerFrameImg" src="assets/printer/base.png" alt="프린터">
+        </div>
+      </div>
     </nav>
 
     <main>
@@ -782,19 +785,11 @@
   </div>
 </div>
 
-<!-- 명함 인쇄 애니메이션 -->
-<div class="print-overlay" id="printOverlay">
-  <div class="printer-scene">
-    <img class="printer-frame-img" id="printerFrameImg" src="assets/printer/base.png" alt="프린터">
-  </div>
-</div>
-
 <!-- 명함 완성 팝업 -->
 <div class="lightbox" id="bizcardResult">
   <span class="lightbox-close" id="bizcardResultClose">&times;</span>
   <div class="lightbox-inner">
     <img src="assets/bizcard/card-download.jpg" alt="완성된 명함">
-    <div class="lightbox-caption">명함이 다운로드되었습니다 :)</div>
   </div>
 </div>
 
@@ -1125,8 +1120,8 @@
     'assets/printer/frame5.png',
     'assets/printer/frame6.png'
   ];
-  const PRINT_FRAME_DELAY = 220; // 프레임당 전환 시간(ms)
-  const PRINT_HOLD_AFTER = 500;  // 마지막 프레임에서 잠시 멈춰있는 시간(ms)
+  const PRINT_FRAME_DELAY = 450; // 프레임당 전환 시간(ms)
+  const PRINT_HOLD_AFTER = 700;  // 마지막 프레임에서 잠시 멈춰있는 시간(ms)
 
   if(bizcardBtn){
     bizcardBtn.addEventListener('click', () => {
