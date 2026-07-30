@@ -85,6 +85,8 @@
   nav.side{
     width: 220px;
     flex-shrink:0;
+  }
+  .nav-main{
     border-left: 2px solid var(--pink-line);
     padding-left: 24px;
   }
@@ -95,13 +97,13 @@
     display:block;
   }
   .bizcard-btn{
-    display:block;
-    width:100%;
+    display:inline-block;
     font-family: var(--font-heading);
-    font-size: 0.85rem;
+    font-size: 0.55rem;
     font-weight:600;
-    padding: 9px 16px;
-    margin-bottom: 26px;
+    padding: 4px 8px;
+    margin-top: 90px;
+    margin-left: 24px;
     border-radius: 999px;
     border: 1px solid var(--pink);
     background: #fff;
@@ -543,42 +545,18 @@
   .printer-scene{
     display:flex; flex-direction:column; align-items:center;
   }
-  .printer-svg{
-    width: 220px; height: auto;
-    position:relative; z-index:2;
-  }
-  .print-slot{
-    width: 132px;
-    height: 208px;
-    overflow: hidden;
-    position:relative;
-    margin-top: -6px;
-  }
-  .print-card{
-    width: 132px;
-    position:absolute; top:0; left:0;
-    clip-path: inset(0 0 100% 0);
-    animation: printReveal 1.8s ease-out forwards;
-  }
-  .print-card img{
-    width:100%; display:block; border-radius: 2px;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
-  }
-  @keyframes printReveal{
-    0%{ clip-path: inset(0 0 100% 0); transform: translateY(-10px); }
-    100%{ clip-path: inset(0 0 0% 0); transform: translateY(0); }
-  }
-  .print-status{
-    margin-top: 18px;
-    color: var(--pink);
-    font-size: 0.8rem;
+  .printer-frame-img{
+    width: 300px;
+    height: auto;
+    display:block;
   }
 
   /* ---------- 반응형 ---------- */
   @media (max-width: 880px){
     .app{ padding: 32px 24px 60px; }
     .layout{ flex-direction:column; }
-    nav.side{ width:100%; border-left:none; border-top:2px solid var(--pink-line); padding-left:0; padding-top:20px; }
+    nav.side{ width:100%; }
+    .nav-main{ border-left:none; border-top:2px solid var(--pink-line); padding-left:0; padding-top:20px; }
     nav.side ul{ display:flex; gap:24px; flex-wrap:wrap; }
     .grid{ grid-template-columns: repeat(2, 1fr); }
     .project-grid{ grid-template-columns: repeat(1, 1fr); }
@@ -603,12 +581,14 @@
   <div class="layout">
 
     <nav class="side">
-      <span class="label mono">category</span>
-      <button type="button" id="bizcardBtn" class="rounded bizcard-btn">명함 다운로드</button>
-      <ul>
-        <li><a class="nav-link active rounded" data-target="home">About</a></li>
-        <!-- 주의: 위 About 링크는 예시 상 첫 항목이 아니라, 실제로는 아래 4개 메뉴로 동작합니다 -->
-      </ul>
+      <div class="nav-main">
+        <span class="label mono">category</span>
+        <ul>
+          <li><a class="nav-link active rounded" data-target="home">About</a></li>
+          <!-- 주의: 위 About 링크는 예시 상 첫 항목이 아니라, 실제로는 아래 4개 메뉴로 동작합니다 -->
+        </ul>
+      </div>
+      <button type="button" id="bizcardBtn" class="rounded bizcard-btn">Download Business Card</button>
     </nav>
 
     <main>
@@ -805,19 +785,7 @@
 <!-- 명함 인쇄 애니메이션 -->
 <div class="print-overlay" id="printOverlay">
   <div class="printer-scene">
-    <svg class="printer-svg" viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg">
-      <rect x="10" y="10" width="200" height="70" rx="14" fill="#FFE9F1" stroke="#FF97C1" stroke-width="3"/>
-      <rect x="30" y="0" width="160" height="26" rx="8" fill="#FFF6F9" stroke="#FF97C1" stroke-width="3"/>
-      <rect x="70" y="55" width="80" height="10" rx="5" fill="#FF97C1"/>
-      <circle cx="185" cy="45" r="5" fill="#FF97C1"/>
-      <rect x="40" y="78" width="140" height="8" rx="4" fill="#FF97C1"/>
-    </svg>
-    <div class="print-slot">
-      <div class="print-card" id="printCard">
-        <img src="assets/bizcard/card-print.jpg" alt="명함 인쇄 중">
-      </div>
-    </div>
-    <div class="print-status mono" id="printStatus">인쇄 중...</div>
+    <img class="printer-frame-img" id="printerFrameImg" src="assets/printer/base.png" alt="프린터">
   </div>
 </div>
 
@@ -1143,30 +1111,41 @@
   // ---------- 명함 다운로드 (인쇄 애니메이션 → 완성 팝업 → 다운로드) ----------
   const bizcardBtn = document.getElementById('bizcardBtn');
   const printOverlay = document.getElementById('printOverlay');
-  const printCard = document.getElementById('printCard');
-  const printStatus = document.getElementById('printStatus');
+  const printerFrameImg = document.getElementById('printerFrameImg');
   const bizcardResult = document.getElementById('bizcardResult');
   const bizcardResultClose = document.getElementById('bizcardResultClose');
   const bizcardDownloadLink = document.getElementById('bizcardDownloadLink');
 
+  const PRINT_FRAMES = [
+    'assets/printer/base.png',
+    'assets/printer/frame1.png',
+    'assets/printer/frame2.png',
+    'assets/printer/frame3.png',
+    'assets/printer/frame4.png',
+    'assets/printer/frame5.png',
+    'assets/printer/frame6.png'
+  ];
+  const PRINT_FRAME_DELAY = 220; // 프레임당 전환 시간(ms)
+  const PRINT_HOLD_AFTER = 500;  // 마지막 프레임에서 잠시 멈춰있는 시간(ms)
+
   if(bizcardBtn){
     bizcardBtn.addEventListener('click', () => {
-      // 애니메이션 재생을 위해 강제로 리플로우시켜 재시작 가능하게 함
-      printCard.style.animation = 'none';
-      void printCard.offsetWidth;
-      printCard.style.animation = '';
-
-      printStatus.textContent = '인쇄 중...';
+      printerFrameImg.src = PRINT_FRAMES[0];
       printOverlay.classList.add('active');
 
-      setTimeout(() => {
-        printStatus.textContent = '완료!';
-        setTimeout(() => {
-          printOverlay.classList.remove('active');
-          bizcardResult.classList.add('active');
-          bizcardDownloadLink.click();
-        }, 400);
-      }, 1800);
+      let i = 1;
+      const stepInterval = setInterval(() => {
+        printerFrameImg.src = PRINT_FRAMES[i];
+        i++;
+        if(i >= PRINT_FRAMES.length){
+          clearInterval(stepInterval);
+          setTimeout(() => {
+            printOverlay.classList.remove('active');
+            bizcardResult.classList.add('active');
+            bizcardDownloadLink.click();
+          }, PRINT_HOLD_AFTER);
+        }
+      }, PRINT_FRAME_DELAY);
     });
   }
   if(bizcardResultClose){
