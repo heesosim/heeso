@@ -91,8 +91,26 @@
   nav.side .label{
     color: var(--pink);
     font-size: 0.85rem;
-    margin-bottom: 22px;
+    margin-bottom: 14px;
     display:block;
+  }
+  .bizcard-btn{
+    display:block;
+    width:100%;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight:600;
+    padding: 9px 16px;
+    margin-bottom: 26px;
+    border-radius: 999px;
+    border: 1px solid var(--pink);
+    background: #fff;
+    color: var(--pink);
+    cursor: url('assets/cursor.png') 8 8, pointer;
+    transition: background .15s ease, color .15s ease;
+  }
+  .bizcard-btn:hover{
+    background: var(--pink-soft);
   }
   nav.side ul{ list-style:none; }
   nav.side li{ margin-bottom: 18px; }
@@ -513,6 +531,49 @@
     line-height:1;
   }
 
+  /* ---------- 명함 인쇄 애니메이션 ---------- */
+  .print-overlay{
+    display:none;
+    position:fixed; inset:0;
+    background: rgba(255,255,255,0.96);
+    z-index: 999;
+    align-items:center; justify-content:center;
+  }
+  .print-overlay.active{ display:flex; }
+  .printer-scene{
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .printer-svg{
+    width: 220px; height: auto;
+    position:relative; z-index:2;
+  }
+  .print-slot{
+    width: 132px;
+    height: 208px;
+    overflow: hidden;
+    position:relative;
+    margin-top: -6px;
+  }
+  .print-card{
+    width: 132px;
+    position:absolute; top:0; left:0;
+    clip-path: inset(0 0 100% 0);
+    animation: printReveal 1.8s ease-out forwards;
+  }
+  .print-card img{
+    width:100%; display:block; border-radius: 2px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+  }
+  @keyframes printReveal{
+    0%{ clip-path: inset(0 0 100% 0); transform: translateY(-10px); }
+    100%{ clip-path: inset(0 0 0% 0); transform: translateY(0); }
+  }
+  .print-status{
+    margin-top: 18px;
+    color: var(--pink);
+    font-size: 0.8rem;
+  }
+
   /* ---------- 반응형 ---------- */
   @media (max-width: 880px){
     .app{ padding: 32px 24px 60px; }
@@ -543,6 +604,7 @@
 
     <nav class="side">
       <span class="label mono">category</span>
+      <button type="button" id="bizcardBtn" class="rounded bizcard-btn">명함 다운로드</button>
       <ul>
         <li><a class="nav-link active rounded" data-target="home">About</a></li>
         <!-- 주의: 위 About 링크는 예시 상 첫 항목이 아니라, 실제로는 아래 4개 메뉴로 동작합니다 -->
@@ -739,6 +801,36 @@
     <div class="lightbox-caption" id="lightboxCaption"></div>
   </div>
 </div>
+
+<!-- 명함 인쇄 애니메이션 -->
+<div class="print-overlay" id="printOverlay">
+  <div class="printer-scene">
+    <svg class="printer-svg" viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="200" height="70" rx="14" fill="#FFE9F1" stroke="#FF97C1" stroke-width="3"/>
+      <rect x="30" y="0" width="160" height="26" rx="8" fill="#FFF6F9" stroke="#FF97C1" stroke-width="3"/>
+      <rect x="70" y="55" width="80" height="10" rx="5" fill="#FF97C1"/>
+      <circle cx="185" cy="45" r="5" fill="#FF97C1"/>
+      <rect x="40" y="78" width="140" height="8" rx="4" fill="#FF97C1"/>
+    </svg>
+    <div class="print-slot">
+      <div class="print-card" id="printCard">
+        <img src="assets/bizcard/card-print.jpg" alt="명함 인쇄 중">
+      </div>
+    </div>
+    <div class="print-status mono" id="printStatus">인쇄 중...</div>
+  </div>
+</div>
+
+<!-- 명함 완성 팝업 -->
+<div class="lightbox" id="bizcardResult">
+  <span class="lightbox-close" id="bizcardResultClose">&times;</span>
+  <div class="lightbox-inner">
+    <img src="assets/bizcard/card-download.jpg" alt="완성된 명함">
+    <div class="lightbox-caption">명함이 다운로드되었습니다 :)</div>
+  </div>
+</div>
+
+<a id="bizcardDownloadLink" href="assets/bizcard/card-download.jpg" download="HEESO_명함.jpg" style="display:none;"></a>
 
 <script>
   // 작업물 데이터 (번호-제목 순서대로)
@@ -1047,6 +1139,46 @@
   document.addEventListener('keydown', (e) => {
     if(e.key === 'Escape') closeLightbox();
   });
+
+  // ---------- 명함 다운로드 (인쇄 애니메이션 → 완성 팝업 → 다운로드) ----------
+  const bizcardBtn = document.getElementById('bizcardBtn');
+  const printOverlay = document.getElementById('printOverlay');
+  const printCard = document.getElementById('printCard');
+  const printStatus = document.getElementById('printStatus');
+  const bizcardResult = document.getElementById('bizcardResult');
+  const bizcardResultClose = document.getElementById('bizcardResultClose');
+  const bizcardDownloadLink = document.getElementById('bizcardDownloadLink');
+
+  if(bizcardBtn){
+    bizcardBtn.addEventListener('click', () => {
+      // 애니메이션 재생을 위해 강제로 리플로우시켜 재시작 가능하게 함
+      printCard.style.animation = 'none';
+      void printCard.offsetWidth;
+      printCard.style.animation = '';
+
+      printStatus.textContent = '인쇄 중...';
+      printOverlay.classList.add('active');
+
+      setTimeout(() => {
+        printStatus.textContent = '완료!';
+        setTimeout(() => {
+          printOverlay.classList.remove('active');
+          bizcardResult.classList.add('active');
+          bizcardDownloadLink.click();
+        }, 400);
+      }, 1800);
+    });
+  }
+  if(bizcardResultClose){
+    bizcardResultClose.addEventListener('click', () => {
+      bizcardResult.classList.remove('active');
+    });
+  }
+  if(bizcardResult){
+    bizcardResult.addEventListener('click', (e) => {
+      if(e.target === bizcardResult) bizcardResult.classList.remove('active');
+    });
+  }
 
   document.addEventListener('click', (e) => {
     if(e.target.classList.contains('nav-link')){
