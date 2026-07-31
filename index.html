@@ -536,17 +536,21 @@
   /* ---------- 명함 인쇄 애니메이션 ---------- */
   .print-overlay{
     display:none;
-    margin-top: 20px;
-    margin-left: 24px;
+    position:fixed; inset:0;
+    background: rgba(255,255,255,0.75);
+    z-index: 999;
+    align-items:center; justify-content:center;
   }
-  .print-overlay.active{ display:block; }
+  .print-overlay.active{ display:flex; }
   .printer-scene{
-    display:flex; flex-direction:column; align-items:flex-start;
+    display:flex; flex-direction:column; align-items:center;
   }
   .printer-frame-img{
-    width: 225px;
+    width: 390px;
+    max-width: 85vw;
     height: auto;
     display:block;
+    filter: drop-shadow(0 10px 24px rgba(0,0,0,0.12));
   }
 
   /* ---------- 반응형 ---------- */
@@ -1127,10 +1131,6 @@
     bizcardBtn.addEventListener('click', () => {
       printerFrameImg.src = PRINT_FRAMES[0];
       printOverlay.classList.add('active');
-
-      requestAnimationFrame(() => {
-        printOverlay.scrollIntoView({ block: 'center', behavior: 'smooth' });
-      });
 
       let i = 1;
       const stepInterval = setInterval(() => {
