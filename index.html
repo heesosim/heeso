@@ -242,10 +242,12 @@
 
   /* ---------- 소개(About) ---------- */
   .about-panel{
-    background: var(--pink-soft);
+    background: var(--pink-soft) url('assets/about-bg.png') center bottom / cover no-repeat;
     border-radius: 0;
     padding: 72px 40px;
     text-align:center;
+    min-height: 640px;
+    box-sizing: border-box;
   }
   .about-panel .eyebrow{
     color: var(--pink); font-size:0.95rem; margin-bottom: 18px;
@@ -556,6 +558,7 @@
   /* ---------- 반응형 ---------- */
   @media (max-width: 880px){
     .app{ padding: 32px 24px 60px; }
+    .about-panel{ min-height: 420px; }
     .layout{ flex-direction:column; }
     nav.side{ width:100%; }
     .nav-main{ border-left:none; border-top:2px solid var(--pink-line); padding-left:0; padding-top:20px; }
