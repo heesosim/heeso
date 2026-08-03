@@ -45,12 +45,12 @@
   .app{
     position:relative; z-index:1;
     max-width:1920px; margin:0 auto;
-    padding: 48px 54px 80px;
+    padding: 24px 54px 80px;
     min-height:100vh;
   }
   .layout{
     display:flex; gap:40px; align-items:flex-start;
-    margin-top: 56px;
+    margin-top: 28px;
   }
 
   /* ---------- 헤더(로고) ---------- */
@@ -92,7 +92,7 @@
   .bizcard-btn{
     display:block;
     padding: 0;
-    margin-top: 18px;
+    margin-top: 12px;
     border: none;
     background: none;
     cursor: url('assets/cursor.png') 8 8, pointer;
@@ -117,7 +117,7 @@
     text-align:center;
     color: #715c53;
     background: #ffe7f4;
-    border: 2px solid #715c53;
+    border: 1px solid #715c53;
     border-radius: 0;
     text-decoration:none;
     cursor: url('assets/cursor.png') 8 8, pointer;
@@ -188,6 +188,7 @@
   }
 
   .home-slider-block{ margin-top: 64px; }
+  .home-slider-block + .home-slider-block{ margin-top: 32px; }
   .section-label{
     color: var(--pink);
     font-size: 0.85rem;
@@ -207,20 +208,28 @@
 
   .custom-scrollbar{
     position: relative;
-    height: 8px;
+    height: 12px;
     margin-top: 10px;
     background: #FFE9F1;
+    border: 1px solid #715c53;
     border-radius: 999px;
     cursor: pointer;
+    box-sizing: border-box;
   }
   .custom-scrollbar-thumb{
     position: absolute;
-    top: 0; left: 0;
-    height: 100%;
-    width: 16.666%;
-    background: #FF97C1;
-    border-radius: 999px;
+    top: 50%;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    transform: translateY(-50%);
     cursor: grab;
+  }
+  .custom-scrollbar-thumb svg{
+    display:block;
+    width:100%;
+    height:100%;
+    overflow: visible;
   }
   .custom-scrollbar-thumb:active{ cursor: grabbing; }
   .home-slider{
@@ -256,11 +265,13 @@
   .home-more-icon{
     width:56px; height:56px; border-radius:50%;
     background: var(--pink-soft);
+    border: 1px solid #715c53;
     color: var(--pink); font-size:1.7rem;
     display:flex; align-items:center; justify-content:center;
+    box-sizing: border-box;
   }
   .home-more-text{
-    color: var(--pink); font-size:0.8rem; font-weight:600;
+    color: #715c53; font-size:0.8rem; font-weight:600;
   }
 
   /* ---------- 소개(About) ---------- */
@@ -645,7 +656,7 @@
           <div class="home-slider-wrap" id="homeIllustrationWrap">
             <div class="home-slider" id="homeIllustrationSlider"></div>
           </div>
-          <div class="custom-scrollbar" data-target="homeIllustrationWrap"><div class="custom-scrollbar-thumb"></div></div>
+          <div class="custom-scrollbar" data-target="homeIllustrationWrap"><div class="custom-scrollbar-thumb"><svg viewBox="0 0 32 29" xmlns="http://www.w3.org/2000/svg"><path d="M16 27C16 27 2 17.8 2 9.4C2 4.7 5.8 1.5 10 1.5C12.6 1.5 14.8 3 16 5.3C17.2 3 19.4 1.5 22 1.5C26.2 1.5 30 4.7 30 9.4C30 17.8 16 27 16 27Z" fill="#FF97C1" stroke="#715c53" stroke-width="1.6" stroke-linejoin="round"/></svg></div></div>
         </div>
 
         <div class="home-slider-block">
@@ -653,7 +664,7 @@
           <div class="home-slider-wrap" id="homeProjectWrap">
             <div class="home-slider" id="homeProjectSlider"></div>
           </div>
-          <div class="custom-scrollbar" data-target="homeProjectWrap"><div class="custom-scrollbar-thumb"></div></div>
+          <div class="custom-scrollbar" data-target="homeProjectWrap"><div class="custom-scrollbar-thumb"><svg viewBox="0 0 32 29" xmlns="http://www.w3.org/2000/svg"><path d="M16 27C16 27 2 17.8 2 9.4C2 4.7 5.8 1.5 10 1.5C12.6 1.5 14.8 3 16 5.3C17.2 3 19.4 1.5 22 1.5C26.2 1.5 30 4.7 30 9.4C30 17.8 16 27 16 27Z" fill="#FF97C1" stroke="#715c53" stroke-width="1.6" stroke-linejoin="round"/></svg></div></div>
         </div>
       </section>
 
