@@ -55,12 +55,12 @@
 
   /* ---------- 헤더(로고) ---------- */
   header.brand{
-    display:flex; align-items:center; gap:20px;
+    display:flex; align-items:center; justify-content:center; gap:20px;
     cursor: url('assets/cursor.png') 8 8, pointer;
-    width:fit-content;
+    width: 220px;
   }
   .logo-img{
-    height: 138px;
+    height: 166px;
     width: auto;
     display:block;
   }
@@ -100,7 +100,7 @@
   }
   .bizcard-btn img{
     display:block;
-    width: 150px;
+    width: 120px;
     height: auto;
   }
   nav.side ul{ list-style:none; }
@@ -110,14 +110,14 @@
     display:block;
     width: 150px;
     box-sizing: border-box;
-    padding: 6.5px 10px;
+    padding: 6.5px 8px;
     font-family: var(--font-heading);
-    font-weight:500;
+    font-weight:400;
     font-size:1rem;
     text-align:center;
     color: #715c53;
     background: #ffe7f4;
-    border: 2px solid #715c53;
+    border: 1px solid #715c53;
     border-radius: 0;
     text-decoration:none;
     cursor: url('assets/cursor.png') 8 8, pointer;
@@ -126,30 +126,17 @@
   nav.side a:hover{ opacity:0.9; }
   nav.side a.active{ background: #dcf1ff; }
 
-  .contact-group{ position:relative; }
-  .connector-bars{
-    display:flex; justify-content:center; gap: 46px;
-    height: 10px;
-  }
-  .connector-bars span{
-    display:block;
-    box-sizing: border-box;
-    width: 8px;
-    height: 10px;
-    background: #fff9c2;
-    border: 1px solid #715c53;
-  }
   .sub-nav{
     list-style:none;
     margin: 0;
     display:flex;
-    justify-content:center;
+    justify-content:flex-start;
   }
   .sub-nav li{ margin-bottom:0; }
   nav.side .sub-nav a{
     width: 104px;
     font-size: 0.9rem;
-    padding: 5px 10px;
+    padding: 5px 8px;
     background: #fff3fa;
     border-radius: 0;
   }
@@ -348,7 +335,7 @@
 
   /* ---------- 공통 하단 카피라이트 ---------- */
   .site-footer{
-    text-align:center;
+    text-align:left;
     color: var(--ink-soft);
     font-size: 0.75rem;
     line-height: 1.6;
@@ -964,7 +951,6 @@
     <li><a class="nav-link rounded" data-target="activity">Project</a></li>
     <li class="contact-group">
       <a class="nav-link rounded" data-target="contact">Contact</a>
-      <div class="connector-bars"><span></span><span></span></div>
       <ul class="sub-nav" id="subContact">
         <li><a class="nav-link sub-link rounded" data-target="guide">Guide</a></li>
       </ul>
