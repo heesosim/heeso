@@ -45,7 +45,7 @@
   .app{
     position:relative; z-index:1;
     max-width:1920px; margin:0 auto;
-    padding: 48px 60px 80px;
+    padding: 48px 54px 80px;
     min-height:100vh;
   }
   .layout{
@@ -60,7 +60,7 @@
     width:fit-content;
   }
   .logo-img{
-    height: 230px;
+    height: 138px;
     width: auto;
     display:block;
   }
@@ -104,13 +104,13 @@
     height: auto;
   }
   nav.side ul{ list-style:none; }
-  nav.side li{ margin-bottom: 22px; }
+  nav.side li{ margin-bottom: 15px; }
   nav.side ul > li:last-child{ margin-bottom:0; }
   nav.side a{
     display:block;
     width: 150px;
     box-sizing: border-box;
-    padding: 13px 10px;
+    padding: 6.5px 10px;
     font-family: var(--font-heading);
     font-weight:500;
     font-size:1rem;
@@ -118,7 +118,7 @@
     color: #715c53;
     background: #ffe7f4;
     border: 2px solid #715c53;
-    border-radius: 6px;
+    border-radius: 0;
     text-decoration:none;
     cursor: url('assets/cursor.png') 8 8, pointer;
     transition: background .15s ease;
@@ -133,9 +133,11 @@
   }
   .connector-bars span{
     display:block;
-    width: 4px;
+    box-sizing: border-box;
+    width: 8px;
     height: 10px;
     background: #fff9c2;
+    border: 1px solid #715c53;
   }
   .sub-nav{
     list-style:none;
@@ -147,25 +149,26 @@
   nav.side .sub-nav a{
     width: 104px;
     font-size: 0.9rem;
-    padding: 9px 10px;
+    padding: 5px 10px;
     background: #fff3fa;
+    border-radius: 0;
   }
   nav.side .sub-nav a.active{ background: #eef9ff; }
 
   .side-links{
-    display:flex; gap: 10px;
+    display:flex; gap: 8px;
     margin-top: 40px;
   }
-  .side-links a{
+  nav.side .side-links a{
     display:flex; align-items:center; justify-content:center;
-    width: 40px; height: 40px;
-    border: 2px solid #715c53;
-    background: #ffe1f4;
-    border-radius: 6px;
+    width: auto; height: auto;
+    padding: 0;
+    border: none;
+    background: none;
     cursor: url('assets/cursor.png') 8 8, pointer;
   }
   .side-links a img{
-    width: 22px; height: 22px;
+    width: 33px; height: 33px;
     display:block;
   }
 
