@@ -60,7 +60,7 @@
     width:fit-content;
   }
   .logo-img{
-    height: 100px;
+    height: 230px;
     width: auto;
     display:block;
   }
@@ -87,57 +87,87 @@
     flex-shrink:0;
   }
   .nav-main{
-    border-left: 2px solid var(--pink-line);
-    padding-left: 24px;
-  }
-  nav.side .label{
-    color: var(--pink);
-    font-size: 0.85rem;
-    margin-bottom: 14px;
-    display:block;
+    /* 라인 구분선 없이, 박스형 버튼 디자인 */
   }
   .bizcard-btn{
-    display:inline-block;
-    font-family: var(--font-heading);
-    font-size: 0.715rem;
-    font-weight:600;
-    padding: 4px 8px;
-    margin-top: 45px;
-    margin-left: 24px;
-    border-radius: 999px;
-    border: 1px solid var(--pink);
-    background: #fff;
-    color: var(--pink);
+    display:block;
+    padding: 0;
+    margin-top: 18px;
+    border: none;
+    background: none;
     cursor: url('assets/cursor.png') 8 8, pointer;
-    transition: background .15s ease, color .15s ease;
+    line-height: 0;
   }
-  .bizcard-btn:hover{
-    background: var(--pink-soft);
+  .bizcard-btn img{
+    display:block;
+    width: 150px;
+    height: auto;
   }
   nav.side ul{ list-style:none; }
-  nav.side li{ margin-bottom: 18px; }
+  nav.side li{ margin-bottom: 22px; }
   nav.side ul > li:last-child{ margin-bottom:0; }
   nav.side a{
+    display:block;
+    width: 150px;
+    box-sizing: border-box;
+    padding: 13px 10px;
     font-family: var(--font-heading);
-    font-weight:600;
-    font-size:1.6rem;
-    color: var(--pink);
+    font-weight:500;
+    font-size:1rem;
+    text-align:center;
+    color: #715c53;
+    background: #ffe7f4;
+    border: 2px solid #715c53;
+    border-radius: 6px;
     text-decoration:none;
     cursor: url('assets/cursor.png') 8 8, pointer;
-    transition: color .15s ease;
+    transition: background .15s ease;
   }
-  nav.side a:hover{ opacity:0.8; }
-  nav.side a.active{ color: var(--blue); }
+  nav.side a:hover{ opacity:0.9; }
+  nav.side a.active{ background: #dcf1ff; }
+
+  .contact-group{ position:relative; }
+  .connector-bars{
+    display:flex; justify-content:center; gap: 46px;
+    height: 10px;
+  }
+  .connector-bars span{
+    display:block;
+    width: 4px;
+    height: 10px;
+    background: #fff9c2;
+  }
   .sub-nav{
     list-style:none;
-    margin: 12px 0 0 4px;
-    display:none;
+    margin: 0;
+    display:flex;
+    justify-content:center;
   }
-  .sub-nav.expanded{ display:block; }
-  .sub-nav li{ margin-bottom:8px; }
-  .sub-nav li:last-child{ margin-bottom:0; }
-  nav.side .sub-nav a{ font-size: 1.12rem; font-weight:400; }
-  nav.side .sub-nav a.active{ color: var(--blue-light); }
+  .sub-nav li{ margin-bottom:0; }
+  nav.side .sub-nav a{
+    width: 104px;
+    font-size: 0.9rem;
+    padding: 9px 10px;
+    background: #fff3fa;
+  }
+  nav.side .sub-nav a.active{ background: #eef9ff; }
+
+  .side-links{
+    display:flex; gap: 10px;
+    margin-top: 40px;
+  }
+  .side-links a{
+    display:flex; align-items:center; justify-content:center;
+    width: 40px; height: 40px;
+    border: 2px solid #715c53;
+    background: #ffe1f4;
+    border-radius: 6px;
+    cursor: url('assets/cursor.png') 8 8, pointer;
+  }
+  .side-links a img{
+    width: 22px; height: 22px;
+    display:block;
+  }
 
   /* ---------- 콘텐츠 공통 ---------- */
   main{ flex-grow:1; min-width:0; }
@@ -242,12 +272,17 @@
 
   /* ---------- 소개(About) ---------- */
   .about-panel{
-    background: var(--pink-soft) url('assets/about-bg.png') center top / 100% 100% no-repeat;
-    aspect-ratio: 1920 / 1992;
+    background: #fff;
     border-radius: 0;
-    padding: 8% 40px 0;
+    padding: 56px 40px 0;
     text-align:center;
     box-sizing: border-box;
+  }
+  .about-illustration{
+    display:block;
+    width:100%;
+    height:auto;
+    margin-top: 16px;
   }
   .about-panel .eyebrow{
     color: var(--pink); font-size:0.95rem; margin-bottom: 18px;
@@ -560,8 +595,7 @@
     .app{ padding: 32px 24px 60px; }
     .layout{ flex-direction:column; }
     nav.side{ width:100%; }
-    .nav-main{ border-left:none; border-top:2px solid var(--pink-line); padding-left:0; padding-top:20px; }
-    nav.side ul{ display:flex; gap:24px; flex-wrap:wrap; }
+    nav.side ul{ display:flex; gap:16px; flex-wrap:wrap; }
     .grid{ grid-template-columns: repeat(2, 1fr); }
     .project-grid{ grid-template-columns: repeat(1, 1fr); }
     .project-cats{ gap:8px; }
@@ -586,13 +620,16 @@
 
     <nav class="side">
       <div class="nav-main">
-        <span class="label mono">category</span>
         <ul>
           <li><a class="nav-link active rounded" data-target="home">About</a></li>
           <!-- 주의: 위 About 링크는 예시 상 첫 항목이 아니라, 실제로는 아래 4개 메뉴로 동작합니다 -->
         </ul>
       </div>
-      <button type="button" id="bizcardBtn" class="rounded bizcard-btn">Download Business Card</button>
+      <div class="side-links">
+        <a href="https://instagram.com/heesosim" target="_blank" aria-label="인스타그램"><img src="assets/icon-instagram.png" alt="Instagram"></a>
+        <a href="mailto:bydidi96@daum.net" aria-label="이메일"><img src="assets/icon-mail.png" alt="Mail"></a>
+      </div>
+      <button type="button" id="bizcardBtn" class="rounded bizcard-btn"><img src="assets/bizcard-btn.png" alt="Download Business Card"></button>
       <div class="print-overlay" id="printOverlay">
         <div class="printer-scene">
           <img class="printer-frame-img" id="printerFrameImg" src="assets/printer/base.png" alt="프린터">
@@ -922,8 +959,9 @@
     <li><a class="nav-link rounded" data-target="illustration">Illustration</a></li>
     <li><a class="nav-link rounded" data-target="project">Work</a></li>
     <li><a class="nav-link rounded" data-target="activity">Project</a></li>
-    <li>
+    <li class="contact-group">
       <a class="nav-link rounded" data-target="contact">Contact</a>
+      <div class="connector-bars"><span></span><span></span></div>
       <ul class="sub-nav" id="subContact">
         <li><a class="nav-link sub-link rounded" data-target="guide">Guide</a></li>
       </ul>
@@ -957,9 +995,6 @@
     navLinks.forEach(l => l.classList.remove('active'));
     const target = document.getElementById('view-' + key);
     if(target) target.classList.add('active');
-
-    const isContactGroup = (key === 'contact' || key === 'guide');
-    subContact.classList.toggle('expanded', isContactGroup);
 
     let mainKey = key;
     if(key === 'guide') mainKey = 'contact';
