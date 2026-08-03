@@ -209,21 +209,31 @@
   .custom-scrollbar{
     position: relative;
     height: 12px;
-    margin-top: 10px;
-    background: #FFE9F1;
+    width: 50%;
+    margin: 10px auto 0;
+    background: #fff3fa;
     border: 1px solid #715c53;
     border-radius: 999px;
     cursor: pointer;
     box-sizing: border-box;
+    overflow: hidden;
+  }
+  .custom-scrollbar-fill{
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 0;
+    background: #ffdef2;
   }
   .custom-scrollbar-thumb{
     position: absolute;
     top: 50%;
     left: 0;
-    width: 18px;
-    height: 18px;
+    width: 36px;
+    height: 36px;
     transform: translateY(-50%);
     cursor: grab;
+    z-index: 2;
   }
   .custom-scrollbar-thumb svg{
     display:block;
