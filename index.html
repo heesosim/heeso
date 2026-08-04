@@ -55,6 +55,7 @@
 
   /* ---------- 헤더(로고) ---------- */
   header.brand{
+    position: relative;
     display:flex; align-items:center; justify-content:center; gap:20px;
     cursor: url('assets/cursor.png') 8 8, pointer;
     width: 150px;
@@ -79,6 +80,74 @@
     color: var(--pink);
     font-weight:700;
     font-size: 2.2rem;
+  }
+
+  /* ---------- 로고 옆 하트 팝 애니메이션 ---------- */
+  .logo-heart-pop{
+    position:absolute;
+    width: 30px;
+    height: 30px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .logo-heart-pop.pop-1{ left: -16px; top: 24px; }
+  .logo-heart-pop.pop-2{ right: -12px; bottom: 22px; }
+  .logo-heart-pop.pop-3{ right: 6px; top: -6px; }
+  @keyframes heartPopAnim{
+    0%{ opacity:0; transform: scale(0.4); }
+    25%{ opacity:1; transform: scale(1.15); }
+    45%{ opacity:1; transform: scale(1); }
+    80%{ opacity:1; transform: scale(1) translateY(-6px); }
+    100%{ opacity:0; transform: scale(0.85) translateY(-14px); }
+  }
+  .logo-heart-pop.playing{
+    animation: heartPopAnim 0.65s ease forwards;
+  }
+
+  /* ---------- 우상단 하트/별 아이콘 ---------- */
+  .top-icons{
+    position:absolute;
+    top: 0;
+    right: 54px; /* .app의 우측 padding과 동일하게: 다른 콘텐츠(슬라이더/그리드 등)와 같은 우측 끝선에 정렬 */
+    height: 166px; /* 로고 높이와 동일하게 맞춰 세로 가운데 정렬 */
+    display:flex;
+    align-items:center;
+    gap: 8px; /* Mail/Instagram 아이콘과 동일한 간격 */
+    z-index: 5;
+  }
+  .top-icons .icon-btn{
+    position:relative;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: url('assets/cursor.png') 8 8, pointer;
+  }
+  .top-icons .icon-btn img{
+    width: 30px; /* Mail/Instagram 아이콘과 동일한 사이즈 */
+    height: 30px;
+    display:block;
+  }
+  .fav-message{
+    position:absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 6px;
+    font-size: 0.7rem;
+    color: #999;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .fav-message.show{
+    opacity: 1;
   }
 
   /* ---------- 사이드 네비 ---------- */
@@ -616,6 +685,7 @@
   /* ---------- 반응형 ---------- */
   @media (max-width: 880px){
     .app{ padding: 32px 24px 60px; }
+    .top-icons{ right: 24px; }
     .layout{ flex-direction:column; }
     nav.side{ width:100%; }
     nav.side ul{ display:flex; gap:16px; flex-wrap:wrap; }
@@ -637,7 +707,20 @@
       <span class="logo-fallback-sub mono">ILLUSTRATOR</span>
       <span class="logo-fallback-main rounded">HEESO</span>
     </div>
+    <img class="logo-heart-pop pop-1" id="heartPop1" src="assets/icon-heart-dark.png" alt="">
+    <img class="logo-heart-pop pop-2" id="heartPop2" src="assets/icon-heart-dark.png" alt="">
+    <img class="logo-heart-pop pop-3" id="heartPop3" src="assets/icon-heart-dark.png" alt="">
   </header>
+
+  <div class="top-icons">
+    <button type="button" class="icon-btn" id="heartIconBtn" aria-label="하트">
+      <img id="heartIconImg" src="assets/icon-heart-light.png" alt="Heart">
+    </button>
+    <button type="button" class="icon-btn" id="starIconBtn" aria-label="즐겨찾기 추가">
+      <img id="starIconImg" src="assets/icon-star-light.png" alt="Star">
+      <span class="fav-message" id="favMessage">즐겨찾기에 추가되었습니다</span>
+    </button>
+  </div>
 
   <div class="layout">
 
@@ -1818,6 +1901,74 @@
     });
   });
 
+  // ---------- 우상단 하트/별 아이콘 인터랙션 ----------
+  (function(){
+    const heartBtn = document.getElementById('heartIconBtn');
+    const heartImg = document.getElementById('heartIconImg');
+    const starBtn = document.getElementById('starIconBtn');
+    const starImg = document.getElementById('starIconImg');
+    const favMessage = document.getElementById('favMessage');
+    const pops = [
+      document.getElementById('heartPop1'),
+      document.getElementById('heartPop2'),
+      document.getElementById('heartPop3')
+    ];
+
+    let heartAnimating = false;
+    const HEART_STAGGER = 220;   // 하트가 하나씩 순서대로 뜨는 간격(ms) - 템포감 있게
+    const HEART_DURATION = 650;  // 위 @keyframes heartPopAnim 길이와 맞춤
+
+    if(heartBtn){
+      heartBtn.addEventListener('click', () => {
+        if(heartAnimating) return;
+        heartAnimating = true;
+        heartImg.src = 'assets/icon-heart-dark.png';
+
+        pops.forEach((pop, i) => {
+          if(!pop) return;
+          pop.classList.remove('playing');
+          void pop.offsetWidth; // 강제 리플로우로 애니메이션 재시작 보장 (연속 클릭 대비)
+          setTimeout(() => { pop.classList.add('playing'); }, i * HEART_STAGGER);
+        });
+
+        const totalTime = (pops.length - 1) * HEART_STAGGER + HEART_DURATION;
+        setTimeout(() => {
+          pops.forEach(pop => pop && pop.classList.remove('playing'));
+          heartImg.src = 'assets/icon-heart-light.png';
+          heartAnimating = false;
+        }, totalTime + 60);
+      });
+    }
+
+    let starActive = false;
+    let favMessageTimer = null;
+
+    if(starBtn){
+      starBtn.addEventListener('click', () => {
+        if(!starActive){
+          starActive = true;
+          starImg.src = 'assets/icon-star-dark.png';
+        }
+
+        // 즐겨찾기 추가 시도: 최신 브라우저(Chrome, Firefox 신버전 등)는 보안 정책상
+        // 스크립트로 즐겨찾기를 자동 추가하는 기능을 지원하지 않아 아래 API는 구형 브라우저에서만 동작합니다.
+        try{
+          if(window.sidebar && window.sidebar.addPanel){ // 구형 Firefox
+            window.sidebar.addPanel(document.title, window.location.href, '');
+          } else if(window.external && ('AddFavorite' in window.external)){ // 구형 IE
+            window.external.AddFavorite(window.location.href, document.title);
+          }
+        }catch(e){ /* 무시 */ }
+
+        if(favMessageTimer) clearTimeout(favMessageTimer);
+        favMessage.classList.add('show');
+        favMessageTimer = setTimeout(() => {
+          favMessage.classList.remove('show');
+        }, 1800);
+      });
+    }
+  })();
+
   // 배경 별 장식 생성 (로고 옆 상단 영역에 불규칙하게, 로고와 겹치지 않게, 서로 겹치지 않게 배치)
   function placeStars(){
     const starsWrap = document.getElementById('stars');
@@ -1833,6 +1984,7 @@
     // 로고 영역과 사이드 카테고리 영역(여백 포함)은 별이 배치되지 않도록 제외
     const logoEl = document.getElementById('logoHome');
     const navEl = document.querySelector('nav.side');
+    const topIconsEl = document.querySelector('.top-icons');
     const logoRect = logoEl.getBoundingClientRect();
     const navRect = navEl.getBoundingClientRect();
     const pad = 24;
@@ -1842,6 +1994,15 @@
       top: logoRect.top + window.scrollY - pad,
       bottom: logoRect.bottom + window.scrollY + pad
     };
+    const topIconsBox = topIconsEl ? (() => {
+      const r = topIconsEl.getBoundingClientRect();
+      return {
+        left: r.left + window.scrollX - pad,
+        right: r.right + window.scrollX + pad,
+        top: r.top + window.scrollY - pad,
+        bottom: r.bottom + window.scrollY + pad
+      };
+    })() : null;
     // Guide 서브메뉴가 펼쳐질 때를 대비해 하단에 여유 공간을 더 둠
     const navBox = {
       left: navRect.left + window.scrollX - pad,
@@ -1853,7 +2014,8 @@
     function overlapsAvoidZones(x, y){
       const inLogo = x > logoBox.left && x < logoBox.right && y > logoBox.top && y < logoBox.bottom;
       const inNav = x > navBox.left && x < navBox.right && y > navBox.top && y < navBox.bottom;
-      return inLogo || inNav;
+      const inTopIcons = topIconsBox && x > topIconsBox.left && x < topIconsBox.right && y > topIconsBox.top && y < topIconsBox.bottom;
+      return inLogo || inNav || inTopIcons;
     }
 
     while(placed.length < desiredCount && attempts < 1500){
