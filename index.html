@@ -1986,57 +1986,22 @@
 
     const pageW = document.documentElement.scrollWidth;
     const pageH = Math.max(document.documentElement.scrollHeight, window.innerHeight);
-    const gutter = window.innerWidth <= 880 ? 24 : 54; // .app 좌우 padding과 동일 (콘텐츠가 없는 여백)
-    const topBand = Math.min(820, pageH);              // 로고/상단 영역
-    const bottomBandTop = Math.max(topBand, pageH - 220); // 하단 여백 영역 시작 지점
 
-    const MIN_TOP_STARS = 7;   // 상단에는 무조건 최소 7개
-    const TOTAL_STARS = 26;
+    const MIN_TOP_STARS = 7;     // 로고~하트/별 아이콘 사이 상단 배너: 무조건 최소 7개
+    const MIN_BOTTOM_STARS = 4;  // 맨 아래 여백에도 최소 개수 보장
+    const TOTAL_STARS = 34;
 
     const placed = [];
-    let attempts = 0;
 
-    // 로고, 사이드 카테고리 영역, 우상단 하트/별 아이콘과는 겹치지 않도록 제외
-    const logoEl = document.getElementById('logoHome');
-    const navEl = document.querySelector('nav.side');
-    const topIconsEl = document.querySelector('.top-icons');
-    const logoRect = logoEl.getBoundingClientRect();
-    const navRect = navEl.getBoundingClientRect();
-    const pad = 24;
-    const logoBox = {
-      left: logoRect.left + window.scrollX - pad,
-      right: logoRect.right + window.scrollX + pad,
-      top: logoRect.top + window.scrollY - pad,
-      bottom: logoRect.bottom + window.scrollY + pad
-    };
-    const topIconsBox = topIconsEl ? (() => {
-      const r = topIconsEl.getBoundingClientRect();
+    function rectOf(el, extra){
+      const r = el.getBoundingClientRect();
+      const p = extra == null ? 20 : extra;
       return {
-        left: r.left + window.scrollX - pad,
-        right: r.right + window.scrollX + pad,
-        top: r.top + window.scrollY - pad,
-        bottom: r.bottom + window.scrollY + pad
+        left: r.left + window.scrollX - p,
+        right: r.right + window.scrollX + p,
+        top: r.top + window.scrollY - p,
+        bottom: r.bottom + window.scrollY + p
       };
-    })() : null;
-    // Guide 서브메뉴가 펼쳐질 때를 대비해 하단에 여유 공간을 더 둠
-    const navBox = {
-      left: navRect.left + window.scrollX - pad,
-      right: navRect.right + window.scrollX + pad,
-      top: navRect.top + window.scrollY - pad,
-      bottom: navRect.bottom + window.scrollY + pad + 60
-    };
-
-    function overlapsAvoidZones(x, y){
-      const inLogo = x > logoBox.left && x < logoBox.right && y > logoBox.top && y < logoBox.bottom;
-      const inNav = x > navBox.left && x < navBox.right && y > navBox.top && y < navBox.bottom;
-      const inTopIcons = topIconsBox && x > topIconsBox.left && x < topIconsBox.right && y > topIconsBox.top && y < topIconsBox.bottom;
-      return inLogo || inNav || inTopIcons;
-    }
-    function tooCloseToPlaced(x, y){
-      return placed.some(p => {
-        const dx = p.x - x, dy = p.y - y;
-        return Math.sqrt(dx*dx + dy*dy) < minDist;
-      });
     }
     function insetBounds(b){
       // 별이 영역 가장자리에 반쯤 잘려 보이지 않도록 안쪽으로 살짝 여유를 둠
@@ -2044,42 +2009,87 @@
       const top = b.top + half, bottom = b.bottom - half;
       return (right > left && bottom > top) ? { left, right, top, bottom } : null;
     }
-
-    // 콘텐츠가 들어가지 않는 영역만: 상단 / 좌우 여백(카테고리 옆) / 하단
-    const zones = [
-      { name:'top',    weight:0.20, bounds: insetBounds({ left:0, right:pageW, top:0, bottom:topBand }) },
-      { name:'left',   weight:0.25, bounds: insetBounds({ left:0, right:gutter, top:topBand, bottom:bottomBandTop }) },
-      { name:'right',  weight:0.25, bounds: insetBounds({ left:pageW-gutter, right:pageW, top:topBand, bottom:bottomBandTop }) },
-      { name:'bottom', weight:0.30, bounds: insetBounds({ left:0, right:pageW, top:bottomBandTop, bottom:pageH }) }
-    ].filter(z => z.bounds);
-
-    function pickZone(){
-      const total = zones.reduce((s,z) => s + z.weight, 0);
-      let r = Math.random() * total;
-      for(const z of zones){ if(r < z.weight) return z; r -= z.weight; }
-      return zones[zones.length - 1];
+    function inBox(x, y, b){
+      return !!b && x > b.left && x < b.right && y > b.top && y < b.bottom;
+    }
+    function tooCloseToPlaced(x, y){
+      return placed.some(p => {
+        const dx = p.x - x, dy = p.y - y;
+        return Math.sqrt(dx*dx + dy*dy) < minDist;
+      });
     }
 
-    // 1) 상단에 불규칙한 위치로 최소 개수 먼저 확보
-    const topZone = zones.find(z => z.name === 'top');
-    if(topZone){
-      while(placed.length < MIN_TOP_STARS && attempts < 1000){
+    // 실제 콘텐츠가 들어가는 영역(<main>)만 피하고, 로고/상단아이콘/카테고리 버튼 하나하나만 살짝 피함
+    // (카테고리 nav 전체 박스를 피하지 않기 때문에, 버튼 사이 여백·버튼 아래 빈 공간에도 별이 들어갈 수 있음)
+    const logoEl = document.getElementById('logoHome');
+    const topIconsEl = document.querySelector('.top-icons');
+    const mainEl = document.querySelector('.layout main');
+    const navClickableEls = document.querySelectorAll('nav.side a, nav.side button');
+
+    const logoBox = rectOf(logoEl, 16);
+    const topIconsBox = topIconsEl ? rectOf(topIconsEl, 16) : null;
+    const mainBox = mainEl ? rectOf(mainEl, 10) : null;
+    const navAvoidBoxes = Array.from(navClickableEls).map(el => rectOf(el, 6));
+
+    function overlapsAvoidZones(x, y){
+      if(inBox(x, y, logoBox)) return true;
+      if(inBox(x, y, topIconsBox)) return true;
+      if(inBox(x, y, mainBox)) return true;
+      for(let i = 0; i < navAvoidBoxes.length; i++){
+        if(inBox(x, y, navAvoidBoxes[i])) return true;
+      }
+      return false;
+    }
+
+    // 1) 로고와 하트/별 아이콘 사이, 상단 배너에 불규칙한 위치로 최소 7개 먼저 확보
+    const headerBand = insetBounds({
+      left: logoBox.right,
+      right: topIconsBox ? topIconsBox.left : pageW,
+      top: 0,
+      bottom: Math.max(logoBox.bottom, topIconsBox ? topIconsBox.bottom : 0, 200)
+    });
+    if(headerBand){
+      let attempts = 0;
+      while(placed.length < MIN_TOP_STARS && attempts < 1500){
         attempts++;
-        const x = topZone.bounds.left + Math.random() * (topZone.bounds.right - topZone.bounds.left);
-        const y = topZone.bounds.top + Math.random() * (topZone.bounds.bottom - topZone.bounds.top);
+        const x = headerBand.left + Math.random() * (headerBand.right - headerBand.left);
+        const y = headerBand.top + Math.random() * (headerBand.bottom - headerBand.top);
         if(overlapsAvoidZones(x, y) || tooCloseToPlaced(x, y)) continue;
         placed.push({ x, y });
       }
     }
 
-    // 2) 나머지는 상단/좌우 여백/하단에 걸쳐 불규칙하게 채움
-    while(placed.length < TOTAL_STARS && attempts < 4000){
-      attempts++;
-      const zone = pickZone();
-      const x = zone.bounds.left + Math.random() * (zone.bounds.right - zone.bounds.left);
-      const y = zone.bounds.top + Math.random() * (zone.bounds.bottom - zone.bounds.top);
-      if(overlapsAvoidZones(x, y) || tooCloseToPlaced(x, y)) continue;
-      placed.push({ x, y });
+    // 2) 맨 아래 여백에도 최소 개수 확보 (본문 <main>이 끝난 지점부터 페이지 끝까지)
+    const bottomBand = insetBounds({
+      left: 0,
+      right: pageW,
+      top: mainBox ? Math.max(mainBox.bottom, pageH - 260) : pageH - 140,
+      bottom: pageH
+    });
+    if(bottomBand){
+      let attempts = 0;
+      const targetCount = placed.length + MIN_BOTTOM_STARS;
+      while(placed.length < targetCount && attempts < 1500){
+        attempts++;
+        const x = bottomBand.left + Math.random() * (bottomBand.right - bottomBand.left);
+        const y = bottomBand.top + Math.random() * (bottomBand.bottom - bottomBand.top);
+        if(overlapsAvoidZones(x, y) || tooCloseToPlaced(x, y)) continue;
+        placed.push({ x, y });
+      }
+    }
+
+    // 3) 나머지는 페이지 전체(본문 영역 제외)에 걸쳐 자유롭게 채움
+    //    → 자연스럽게 카테고리 버튼 사이/여백, 우측, 상단, 하단에 고르게 분포됨
+    const fullBand = insetBounds({ left: 0, right: pageW, top: 0, bottom: pageH });
+    if(fullBand){
+      let attempts = 0;
+      while(placed.length < TOTAL_STARS && attempts < 8000){
+        attempts++;
+        const x = fullBand.left + Math.random() * (fullBand.right - fullBand.left);
+        const y = fullBand.top + Math.random() * (fullBand.bottom - fullBand.top);
+        if(overlapsAvoidZones(x, y) || tooCloseToPlaced(x, y)) continue;
+        placed.push({ x, y });
+      }
     }
 
     placed.forEach(p => {
