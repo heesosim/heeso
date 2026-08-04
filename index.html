@@ -133,21 +133,37 @@
     height: 30px;
     display:block;
   }
-  .fav-message{
-    position:absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 6px;
-    font-size: 0.7rem;
-    color: #999;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .3s ease;
+  /* ---------- 별 클릭 이펙트: 배경 별 트윙클 (크기만 커졌다 작아지며 반짝) ---------- */
+  .bg-star.twinkle{
+    animation: bgStarTwinkle .6s ease;
   }
-  .fav-message.show{
-    opacity: 1;
+  @keyframes bgStarTwinkle{
+    0%{ transform: rotate(var(--rot, 0deg)) scale(1); }
+    45%{ transform: rotate(var(--rot, 0deg)) scale(1.6); }
+    100%{ transform: rotate(var(--rot, 0deg)) scale(1); }
+  }
+
+  /* ---------- 별 클릭 이펙트: 별똥별 (별 아이콘이 날아가다 끝에서 작아지며 소멸) ---------- */
+  .shooting-star{
+    position: fixed;
+    top:0; left:0;
+    width: 26px;
+    height: 26px;
+    pointer-events:none;
+    z-index: 60;
+    opacity: 0;
+  }
+  .shooting-star img{
+    width:100%; height:100%; display:block;
+  }
+  .shooting-star.fly{
+    animation: shootingStarFly .85s ease-out forwards;
+  }
+  @keyframes shootingStarFly{
+    0%{ opacity:0; transform: translate(0,0) scale(.5); }
+    12%{ opacity:1; transform: translate(calc(var(--dx) * 0.1), calc(var(--dy) * 0.1)) scale(1); }
+    72%{ opacity:1; transform: translate(calc(var(--dx) * 0.82), calc(var(--dy) * 0.82)) scale(1); }
+    100%{ opacity:0; transform: translate(var(--dx), var(--dy)) scale(.1); }
   }
 
   /* ---------- 사이드 네비 ---------- */
@@ -718,7 +734,6 @@
     </button>
     <button type="button" class="icon-btn" id="starIconBtn" aria-label="즐겨찾기 추가">
       <img id="starIconImg" src="assets/icon-star-light.png" alt="Star">
-      <span class="fav-message" id="favMessage">즐겨찾기에 추가되었습니다</span>
     </button>
   </div>
 
@@ -1907,7 +1922,6 @@
     const heartImg = document.getElementById('heartIconImg');
     const starBtn = document.getElementById('starIconBtn');
     const starImg = document.getElementById('starIconImg');
-    const favMessage = document.getElementById('favMessage');
     const pops = [
       document.getElementById('heartPop1'),
       document.getElementById('heartPop2'),
@@ -1940,48 +1954,94 @@
       });
     }
 
-    let starActive = false;
-    let favMessageTimer = null;
+    let starAnimating = false;
+    const SHOOTING_STAR_COUNT = 2;
+    const SHOOTING_STAR_STAGGER = 150;  // 별똥별 2개가 살짝 시차 두고 나가는 간격(ms)
+    const SHOOTING_STAR_DURATION = 850; // 위 @keyframes shootingStarFly 길이와 맞춤
 
     if(starBtn){
       starBtn.addEventListener('click', () => {
-        if(!starActive){
-          starActive = true;
-          starImg.src = 'assets/icon-star-dark.png';
-        }
+        if(starAnimating) return;
+        starAnimating = true;
+        starImg.src = 'assets/icon-star-dark.png';
 
-        // 즐겨찾기 추가 시도: 최신 브라우저(Chrome, Firefox 신버전 등)는 보안 정책상
-        // 스크립트로 즐겨찾기를 자동 추가하는 기능을 지원하지 않아 아래 API는 구형 브라우저에서만 동작합니다.
-        try{
-          if(window.sidebar && window.sidebar.addPanel){ // 구형 Firefox
-            window.sidebar.addPanel(document.title, window.location.href, '');
-          } else if(window.external && ('AddFavorite' in window.external)){ // 구형 IE
-            window.external.AddFavorite(window.location.href, document.title);
-          }
-        }catch(e){ /* 무시 */ }
+        // 배경에 깔린 별 장식들이 크기로 반짝이면서 + 별똥별이 슝 지나가며 소멸하는 연출
+        twinkleBgStars();
+        spawnShootingStars(SHOOTING_STAR_COUNT);
 
-        if(favMessageTimer) clearTimeout(favMessageTimer);
-        favMessage.classList.add('show');
-        favMessageTimer = setTimeout(() => {
-          favMessage.classList.remove('show');
-        }, 1800);
+        const totalTime = (SHOOTING_STAR_COUNT - 1) * SHOOTING_STAR_STAGGER + SHOOTING_STAR_DURATION;
+        setTimeout(() => {
+          starImg.src = 'assets/icon-star-light.png';
+          starAnimating = false;
+        }, totalTime + 60);
       });
     }
   })();
+
+  // ---------- 배경 별 트윙클 ----------
+  function twinkleBgStars(){
+    document.querySelectorAll('#stars .bg-star').forEach((s) => {
+      const delay = Math.random() * 220; // 한꺼번에 반짝이지 않고 살짝 물결치듯
+      setTimeout(() => {
+        s.classList.remove('twinkle');
+        void s.offsetWidth; // 리플로우로 애니메이션 재시작 보장
+        s.classList.add('twinkle');
+      }, delay);
+    });
+  }
+
+  // ---------- 별똥별 ----------
+  function spawnShootingStars(count){
+    for(let i = 0; i < count; i++){
+      setTimeout(spawnOneShootingStar, i * (120 + Math.random() * 100));
+    }
+  }
+  function spawnOneShootingStar(){
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const startX = vw * 0.15 + Math.random() * vw * 0.6;
+    const startY = vh * 0.06 + Math.random() * vh * 0.22;
+    const goingLeft = Math.random() < 0.5;
+    const angleDeg = goingLeft ? (140 + Math.random() * 20) : (20 + Math.random() * 20);
+    const dist = 170 + Math.random() * 90;
+    const rad = angleDeg * Math.PI / 180;
+    const dx = Math.cos(rad) * dist;
+    const dy = Math.sin(rad) * dist;
+
+    const el = document.createElement('div');
+    el.className = 'shooting-star';
+    el.style.left = startX + 'px';
+    el.style.top = startY + 'px';
+    el.style.setProperty('--dx', dx + 'px');
+    el.style.setProperty('--dy', dy + 'px');
+    el.innerHTML = '<img src="assets/icon-star-dark.png" alt="">';
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('fly'));
+    el.addEventListener('animationend', () => el.remove());
+    setTimeout(() => { if(el.isConnected) el.remove(); }, 1200); // 안전장치
+  }
 
   // 배경 별 장식 생성 (로고 옆 상단 영역에 불규칙하게, 로고와 겹치지 않게, 서로 겹치지 않게 배치)
   function placeStars(){
     const starsWrap = document.getElementById('stars');
     starsWrap.innerHTML = '';
     const STAR_SIZE = 29;
-    const containerW = document.documentElement.scrollWidth;
-    const topZoneHeight = 760; // 로고가 있는 상단 영역 정도의 높이 (세로 분포를 넓혀 더 불규칙하게)
+    const half = STAR_SIZE / 2 + 2;
     const minDist = STAR_SIZE * 1.35;
-    const desiredCount = 20;
+
+    const pageW = document.documentElement.scrollWidth;
+    const pageH = Math.max(document.documentElement.scrollHeight, window.innerHeight);
+    const gutter = window.innerWidth <= 880 ? 24 : 54; // .app 좌우 padding과 동일 (콘텐츠가 없는 여백)
+    const topBand = Math.min(820, pageH);              // 로고/상단 영역
+    const bottomBandTop = Math.max(topBand, pageH - 220); // 하단 여백 영역 시작 지점
+
+    const MIN_TOP_STARS = 7;   // 상단에는 무조건 최소 7개
+    const TOTAL_STARS = 26;
+
     const placed = [];
     let attempts = 0;
 
-    // 로고 영역과 사이드 카테고리 영역(여백 포함)은 별이 배치되지 않도록 제외
+    // 로고, 사이드 카테고리 영역, 우상단 하트/별 아이콘과는 겹치지 않도록 제외
     const logoEl = document.getElementById('logoHome');
     const navEl = document.querySelector('nav.side');
     const topIconsEl = document.querySelector('.top-icons');
@@ -2017,32 +2077,73 @@
       const inTopIcons = topIconsBox && x > topIconsBox.left && x < topIconsBox.right && y > topIconsBox.top && y < topIconsBox.bottom;
       return inLogo || inNav || inTopIcons;
     }
-
-    while(placed.length < desiredCount && attempts < 1500){
-      attempts++;
-      const x = Math.random() * containerW;
-      const y = Math.random() * topZoneHeight;
-      if(overlapsAvoidZones(x, y)) continue;
-      const tooClose = placed.some(p => {
+    function tooCloseToPlaced(x, y){
+      return placed.some(p => {
         const dx = p.x - x, dy = p.y - y;
         return Math.sqrt(dx*dx + dy*dy) < minDist;
       });
-      if(!tooClose) placed.push({ x, y });
+    }
+    function insetBounds(b){
+      // 별이 영역 가장자리에 반쯤 잘려 보이지 않도록 안쪽으로 살짝 여유를 둠
+      const left = b.left + half, right = b.right - half;
+      const top = b.top + half, bottom = b.bottom - half;
+      return (right > left && bottom > top) ? { left, right, top, bottom } : null;
+    }
+
+    // 콘텐츠가 들어가지 않는 영역만: 상단 / 좌우 여백(카테고리 옆) / 하단
+    const zones = [
+      { name:'top',    weight:0.20, bounds: insetBounds({ left:0, right:pageW, top:0, bottom:topBand }) },
+      { name:'left',   weight:0.25, bounds: insetBounds({ left:0, right:gutter, top:topBand, bottom:bottomBandTop }) },
+      { name:'right',  weight:0.25, bounds: insetBounds({ left:pageW-gutter, right:pageW, top:topBand, bottom:bottomBandTop }) },
+      { name:'bottom', weight:0.30, bounds: insetBounds({ left:0, right:pageW, top:bottomBandTop, bottom:pageH }) }
+    ].filter(z => z.bounds);
+
+    function pickZone(){
+      const total = zones.reduce((s,z) => s + z.weight, 0);
+      let r = Math.random() * total;
+      for(const z of zones){ if(r < z.weight) return z; r -= z.weight; }
+      return zones[zones.length - 1];
+    }
+
+    // 1) 상단에 불규칙한 위치로 최소 개수 먼저 확보
+    const topZone = zones.find(z => z.name === 'top');
+    if(topZone){
+      while(placed.length < MIN_TOP_STARS && attempts < 1000){
+        attempts++;
+        const x = topZone.bounds.left + Math.random() * (topZone.bounds.right - topZone.bounds.left);
+        const y = topZone.bounds.top + Math.random() * (topZone.bounds.bottom - topZone.bounds.top);
+        if(overlapsAvoidZones(x, y) || tooCloseToPlaced(x, y)) continue;
+        placed.push({ x, y });
+      }
+    }
+
+    // 2) 나머지는 상단/좌우 여백/하단에 걸쳐 불규칙하게 채움
+    while(placed.length < TOTAL_STARS && attempts < 4000){
+      attempts++;
+      const zone = pickZone();
+      const x = zone.bounds.left + Math.random() * (zone.bounds.right - zone.bounds.left);
+      const y = zone.bounds.top + Math.random() * (zone.bounds.bottom - zone.bounds.top);
+      if(overlapsAvoidZones(x, y) || tooCloseToPlaced(x, y)) continue;
+      placed.push({ x, y });
     }
 
     placed.forEach(p => {
       const img = document.createElement('img');
+      img.className = 'bg-star';
       img.src = 'assets/star.png';
       img.onerror = function(){ this.style.display = 'none'; };
       img.style.position = 'absolute';
       img.style.left = (p.x - STAR_SIZE/2) + 'px';
       img.style.top = (p.y - STAR_SIZE/2) + 'px';
       img.style.width = STAR_SIZE + 'px';
-      img.style.transform = `rotate(${Math.random()*360 - 180}deg)`;
+      const rot = Math.random()*360 - 180;
+      img.style.setProperty('--rot', rot + 'deg');
+      img.style.transform = `rotate(${rot}deg)`;
       starsWrap.appendChild(img);
     });
   }
   window.addEventListener('load', placeStars);
+  window.addEventListener('resize', placeStars);
 </script>
 
 </body>
