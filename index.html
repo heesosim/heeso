@@ -133,37 +133,17 @@
     height: 30px;
     display:block;
   }
-  /* ---------- 별 클릭 이펙트: 배경 별 트윙클 (크기만 커졌다 작아지며 반짝) ---------- */
+  /* ---------- 별 클릭 이펙트: 배경 별 반짝반짝 (빠르게 커졌다 작아졌다 반복, 개체마다 타이밍 다르게) ---------- */
   .bg-star.twinkle{
-    animation: bgStarTwinkle .6s ease;
+    animation-name: bgStarTwinkle;
+    animation-timing-function: ease-in-out;
+    animation-duration: var(--dur, 0.4s);
+    animation-delay: var(--sdelay, 0s);
+    animation-iteration-count: var(--iter, 4);
   }
   @keyframes bgStarTwinkle{
-    0%{ transform: rotate(var(--rot, 0deg)) scale(1); }
-    45%{ transform: rotate(var(--rot, 0deg)) scale(1.6); }
-    100%{ transform: rotate(var(--rot, 0deg)) scale(1); }
-  }
-
-  /* ---------- 별 클릭 이펙트: 별똥별 (별 아이콘이 날아가다 끝에서 작아지며 소멸) ---------- */
-  .shooting-star{
-    position: fixed;
-    top:0; left:0;
-    width: 26px;
-    height: 26px;
-    pointer-events:none;
-    z-index: 60;
-    opacity: 0;
-  }
-  .shooting-star img{
-    width:100%; height:100%; display:block;
-  }
-  .shooting-star.fly{
-    animation: shootingStarFly .85s ease-out forwards;
-  }
-  @keyframes shootingStarFly{
-    0%{ opacity:0; transform: translate(0,0) scale(.5); }
-    12%{ opacity:1; transform: translate(calc(var(--dx) * 0.1), calc(var(--dy) * 0.1)) scale(1); }
-    72%{ opacity:1; transform: translate(calc(var(--dx) * 0.82), calc(var(--dy) * 0.82)) scale(1); }
-    100%{ opacity:0; transform: translate(var(--dx), var(--dy)) scale(.1); }
+    0%, 100%{ transform: rotate(var(--rot, 0deg)) scale(1); }
+    50%{ transform: rotate(var(--rot, 0deg)) scale(1.6); }
   }
 
   /* ---------- 사이드 네비 ---------- */
@@ -1955,9 +1935,6 @@
     }
 
     let starAnimating = false;
-    const SHOOTING_STAR_COUNT = 2;
-    const SHOOTING_STAR_STAGGER = 150;  // 별똥별 2개가 살짝 시차 두고 나가는 간격(ms)
-    const SHOOTING_STAR_DURATION = 850; // 위 @keyframes shootingStarFly 길이와 맞춤
 
     if(starBtn){
       starBtn.addEventListener('click', () => {
@@ -1965,60 +1942,38 @@
         starAnimating = true;
         starImg.src = 'assets/icon-star-dark.png';
 
-        // 배경에 깔린 별 장식들이 크기로 반짝이면서 + 별똥별이 슝 지나가며 소멸하는 연출
-        twinkleBgStars();
-        spawnShootingStars(SHOOTING_STAR_COUNT);
+        // 배경에 깔린 별 장식들이 반짝반짝 크기로 여러 번 빠르게 반짝이는 연출
+        const twinkleTotalMs = twinkleBgStars();
 
-        const totalTime = (SHOOTING_STAR_COUNT - 1) * SHOOTING_STAR_STAGGER + SHOOTING_STAR_DURATION;
         setTimeout(() => {
           starImg.src = 'assets/icon-star-light.png';
           starAnimating = false;
-        }, totalTime + 60);
+        }, twinkleTotalMs + 60);
       });
     }
   })();
 
-  // ---------- 배경 별 트윙클 ----------
+  // ---------- 배경 별 반짝반짝 (빠르게 여러 번, 개체마다 다른 타이밍) ----------
   function twinkleBgStars(){
-    document.querySelectorAll('#stars .bg-star').forEach((s) => {
-      const delay = Math.random() * 220; // 한꺼번에 반짝이지 않고 살짝 물결치듯
-      setTimeout(() => {
-        s.classList.remove('twinkle');
-        void s.offsetWidth; // 리플로우로 애니메이션 재시작 보장
-        s.classList.add('twinkle');
-      }, delay);
+    const stars = document.querySelectorAll('#stars .bg-star');
+    let maxEndMs = 0;
+    stars.forEach((s) => {
+      const dur = 0.28 + Math.random() * 0.22;        // 한 번 반짝이는 데 걸리는 시간: 0.28~0.5초 (빠르게)
+      const iter = 3 + Math.floor(Math.random() * 3);  // 3~5번 반복
+      const sdelay = Math.random() * 0.35;              // 시작 시점을 제각각으로 흩어서 진짜 반짝반짝하는 느낌
+      s.style.setProperty('--dur', dur + 's');
+      s.style.setProperty('--iter', iter);
+      s.style.setProperty('--sdelay', sdelay + 's');
+      s.classList.remove('twinkle');
+      void s.offsetWidth; // 리플로우로 애니메이션 재시작 보장
+      s.classList.add('twinkle');
+      maxEndMs = Math.max(maxEndMs, (sdelay + dur * iter) * 1000);
     });
-  }
-
-  // ---------- 별똥별 ----------
-  function spawnShootingStars(count){
-    for(let i = 0; i < count; i++){
-      setTimeout(spawnOneShootingStar, i * (120 + Math.random() * 100));
-    }
-  }
-  function spawnOneShootingStar(){
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const startX = vw * 0.15 + Math.random() * vw * 0.6;
-    const startY = vh * 0.06 + Math.random() * vh * 0.22;
-    const goingLeft = Math.random() < 0.5;
-    const angleDeg = goingLeft ? (140 + Math.random() * 20) : (20 + Math.random() * 20);
-    const dist = 170 + Math.random() * 90;
-    const rad = angleDeg * Math.PI / 180;
-    const dx = Math.cos(rad) * dist;
-    const dy = Math.sin(rad) * dist;
-
-    const el = document.createElement('div');
-    el.className = 'shooting-star';
-    el.style.left = startX + 'px';
-    el.style.top = startY + 'px';
-    el.style.setProperty('--dx', dx + 'px');
-    el.style.setProperty('--dy', dy + 'px');
-    el.innerHTML = '<img src="assets/icon-star-dark.png" alt="">';
-    document.body.appendChild(el);
-    requestAnimationFrame(() => el.classList.add('fly'));
-    el.addEventListener('animationend', () => el.remove());
-    setTimeout(() => { if(el.isConnected) el.remove(); }, 1200); // 안전장치
+    // 애니메이션이 다 끝난 뒤 클래스 정리 (다음 클릭 때도 확실히 재시작되도록)
+    setTimeout(() => {
+      stars.forEach(s => s.classList.remove('twinkle'));
+    }, maxEndMs + 100);
+    return maxEndMs;
   }
 
   // 배경 별 장식 생성 (로고 옆 상단 영역에 불규칙하게, 로고와 겹치지 않게, 서로 겹치지 않게 배치)
