@@ -1982,7 +1982,7 @@
     starsWrap.innerHTML = '';
     const STAR_SIZE = 29;
     const half = STAR_SIZE / 2 + 2;
-    const minDist = STAR_SIZE * 1.35;
+    const minDist = STAR_SIZE * 2.4; // 별끼리 다닥다닥 붙지 않도록 간격을 넉넉하게
 
     const pageW = document.documentElement.scrollWidth;
     const pageH = Math.max(document.documentElement.scrollHeight, window.innerHeight);
@@ -2078,8 +2078,8 @@
       }
     }
 
-    // 3) 나머지는 페이지 전체(본문 영역 제외)에 걸쳐 자유롭게 채움
-    //    → 자연스럽게 카테고리 버튼 사이/여백, 우측, 상단, 하단에 고르게 분포됨
+    // 3) 나머지는 페이지 전체(본문 영역 + 상단 배너 + 하단 배너 제외)에 걸쳐 자유롭게 채움
+    //    → 상단/하단은 1),2)에서 확보한 개수로 고정되고, 카테고리 버튼 사이/여백·우측에 주로 분포됨
     const fullBand = insetBounds({ left: 0, right: pageW, top: 0, bottom: pageH });
     if(fullBand){
       let attempts = 0;
@@ -2087,6 +2087,7 @@
         attempts++;
         const x = fullBand.left + Math.random() * (fullBand.right - fullBand.left);
         const y = fullBand.top + Math.random() * (fullBand.bottom - fullBand.top);
+        if(inBox(x, y, headerBand) || inBox(x, y, bottomBand)) continue;
         if(overlapsAvoidZones(x, y) || tooCloseToPlaced(x, y)) continue;
         placed.push({ x, y });
       }
