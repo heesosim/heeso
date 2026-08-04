@@ -170,16 +170,21 @@
   /* ---------- 홈 ---------- */
   .home-hero-block{
     width: 100%;
+    display:flex;
+    align-items:flex-start;
+    gap: 24px;
   }
   .whatido-label{
     color: var(--pink);
     font-size: 0.85rem;
-    margin: 0 0 16px;
+    margin: 0;
     white-space: nowrap;
+    padding-top: 2px;
   }
   .hero-center{
     display:flex;
     justify-content:center;
+    flex: 1;
   }
   .main-hero-img{
     max-width: 100%;
@@ -210,12 +215,16 @@
     position: relative;
     height: 12px;
     width: 50%;
-    margin: 10px auto 0;
+    margin: 20px auto 0;
     background: #fff3fa;
     border: 1px solid #715c53;
-    border-radius: 999px;
+    border-radius: 0;
     cursor: pointer;
     box-sizing: border-box;
+  }
+  .custom-scrollbar-fill-wrap{
+    position: absolute;
+    inset: 0;
     overflow: hidden;
   }
   .custom-scrollbar-fill{
@@ -223,7 +232,7 @@
     top: 0; left: 0;
     height: 100%;
     width: 0;
-    background: #ffdef2;
+    background: #ffcae6;
   }
   .custom-scrollbar-thumb{
     position: absolute;
@@ -666,7 +675,7 @@
           <div class="home-slider-wrap" id="homeIllustrationWrap">
             <div class="home-slider" id="homeIllustrationSlider"></div>
           </div>
-          <div class="custom-scrollbar" data-target="homeIllustrationWrap"><div class="custom-scrollbar-thumb"><svg viewBox="0 0 32 29" xmlns="http://www.w3.org/2000/svg"><path d="M16 27C16 27 2 17.8 2 9.4C2 4.7 5.8 1.5 10 1.5C12.6 1.5 14.8 3 16 5.3C17.2 3 19.4 1.5 22 1.5C26.2 1.5 30 4.7 30 9.4C30 17.8 16 27 16 27Z" fill="#FF97C1" stroke="#715c53" stroke-width="1.6" stroke-linejoin="round"/></svg></div></div>
+          <div class="custom-scrollbar" data-target="homeIllustrationWrap"><div class="custom-scrollbar-fill-wrap"><div class="custom-scrollbar-fill"></div></div><div class="custom-scrollbar-thumb"><svg viewBox="0 0 32 29" xmlns="http://www.w3.org/2000/svg"><path d="M16 27C16 27 2 17.8 2 9.4C2 4.7 5.8 1.5 10 1.5C12.6 1.5 14.8 3 16 5.3C17.2 3 19.4 1.5 22 1.5C26.2 1.5 30 4.7 30 9.4C30 17.8 16 27 16 27Z" fill="#FF97C1" stroke="#715c53" stroke-width="1" stroke-linejoin="round"/></svg></div></div>
         </div>
 
         <div class="home-slider-block">
@@ -674,7 +683,7 @@
           <div class="home-slider-wrap" id="homeProjectWrap">
             <div class="home-slider" id="homeProjectSlider"></div>
           </div>
-          <div class="custom-scrollbar" data-target="homeProjectWrap"><div class="custom-scrollbar-thumb"><svg viewBox="0 0 32 29" xmlns="http://www.w3.org/2000/svg"><path d="M16 27C16 27 2 17.8 2 9.4C2 4.7 5.8 1.5 10 1.5C12.6 1.5 14.8 3 16 5.3C17.2 3 19.4 1.5 22 1.5C26.2 1.5 30 4.7 30 9.4C30 17.8 16 27 16 27Z" fill="#FF97C1" stroke="#715c53" stroke-width="1.6" stroke-linejoin="round"/></svg></div></div>
+          <div class="custom-scrollbar" data-target="homeProjectWrap"><div class="custom-scrollbar-fill-wrap"><div class="custom-scrollbar-fill"></div></div><div class="custom-scrollbar-thumb"><svg viewBox="0 0 32 29" xmlns="http://www.w3.org/2000/svg"><path d="M16 27C16 27 2 17.8 2 9.4C2 4.7 5.8 1.5 10 1.5C12.6 1.5 14.8 3 16 5.3C17.2 3 19.4 1.5 22 1.5C26.2 1.5 30 4.7 30 9.4C30 17.8 16 27 16 27Z" fill="#FF97C1" stroke="#715c53" stroke-width="1" stroke-linejoin="round"/></svg></div></div>
         </div>
       </section>
 
@@ -1683,7 +1692,12 @@
   function initCustomScrollbar(bar){
     const wrap = document.getElementById(bar.dataset.target);
     const thumb = bar.querySelector('.custom-scrollbar-thumb');
+    const fill = bar.querySelector('.custom-scrollbar-fill');
     if(!wrap || !thumb) return;
+
+    function updateFill(left){
+      if(fill) fill.style.width = (left + thumb.offsetWidth/2) + 'px';
+    }
 
     function syncThumb(){
       const maxScroll = wrap.scrollWidth - wrap.clientWidth;
@@ -1691,7 +1705,9 @@
       const thumbWidth = thumb.offsetWidth;
       const maxThumbLeft = trackWidth - thumbWidth;
       const ratio = maxScroll > 0 ? (wrap.scrollLeft / maxScroll) : 0;
-      thumb.style.left = (ratio * maxThumbLeft) + 'px';
+      const left = ratio * maxThumbLeft;
+      thumb.style.left = left + 'px';
+      updateFill(left);
     }
 
     wrap.addEventListener('scroll', syncThumb);
@@ -1711,6 +1727,7 @@
       let newLeft = startLeft + (e.clientX - startX);
       newLeft = Math.max(0, Math.min(maxThumbLeft, newLeft));
       thumb.style.left = newLeft + 'px';
+      updateFill(newLeft);
       wrap.scrollLeft = maxThumbLeft > 0 ? (newLeft / maxThumbLeft) * maxScroll : 0;
     });
     document.addEventListener('mouseup', () => { dragging = false; });
@@ -1725,6 +1742,7 @@
       newLeft = Math.max(0, Math.min(maxThumbLeft, newLeft));
       const maxScroll = wrap.scrollWidth - wrap.clientWidth;
       thumb.style.left = newLeft + 'px';
+      updateFill(newLeft);
       wrap.scrollLeft = maxThumbLeft > 0 ? (newLeft / maxThumbLeft) * maxScroll : 0;
     });
 
