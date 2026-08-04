@@ -1987,9 +1987,10 @@
     const pageW = document.documentElement.scrollWidth;
     const pageH = Math.max(document.documentElement.scrollHeight, window.innerHeight);
 
-    const MIN_TOP_STARS = 7;     // 로고~하트/별 아이콘 사이 상단 배너: 무조건 최소 7개
-    const MIN_BOTTOM_STARS = 2;  // 맨 아래 여백에도 최소 개수 보장 (기존 대비 절반)
-    const TOTAL_STARS = 21;      // 카테고리 옆/우측 등 나머지 채우기 개수도 절반 수준으로 축소
+    const MIN_TOP_STARS = 7;    // 로고~하트/별 아이콘 사이 상단 배너: 무조건 최소 7개
+    const NAV_STARS = 4;        // 카테고리(nav) 옆/사이 여백: 고정 4개
+    const RIGHT_STARS = 3;      // 우측 여백: 고정 3개
+    const BOTTOM_STARS = 2;     // 맨 아래 여백: 고정 2개
 
     const placed = [];
 
@@ -2059,7 +2060,7 @@
       }
     }
 
-    // 2) 맨 아래 여백에도 최소 개수 확보 (본문 <main>이 끝난 지점부터 페이지 끝까지)
+    // 2) 맨 아래 여백에 고정 개수 배치 (본문 <main>이 끝난 지점부터 페이지 끝까지)
     const bottomBand = insetBounds({
       left: 0,
       right: pageW,
@@ -2068,7 +2069,7 @@
     });
     if(bottomBand){
       let attempts = 0;
-      const targetCount = placed.length + MIN_BOTTOM_STARS;
+      const targetCount = placed.length + BOTTOM_STARS;
       while(placed.length < targetCount && attempts < 1500){
         attempts++;
         const x = bottomBand.left + Math.random() * (bottomBand.right - bottomBand.left);
@@ -2078,16 +2079,41 @@
       }
     }
 
-    // 3) 나머지는 페이지 전체(본문 영역 + 상단 배너 + 하단 배너 제외)에 걸쳐 자유롭게 채움
-    //    → 상단/하단은 1),2)에서 확보한 개수로 고정되고, 카테고리 버튼 사이/여백·우측에 주로 분포됨
-    const fullBand = insetBounds({ left: 0, right: pageW, top: 0, bottom: pageH });
-    if(fullBand){
+    // 3) 카테고리(nav) 옆/사이 여백에 고정 개수 배치 (버튼 하나하나만 피해서 그 사이/여백에 놓임)
+    const navEl = document.querySelector('nav.side');
+    const navRect = navEl ? navEl.getBoundingClientRect() : null;
+    const navBand = navRect ? insetBounds({
+      left: 0,
+      right: navRect.right + window.scrollX + 20,
+      top: headerBand ? headerBand.bottom : 0,
+      bottom: bottomBand ? bottomBand.top : pageH
+    }) : null;
+    if(navBand){
       let attempts = 0;
-      while(placed.length < TOTAL_STARS && attempts < 8000){
+      const targetCount = placed.length + NAV_STARS;
+      while(placed.length < targetCount && attempts < 1500){
         attempts++;
-        const x = fullBand.left + Math.random() * (fullBand.right - fullBand.left);
-        const y = fullBand.top + Math.random() * (fullBand.bottom - fullBand.top);
-        if(inBox(x, y, headerBand) || inBox(x, y, bottomBand)) continue;
+        const x = navBand.left + Math.random() * (navBand.right - navBand.left);
+        const y = navBand.top + Math.random() * (navBand.bottom - navBand.top);
+        if(overlapsAvoidZones(x, y) || tooCloseToPlaced(x, y)) continue;
+        placed.push({ x, y });
+      }
+    }
+
+    // 4) 우측 여백에 고정 개수 배치
+    const rightBand = insetBounds({
+      left: pageW - 100,
+      right: pageW,
+      top: headerBand ? headerBand.bottom : 0,
+      bottom: bottomBand ? bottomBand.top : pageH
+    });
+    if(rightBand){
+      let attempts = 0;
+      const targetCount = placed.length + RIGHT_STARS;
+      while(placed.length < targetCount && attempts < 1500){
+        attempts++;
+        const x = rightBand.left + Math.random() * (rightBand.right - rightBand.left);
+        const y = rightBand.top + Math.random() * (rightBand.bottom - rightBand.top);
         if(overlapsAvoidZones(x, y) || tooCloseToPlaced(x, y)) continue;
         placed.push({ x, y });
       }
