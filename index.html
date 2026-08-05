@@ -735,6 +735,25 @@
     .grid{ grid-template-columns: repeat(2, 1fr); }
     .project-grid{ grid-template-columns: repeat(1, 1fr); }
     .project-cats{ gap:8px; }
+
+    /* What I do 라벨이 이미지와 겹치지 않도록 절대위치를 풀고 이미지 위에 쌓이게 함 */
+    .whatido-label{ position:static; margin-bottom:10px; }
+
+    /* 로고가 커서 하트/별 아이콘 아래 남는 여백에 인스타·메일·명함 버튼을 우측정렬로 배치 */
+    .side-links{
+      position:absolute;
+      top: 110px;
+      right: 24px;
+      margin-top: 0;
+      z-index: 2;
+    }
+    .bizcard-btn{
+      position:absolute;
+      top: 148px;
+      right: 24px;
+      margin-top: 0;
+      z-index: 2;
+    }
   }
 </style>
 </head>
@@ -1843,23 +1862,42 @@
     window.addEventListener('resize', syncThumb);
 
     let dragging = false, startX = 0, startLeft = 0;
-    thumb.addEventListener('mousedown', (e) => {
-      dragging = true; startX = e.clientX; startLeft = thumb.offsetLeft;
-      e.preventDefault();
-    });
-    document.addEventListener('mousemove', (e) => {
+
+    function dragStart(clientX){
+      dragging = true; startX = clientX; startLeft = thumb.offsetLeft;
+    }
+    function dragMove(clientX){
       if(!dragging) return;
       const trackWidth = bar.clientWidth;
       const thumbWidth = thumb.offsetWidth;
       const maxThumbLeft = trackWidth - thumbWidth;
       const maxScroll = wrap.scrollWidth - wrap.clientWidth;
-      let newLeft = startLeft + (e.clientX - startX);
+      let newLeft = startLeft + (clientX - startX);
       newLeft = Math.max(0, Math.min(maxThumbLeft, newLeft));
       thumb.style.left = newLeft + 'px';
       updateFill(newLeft);
       wrap.scrollLeft = maxThumbLeft > 0 ? (newLeft / maxThumbLeft) * maxScroll : 0;
+    }
+    function dragEnd(){ dragging = false; }
+
+    thumb.addEventListener('mousedown', (e) => {
+      dragStart(e.clientX);
+      e.preventDefault();
     });
-    document.addEventListener('mouseup', () => { dragging = false; });
+    document.addEventListener('mousemove', (e) => dragMove(e.clientX));
+    document.addEventListener('mouseup', dragEnd);
+
+    // 모바일 터치로도 하트 손잡이를 직접 끌 수 있도록 터치 이벤트 지원
+    thumb.addEventListener('touchstart', (e) => {
+      dragStart(e.touches[0].clientX);
+    }, { passive: true });
+    document.addEventListener('touchmove', (e) => {
+      if(!dragging) return;
+      dragMove(e.touches[0].clientX);
+      e.preventDefault(); // 손잡이를 끄는 동안 페이지 자체가 스크롤되지 않도록
+    }, { passive: false });
+    document.addEventListener('touchend', dragEnd);
+    document.addEventListener('touchcancel', dragEnd);
 
     bar.addEventListener('click', (e) => {
       if(e.target === thumb) return;
