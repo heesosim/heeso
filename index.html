@@ -372,6 +372,9 @@
     width: min(640px, 100%);
     margin: 0 auto;
   }
+  .about-hero picture{
+    display:block;
+  }
   .about-illustration{
     display:block;
     width:100%;
@@ -730,7 +733,16 @@
     /* Contact + Guide(서브메뉴)는 서로 가운데 정렬 */
     .contact-group{ display:flex; flex-direction:column; align-items:center; }
     .sub-nav{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; justify-content:center; }
-    nav.side .sub-nav a{ width:auto; white-space:nowrap; }
+    /* Guide 버튼도 카테고리 버튼과 동일하게 축소 (기존엔 여기 크기 지정이 없어서 안 줄어들었음) */
+    nav.side .sub-nav a{
+      width:auto;
+      white-space:nowrap;
+      font-size:0.765rem;
+      padding:6px 13px;
+    }
+    /* Contact를 눌러 active/expanded 되기 전까지 Guide는 확실히 숨김 */
+    .sub-nav{ display:none; }
+    .sub-nav.expanded{ display:flex; }
     .side-links{ margin-top:20px; }
     .bizcard-btn{ margin-top:8px; }
 
@@ -763,15 +775,14 @@
     }
 
     /* About: 좌우 여백을 없애 이미지를 최대한 크게 보여주고,
-       텍스트(특히 설명 문단)가 이미지의 좁은 여백 안에서 잘리지 않도록
-       이미지 위에 겹쳐 올리는 대신 이미지 아래로 자연스럽게 흐르게 함 */
+       모바일 전용 이미지(여백 76%)의 넉넉한 빈 공간 안에 텍스트를 겹쳐 배치 */
     .about-panel{ padding-left:0; padding-right:0; }
     .about-hero{ width:100%; }
     .about-hero-text{
-      position:static;
-      top:auto; left:auto; right:auto; bottom:auto;
-      overflow:visible;
-      padding: 20px 20px 0;
+      position:absolute;
+      top:0; left:0; right:0; bottom:26%; /* 새 모바일 이미지의 그림 시작 지점(76.4%)보다 넉넉히 위에서 자름 */
+      overflow:hidden;
+      padding: 28px 24px 0;
     }
   }
 </style>
@@ -854,7 +865,10 @@
       <section class="view" id="view-about">
         <div class="about-panel">
           <div class="about-hero">
-            <img class="about-illustration" src="assets/about-illustration.png" alt="희소의 작업 공간 일러스트">
+            <picture>
+              <source media="(max-width: 880px)" srcset="assets/about-illustration-mobile.png">
+              <img class="about-illustration" src="assets/about-illustration.png" alt="희소의 작업 공간 일러스트">
+            </picture>
             <div class="about-hero-text">
               <h2>ILLUSTRATOR HEESO</h2>
               <div class="subtitle"><span class="thin">일러스트레이터</span> <span class="bold">희소</span></div>
