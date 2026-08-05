@@ -701,9 +701,37 @@
   @media (max-width: 880px){
     .app{ padding: 32px 24px 60px; }
     .top-icons{ right: 24px; }
-    .layout{ flex-direction:column; }
+    .layout{ flex-direction:column; align-items:stretch; }
+    main{ width:100%; min-width:0; }
+
+    /* 슬라이더(스크롤바) 내용이 화면 자체를 옆으로 늘리지 않도록 확실히 폭 고정 */
+    .home-slider-wrap{ width:100%; max-width:100%; -webkit-overflow-scrolling:touch; touch-action:pan-x; }
+
+    /* 카테고리 메뉴: 여러 줄로 크게 쌓이지 않도록 한 줄 스와이프 칩 형태로 축소 */
     nav.side{ width:100%; }
-    nav.side ul{ display:flex; gap:16px; flex-wrap:wrap; }
+    nav.side ul{
+      display:flex;
+      flex-wrap:nowrap;
+      gap:8px;
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+      -ms-overflow-style:none;
+      padding-bottom:2px;
+    }
+    nav.side ul::-webkit-scrollbar{ display:none; height:0; }
+    nav.side li{ margin-bottom:0; flex:0 0 auto; }
+    nav.side a{
+      width:auto;
+      white-space:nowrap;
+      font-size:0.85rem;
+      padding:7px 14px;
+    }
+    .sub-nav{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    nav.side .sub-nav a{ width:auto; white-space:nowrap; }
+    .side-links{ margin-top:20px; }
+    .bizcard-btn{ margin-top:8px; }
+
     .grid{ grid-template-columns: repeat(2, 1fr); }
     .project-grid{ grid-template-columns: repeat(1, 1fr); }
     .project-cats{ gap:8px; }
