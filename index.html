@@ -707,7 +707,7 @@
     /* 슬라이더(스크롤바) 내용이 화면 자체를 옆으로 늘리지 않도록 확실히 폭 고정 */
     .home-slider-wrap{ width:100%; max-width:100%; -webkit-overflow-scrolling:touch; touch-action:pan-x; }
 
-    /* 카테고리 메뉴: 여러 줄로 크게 쌓이지 않도록 한 줄 스와이프 칩 형태로 축소 */
+    /* 카테고리 메뉴: 여러 줄로 크게 쌓이지 않도록 한 줄 스와이프 칩 형태로 축소 (기존 대비 90% 크기) */
     nav.side{ width:100%; }
     nav.side ul{
       display:flex;
@@ -724,17 +724,24 @@
     nav.side a{
       width:auto;
       white-space:nowrap;
-      font-size:0.85rem;
-      padding:7px 14px;
+      font-size:0.765rem; /* 0.85rem의 90% */
+      padding:6px 13px;   /* 7px 14px의 90% */
     }
-    .sub-nav{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    /* Contact + Guide(서브메뉴)는 서로 가운데 정렬 */
+    .contact-group{ display:flex; flex-direction:column; align-items:center; }
+    .sub-nav{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; justify-content:center; }
     nav.side .sub-nav a{ width:auto; white-space:nowrap; }
     .side-links{ margin-top:20px; }
     .bizcard-btn{ margin-top:8px; }
 
     .grid{ grid-template-columns: repeat(2, 1fr); }
     .project-grid{ grid-template-columns: repeat(1, 1fr); }
-    .project-cats{ gap:8px; }
+    /* Work 상단 세부 카테고리 필터 버튼: 기존 대비 70% 크기 */
+    .project-cats{ gap:6px; }
+    .project-cat-btn{
+      font-size: 0.595rem; /* 0.85rem의 70% */
+      padding: 6px 14px;   /* 9px 20px의 70% */
+    }
 
     /* What I do 라벨이 이미지와 겹치지 않도록 절대위치를 풀고 이미지 위에 쌓이게 함 */
     .whatido-label{ position:static; margin-bottom:10px; }
@@ -745,14 +752,26 @@
       top: 110px;
       right: 24px;
       margin-top: 0;
-      z-index: 2;
+      z-index: 6; /* top-icons(z-index:5)보다 위로: 안 그러면 빈 공간이 클릭을 가로챔 */
     }
     .bizcard-btn{
       position:absolute;
       top: 148px;
       right: 24px;
       margin-top: 0;
-      z-index: 2;
+      z-index: 6; /* 위와 동일한 이유 */
+    }
+
+    /* About: 좌우 여백을 없애 이미지를 최대한 크게 보여주고,
+       텍스트(특히 설명 문단)가 이미지의 좁은 여백 안에서 잘리지 않도록
+       이미지 위에 겹쳐 올리는 대신 이미지 아래로 자연스럽게 흐르게 함 */
+    .about-panel{ padding-left:0; padding-right:0; }
+    .about-hero{ width:100%; }
+    .about-hero-text{
+      position:static;
+      top:auto; left:auto; right:auto; bottom:auto;
+      overflow:visible;
+      padding: 20px 20px 0;
     }
   }
 </style>
