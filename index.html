@@ -784,18 +784,42 @@
     }
 
     /* About: 좌우 여백을 없애 이미지를 최대한 크게 보여주고,
-       제목(타이틀+부제)은 그림 안 여백에 계속 겹쳐두되,
-       본문 설명 문단은 줄바꿈이 얼마나 되든 절대 잘리지 않도록 그림 아래로 자연스럽게 흐르게 함 */
+       핑크 배경/테두리는 CSS로 직접 그리고, 방 그림(하단부만 잘라낸 이미지)은
+       flex order로 맨 아래에 고정 → 텍스트가 길어지면 배경이 자동으로 늘어나서
+       절대 잘리거나 그림과 겹치지 않음 */
     .about-panel{ padding-left:0; padding-right:0; }
-    .about-hero{ width:100%; }
+    .about-hero{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      background:#FFEFF5;
+      border:1px solid #715c53;
+      box-sizing:border-box;
+      padding: 28px 0 0;
+    }
     .about-hero-title{
-      padding: 28px 24px 0;
+      position:static;
+      order:1;
+      width:100%;
+      padding: 0 24px;
+      box-sizing:border-box;
     }
     .about-hero-copy{
       position:static;
       top:auto; left:auto; right:auto; bottom:auto;
       overflow:visible;
-      padding: 20px 24px 0;
+      order:2;
+      width:100%;
+      padding: 20px 24px 24px;
+      box-sizing:border-box;
+    }
+    .about-hero picture{
+      order:3;
+      width:100%;
+    }
+    .about-hero .about-illustration{
+      width:100%;
     }
   }
 </style>
@@ -879,7 +903,7 @@
         <div class="about-panel">
           <div class="about-hero">
             <picture>
-              <source media="(max-width: 880px)" srcset="assets/about-illustration-mobile.png">
+              <source media="(max-width: 880px)" srcset="assets/about-illustration-bottom.png">
               <img class="about-illustration" src="assets/about-illustration.png" alt="희소의 작업 공간 일러스트">
             </picture>
             <div class="about-hero-title">
