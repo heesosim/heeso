@@ -380,20 +380,29 @@
     width:100%;
     height:auto;
   }
-  .about-hero-text{
+  .about-hero-title{
     position:absolute;
-    left:0; right:0; top:0; bottom:38%; /* 삽화의 빈 상단 영역 안쪽으로만: 아래쪽 그림과 절대 안 겹치게 */
+    left:0; right:0; top:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 42px 34px 0;
+    box-sizing:border-box;
+  }
+  .about-hero-title .subtitle{ margin-bottom: 0; }
+  .about-hero-copy{
+    position:absolute;
+    left:0; right:0; top:140px; bottom:38%; /* 삽화의 빈 상단 영역 안쪽으로만: 아래쪽 그림과 절대 안 겹치게 */
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:flex-start;
-    padding: 42px 34px 0;
+    padding: 0 34px 0;
     box-sizing:border-box;
     overflow:hidden;
   }
-  .about-hero-text .subtitle{ margin-bottom: 18px; }
-  .about-hero-text p{ margin-bottom: 10px; }
-  .about-hero-text p:last-child{ margin-bottom: 0; }
+  .about-hero-copy p{ margin-bottom: 10px; }
+  .about-hero-copy p:last-child{ margin-bottom: 0; }
   .about-panel .eyebrow{
     color: var(--pink); font-size:0.95rem; margin-bottom: 18px;
   }
@@ -775,14 +784,18 @@
     }
 
     /* About: 좌우 여백을 없애 이미지를 최대한 크게 보여주고,
-       모바일 전용 이미지(여백 76%)의 넉넉한 빈 공간 안에 텍스트를 겹쳐 배치 */
+       제목(타이틀+부제)은 그림 안 여백에 계속 겹쳐두되,
+       본문 설명 문단은 줄바꿈이 얼마나 되든 절대 잘리지 않도록 그림 아래로 자연스럽게 흐르게 함 */
     .about-panel{ padding-left:0; padding-right:0; }
     .about-hero{ width:100%; }
-    .about-hero-text{
-      position:absolute;
-      top:0; left:0; right:0; bottom:26%; /* 새 모바일 이미지의 그림 시작 지점(76.4%)보다 넉넉히 위에서 자름 */
-      overflow:hidden;
+    .about-hero-title{
       padding: 28px 24px 0;
+    }
+    .about-hero-copy{
+      position:static;
+      top:auto; left:auto; right:auto; bottom:auto;
+      overflow:visible;
+      padding: 20px 24px 0;
     }
   }
 </style>
@@ -869,9 +882,11 @@
               <source media="(max-width: 880px)" srcset="assets/about-illustration-mobile.png">
               <img class="about-illustration" src="assets/about-illustration.png" alt="희소의 작업 공간 일러스트">
             </picture>
-            <div class="about-hero-text">
+            <div class="about-hero-title">
               <h2>ILLUSTRATOR HEESO</h2>
               <div class="subtitle"><span class="thin">일러스트레이터</span> <span class="bold">희소</span></div>
+            </div>
+            <div class="about-hero-copy">
               <p>안녕하세요 일러스트레이터 희소입니다.<br>귀엽고 다정한 그림을 그립니다.</p>
               <p>어도비 일러스트레이터를 기반으로,<br>깔끔하고 선명한 표현에 따뜻한 감성을 더한 일러스트를 그리고 있습니다.</p>
               <p>키비주얼과 포스터를 비롯해 브랜딩, 인쇄물, 그림책, 어린이 삽화까지<br>다양한 매체에서 일러스트와 디자인 작업을 이어오고 있습니다.</p>
