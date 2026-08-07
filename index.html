@@ -340,8 +340,8 @@
   }
   .home-more{
     flex: 0 0 auto;
-    width: 220px;
-    aspect-ratio: 1 / 1;
+    width: 138px; /* 220px 기준 좌우 여백을 절반으로 축소 */
+    height: 220px; /* 슬라이드 아이템과 동일한 높이 유지 */
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     gap:10px;
     cursor: url('assets/cursor.png') 8 8, pointer;
@@ -516,42 +516,84 @@
     line-height:1.4;
   }
 
-  /* ---------- 프로젝트 페이지 ---------- */
+  /* ---------- 프로젝트 페이지: 세부 카테고리 드롭다운 ---------- */
   .project-cats{
-    display:flex; flex-wrap:wrap; gap:10px;
+    position:relative;
+    display:inline-block;
     margin-bottom: 32px;
   }
+  .project-cats-trigger{
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight:400;
+    padding: 9px 14px;
+    border-radius: 0;
+    border: 1px solid #715c53;
+    background: #fff;
+    color: #715c53;
+    width: 180px; /* 가장 긴 라벨(Key Visual / Poster) 기준으로 고정, 선택 항목 바뀌어도 크기 유지 */
+    box-sizing:border-box;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    cursor: url('assets/cursor.png') 8 8, pointer;
+  }
+  .project-cats-arrow{
+    font-size: 0.7em;
+    transition: transform .15s ease;
+  }
+  .project-cats.open .project-cats-arrow{ transform: rotate(180deg); }
+  .project-cats-panel{
+    display:none;
+    flex-direction:column;
+    gap:6px;
+    position:absolute;
+    top: calc(100% + 8px);
+    left:0;
+    width: 196px; /* 아이템 폭(180px) + 패널 패딩(8px*2) */
+    background:#fff;
+    padding:8px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.10);
+    z-index: 30;
+  }
+  .project-cats.open .project-cats-panel{ display:flex; }
+
   .project-cat-btn{
     font-family: var(--font-heading);
     font-size: 0.85rem;
     font-weight:400;
-    padding: 9px 20px;
+    padding: 9px 14px;
     border-radius: 0;
-    border: 1px solid #FFE9F1;
+    border: 1px solid #715c53; /* 메인 카테고리와 동일한 굵기·색상으로 통일 */
     background: #fff;
     color: #adadad;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%;
+    box-sizing:border-box;
+    text-align:center;
+    position:relative; /* 체크마크를 절대위치로 분리해 라벨이 정중앙에 오도록 */
     cursor: url('assets/cursor.png') 8 8, pointer;
-    transition: background .15s ease, color .15s ease, border-color .15s ease;
+    transition: background .15s ease, color .15s ease;
   }
-  .project-cat-btn.active{
-    background: #FFE9F1;
-    border-color: #FFE9F1;
-    color: #FF97C1;
+  .project-cat-btn .cat-check{
+    position:absolute;
+    left: 14px;
+    top:50%;
+    transform: translateY(-50%);
+    width: 12px;
+    opacity:0;
   }
+  .project-cat-btn.active .cat-check{ opacity:1; }
 
-  /* 카테고리별 색상: 클릭 전엔 라인만, 클릭하면 전체 채움 (All은 기존 핑크 유지) */
-  .project-cat-btn.cat-keyvisual{ border-color:#7FB6E8; color:#adadad; }
-  .project-cat-btn.cat-keyvisual.active{ background:#DCEEFB; border-color:#DCEEFB; color:#715c53; }
-  .project-cat-btn.cat-illustration{ border-color:#EE8FAE; color:#adadad; }
-  .project-cat-btn.cat-illustration.active{ background:#FBE1EA; border-color:#FBE1EA; color:#715c53; }
-  .project-cat-btn.cat-cardnews{ border-color:#7FCB6E; color:#adadad; }
-  .project-cat-btn.cat-cardnews.active{ background:#E2F7D9; border-color:#E2F7D9; color:#715c53; }
-  .project-cat-btn.cat-leaflet{ border-color:#AD84E0; color:#adadad; }
-  .project-cat-btn.cat-leaflet.active{ background:#EBE0FA; border-color:#EBE0FA; color:#715c53; }
-  .project-cat-btn.cat-banner{ border-color:#EAB03D; color:#adadad; }
-  .project-cat-btn.cat-banner.active{ background:#FCEACB; border-color:#FCEACB; color:#715c53; }
-  .project-cat-btn.cat-promotion{ border-color:#E8825F; color:#adadad; }
-  .project-cat-btn.cat-promotion.active{ background:#FBE2D6; border-color:#FBE2D6; color:#715c53; }
+  /* 내부 채워지는 색깔은 기존 그대로: hover 시 미리보기, 클릭(active) 시 유지 */
+  .project-cat-btn:hover,
+  .project-cat-btn.active,
+  .project-cats-trigger.cat-all{ background: #FFE9F1; color: #FF97C1; }
+
+  .project-cat-btn.cat-keyvisual:hover, .project-cat-btn.cat-keyvisual.active, .project-cats-trigger.cat-keyvisual{ background:#DCEEFB; color:#715c53; }
+  .project-cat-btn.cat-illustration:hover, .project-cat-btn.cat-illustration.active, .project-cats-trigger.cat-illustration{ background:#FBE1EA; color:#715c53; }
+  .project-cat-btn.cat-cardnews:hover, .project-cat-btn.cat-cardnews.active, .project-cats-trigger.cat-cardnews{ background:#E2F7D9; color:#715c53; }
+  .project-cat-btn.cat-leaflet:hover, .project-cat-btn.cat-leaflet.active, .project-cats-trigger.cat-leaflet{ background:#EBE0FA; color:#715c53; }
+  .project-cat-btn.cat-banner:hover, .project-cat-btn.cat-banner.active, .project-cats-trigger.cat-banner{ background:#FCEACB; color:#715c53; }
+  .project-cat-btn.cat-promotion:hover, .project-cat-btn.cat-promotion.active, .project-cats-trigger.cat-promotion{ background:#FBE2D6; color:#715c53; }
 
   .project-grid{
     display:grid;
@@ -760,11 +802,11 @@
 
     .grid{ grid-template-columns: repeat(2, 1fr); }
     .project-grid{ grid-template-columns: repeat(1, 1fr); }
-    /* Work 상단 세부 카테고리 필터 버튼: 기존 대비 70% 크기 */
-    .project-cats{ gap:6px; }
+    /* Work 상단 세부 카테고리: 기존 모바일 사이즈(70%)보다 20% 더 크게 = 데스크톱의 약 84% */
+    .project-cats-trigger,
     .project-cat-btn{
-      font-size: 0.595rem; /* 0.85rem의 70% */
-      padding: 6px 14px;   /* 9px 20px의 70% */
+      font-size: 0.714rem; /* 0.595rem의 120% */
+      padding: 7px 17px;   /* 6px 14px의 120% */
     }
 
     /* What I do 라벨이 이미지와 겹치지 않도록 절대위치를 풀고 이미지 위에 쌓이게 함 */
@@ -1632,16 +1674,25 @@
   function renderProjectCats(containerId, onDetailPage){
     const el = document.getElementById(containerId);
     if(!el) return;
-    el.innerHTML = '';
-    PROJECT_CATEGORIES.forEach(cat => {
-      const btn = document.createElement('button');
+    el.classList.remove('open'); // 선택/재렌더링 시 항상 닫힌 상태로 초기화
+    const activeCat = PROJECT_CATEGORIES.find(c => c.key === activeProjectCat) || PROJECT_CATEGORIES[0];
+
+    const itemsHTML = PROJECT_CATEGORIES.map(cat => {
       const catClass = cat.key === 'all' ? '' : ` cat-${cat.key}`;
-      btn.className = 'project-cat-btn rounded' + catClass + (cat.key === activeProjectCat ? ' active' : '');
-      btn.textContent = cat.label;
-      btn.dataset.cat = cat.key;
-      btn.dataset.fromDetail = onDetailPage ? '1' : '0';
-      el.appendChild(btn);
-    });
+      const isActive = cat.key === activeProjectCat;
+      return `<button type="button" class="project-cat-btn rounded${catClass}${isActive ? ' active' : ''}" data-cat="${cat.key}" data-from-detail="${onDetailPage ? '1' : '0'}">` +
+        `<span class="cat-check">✓</span><span>${cat.label}</span>` +
+        `</button>`;
+    }).join('');
+
+    const trigCatClass = ` cat-${activeCat.key}`;
+    el.innerHTML = `
+      <button type="button" class="project-cats-trigger rounded${trigCatClass}" data-role="cats-trigger">
+        <span>${activeCat.label}</span>
+        <span class="project-cats-arrow">▾</span>
+      </button>
+      <div class="project-cats-panel">${itemsHTML}</div>
+    `;
   }
 
   function categoryBadgesHTML(categories){
@@ -1854,6 +1905,16 @@
   renderActivityGrid();
 
   document.addEventListener('click', (e) => {
+    const catsTrigger = e.target.closest('[data-role="cats-trigger"]');
+    if(catsTrigger){
+      const wrap = catsTrigger.closest('.project-cats');
+      const willOpen = !wrap.classList.contains('open');
+      // 다른 드롭다운이 열려 있으면 같이 닫기
+      document.querySelectorAll('.project-cats.open').forEach(w => { if(w !== wrap) w.classList.remove('open'); });
+      wrap.classList.toggle('open', willOpen);
+      return;
+    }
+
     const catBtn = e.target.closest('.project-cat-btn');
     if(catBtn){
       activeProjectCat = catBtn.dataset.cat;
@@ -1865,6 +1926,12 @@
       }
       return;
     }
+
+    // 드롭다운 바깥을 클릭하면 열려 있던 드롭다운 닫기
+    if(!e.target.closest('.project-cats')){
+      document.querySelectorAll('.project-cats.open').forEach(w => w.classList.remove('open'));
+    }
+
     const pCard = e.target.closest('.project-card');
     if(pCard && pCard.dataset.projectId){
       openProjectDetail(pCard.dataset.projectId);
