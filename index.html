@@ -807,17 +807,17 @@
       <span class="logo-fallback-sub mono">ILLUSTRATOR</span>
       <span class="logo-fallback-main rounded">HEESO</span>
     </div>
-    <img class="logo-heart-pop pop-1" id="heartPop1" src="assets/icon-heart-dark.png" alt="">
-    <img class="logo-heart-pop pop-2" id="heartPop2" src="assets/icon-heart-dark.png" alt="">
-    <img class="logo-heart-pop pop-3" id="heartPop3" src="assets/icon-heart-dark.png" alt="">
+    <img class="logo-heart-pop pop-1" id="heartPop1" src="assets/icon-heart-dark.svg" alt="">
+    <img class="logo-heart-pop pop-2" id="heartPop2" src="assets/icon-heart-dark.svg" alt="">
+    <img class="logo-heart-pop pop-3" id="heartPop3" src="assets/icon-heart-dark.svg" alt="">
   </header>
 
   <div class="top-icons">
     <button type="button" class="icon-btn" id="heartIconBtn" aria-label="하트">
-      <img id="heartIconImg" src="assets/icon-heart-light.png" alt="Heart">
+      <img id="heartIconImg" src="assets/icon-heart-light.svg" alt="Heart">
     </button>
     <button type="button" class="icon-btn" id="starIconBtn" aria-label="즐겨찾기 추가">
-      <img id="starIconImg" src="assets/icon-star-light.png" alt="Star">
+      <img id="starIconImg" src="assets/icon-star-light.svg" alt="Star">
     </button>
   </div>
 
@@ -831,10 +831,10 @@
         </ul>
       </div>
       <div class="side-links">
-        <a href="https://instagram.com/heesosim" target="_blank" aria-label="인스타그램"><img src="assets/icon-instagram.png" alt="Instagram"></a>
-        <a href="mailto:bydidi96@daum.net" aria-label="이메일"><img src="assets/icon-mail.png" alt="Mail"></a>
+        <a href="https://instagram.com/heesosim" target="_blank" aria-label="인스타그램"><img src="assets/icon-instagram.svg" alt="Instagram"></a>
+        <a href="mailto:bydidi96@daum.net" aria-label="이메일"><img src="assets/icon-mail.svg" alt="Mail"></a>
       </div>
-      <button type="button" id="bizcardBtn" class="rounded bizcard-btn"><img src="assets/bizcard-btn.png" alt="Download Business Card"></button>
+      <button type="button" id="bizcardBtn" class="rounded bizcard-btn"><img src="assets/bizcard-btn.svg" alt="Download Business Card"></button>
       <div class="print-overlay" id="printOverlay">
         <div class="printer-scene">
           <img class="printer-frame-img" id="printerFrameImg" src="assets/printer/base.png" alt="프린터">
@@ -939,8 +939,8 @@
           <div class="contact-inner">
 
             <div class="contact-info">
-              <div class="contact-line"><img class="contact-icon" src="assets/icon-mail.png" alt="이메일" onerror="this.style.display='none';"><a href="mailto:bydidi96@daum.net">bydidi96@daum.net</a></div>
-              <div class="contact-line"><img class="contact-icon" src="assets/icon-instagram.png" alt="인스타그램" onerror="this.style.display='none';"><a href="https://instagram.com/heesosim" target="_blank">instagram.com/heesosim</a></div>
+              <div class="contact-line"><img class="contact-icon" src="assets/icon-mail.svg" alt="이메일" onerror="this.style.display='none';"><a href="mailto:bydidi96@daum.net">bydidi96@daum.net</a></div>
+              <div class="contact-line"><img class="contact-icon" src="assets/icon-instagram.svg" alt="인스타그램" onerror="this.style.display='none';"><a href="https://instagram.com/heesosim" target="_blank">instagram.com/heesosim</a></div>
             </div>
 
             <div class="contact-sections">
@@ -2045,7 +2045,7 @@
       heartBtn.addEventListener('click', () => {
         if(heartAnimating) return;
         heartAnimating = true;
-        heartImg.src = 'assets/icon-heart-dark.png';
+        heartImg.src = 'assets/icon-heart-dark.svg';
 
         pops.forEach((pop, i) => {
           if(!pop) return;
@@ -2057,7 +2057,7 @@
         const totalTime = (pops.length - 1) * HEART_STAGGER + HEART_DURATION;
         setTimeout(() => {
           pops.forEach(pop => pop && pop.classList.remove('playing'));
-          heartImg.src = 'assets/icon-heart-light.png';
+          heartImg.src = 'assets/icon-heart-light.svg';
           heartAnimating = false;
         }, totalTime + 60);
       });
@@ -2069,13 +2069,13 @@
       starBtn.addEventListener('click', () => {
         if(starAnimating) return;
         starAnimating = true;
-        starImg.src = 'assets/icon-star-dark.png';
+        starImg.src = 'assets/icon-star-dark.svg';
 
         // 배경에 깔린 별 장식들이 반짝반짝 크기로 여러 번 빠르게 반짝이는 연출
         const twinkleTotalMs = twinkleBgStars();
 
         setTimeout(() => {
-          starImg.src = 'assets/icon-star-light.png';
+          starImg.src = 'assets/icon-star-light.svg';
           starAnimating = false;
         }, twinkleTotalMs + 60);
       });
