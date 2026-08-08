@@ -223,7 +223,7 @@
     cursor: url('assets/cursor.png') 8 8, pointer;
   }
   .side-links a img{
-    width: 30px; height: 30px;
+    width: 28.5px; height: 28.5px; /* 기존 30px의 95% */
     display:block;
   }
 
@@ -401,7 +401,7 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding: 20px 34px 0;
+    padding: 10px 34px 0;
     box-sizing:border-box;
   }
   .about-hero-copy p{ margin-bottom: 10px; }
@@ -526,12 +526,11 @@
     font-family: var(--font-heading);
     font-size: 0.85rem;
     font-weight:400;
-    padding: 9px 14px;
+    padding: 9px 20px;
     border-radius: 0;
     border: 1px solid #715c53;
     background: #fff;
     color: #715c53;
-    width: 180px; /* 가장 긴 라벨(Key Visual / Poster) 기준으로 고정, 선택 항목 바뀌어도 크기 유지 */
     box-sizing:border-box;
     display:flex; align-items:center; justify-content:center; gap:10px;
     cursor: url('assets/cursor.png') 8 8, pointer;
@@ -548,7 +547,7 @@
     position:absolute;
     top: calc(100% + 8px);
     left:0;
-    width: 196px; /* 아이템 폭(180px) + 패널 패딩(8px*2) */
+    width: 146px; /* Key Visual / Poster 기준, 좌우 여백 절반 반영 */
     background:#fff;
     padding:8px;
     box-shadow: 0 10px 24px rgba(0,0,0,.10);
@@ -560,33 +559,23 @@
     font-family: var(--font-heading);
     font-size: 0.85rem;
     font-weight:400;
-    padding: 9px 14px;
+    padding: 9px 7px; /* 좌우 여백을 기존(14px)의 절반으로 */
     border-radius: 0;
     border: 1px solid #715c53; /* 메인 카테고리와 동일한 굵기·색상으로 통일 */
     background: #fff;
     color: #adadad;
-    display:flex; align-items:center; justify-content:center; gap:8px;
+    display:flex; align-items:center; justify-content:center;
     width:100%;
     box-sizing:border-box;
     text-align:center;
-    position:relative; /* 체크마크를 절대위치로 분리해 라벨이 정중앙에 오도록 */
     cursor: url('assets/cursor.png') 8 8, pointer;
     transition: background .15s ease, color .15s ease;
   }
-  .project-cat-btn .cat-check{
-    position:absolute;
-    left: 14px;
-    top:50%;
-    transform: translateY(-50%);
-    width: 12px;
-    opacity:0;
-  }
-  .project-cat-btn.active .cat-check{ opacity:1; }
 
   /* 내부 채워지는 색깔은 기존 그대로: hover 시 미리보기, 클릭(active) 시 유지 */
   .project-cat-btn:hover,
   .project-cat-btn.active,
-  .project-cats-trigger.cat-all{ background: #FFE9F1; color: #FF97C1; }
+  .project-cats-trigger.cat-all{ background: #fff; color: #715c53; }
 
   .project-cat-btn.cat-keyvisual:hover, .project-cat-btn.cat-keyvisual.active, .project-cats-trigger.cat-keyvisual{ background:#DCEEFB; color:#715c53; }
   .project-cat-btn.cat-illustration:hover, .project-cat-btn.cat-illustration.active, .project-cats-trigger.cat-illustration{ background:#FBE1EA; color:#715c53; }
@@ -761,6 +750,10 @@
     .layout{ flex-direction:column; align-items:stretch; }
     main{ width:100%; min-width:0; }
 
+    /* 로고 10% 축소 */
+    .logo-img{ height: 149px; } /* 166px의 90% */
+    header.brand{ width: 135px; } /* 150px의 90% */
+
     /* 슬라이더(스크롤바) 내용이 화면 자체를 옆으로 늘리지 않도록 확실히 폭 고정 */
     .home-slider-wrap{ width:100%; max-width:100%; -webkit-overflow-scrolling:touch; touch-action:pan-x; }
 
@@ -781,8 +774,8 @@
     nav.side a{
       width:auto;
       white-space:nowrap;
-      font-size:0.765rem; /* 0.85rem의 90% */
-      padding:6px 13px;   /* 7px 14px의 90% */
+      font-size:0.803rem; /* 0.765rem의 105% */
+      padding:6px 14px;   /* 6px 13px의 105% */
     }
     /* Contact + Guide(서브메뉴)는 서로 가운데 정렬 */
     .contact-group{ display:flex; flex-direction:column; align-items:center; }
@@ -791,12 +784,13 @@
     nav.side .sub-nav a{
       width:auto;
       white-space:nowrap;
-      font-size:0.765rem;
-      padding:6px 13px;
+      font-size:0.803rem;
+      padding:6px 14px;
     }
-    /* Contact를 눌러 active/expanded 되기 전까지 Guide는 확실히 숨김 */
-    .sub-nav{ display:none; }
-    .sub-nav.expanded{ display:flex; }
+    /* Contact를 눌러 active/expanded 되기 전까지 Guide는 확실히 숨김
+       (nav.side ul 규칙이 .sub-nav보다 우선순위가 높아 새는 문제가 있어서 id로 확실히 이김) */
+    #subContact{ display:none; }
+    #subContact.expanded{ display:flex; }
     .side-links{ margin-top:20px; }
     .bizcard-btn{ margin-top:8px; }
 
@@ -818,6 +812,7 @@
       top: 110px;
       right: 24px;
       margin-top: 0;
+      gap: 10px; /* 위 하트/별과 인스타/메일이 세로로 열이 맞도록 간격 미세조정 */
       z-index: 6; /* top-icons(z-index:5)보다 위로: 안 그러면 빈 공간이 클릭을 가로챔 */
     }
     .bizcard-btn{
@@ -832,7 +827,7 @@
        (배경/테두리/그림-맨아래 배치 구조는 PC와 공통 규칙을 그대로 사용) */
     .about-panel{ padding-left:0; padding-right:0; }
     .about-hero-title{ padding: 0 24px; }
-    .about-hero-copy{ padding: 20px 24px 0; }
+    .about-hero-copy{ padding: 10px 24px 0; }
     .about-illustration{ margin-top: 24px; }
   }
 </style>
@@ -1069,7 +1064,7 @@
     </main>
   </div>
 
-  <footer class="site-footer">Last update 2026.07.29<br>© 2026. HEESO All Rights Reserved.<br>bydidi96@daum.net</footer>
+  <footer class="site-footer">© 2026. HEESO All Rights Reserved.<br>bydidi96@daum.net</footer>
 
 </div>
 
@@ -1467,7 +1462,7 @@
     { key:'cardnews', label:'Card News' },
     { key:'leaflet', label:'Leaflet' },
     { key:'banner', label:'Banner' },
-    { key:'promotion', label:'Promotion' }
+    { key:'promotion', label:'Package' }
   ];
 
   const PROJECT_COLORS = ['#F6D9E3','#D9EAF6','#F6EAD9','#E1F6D9','#EAD9F6','#F6D9D9'];
@@ -1681,7 +1676,7 @@
       const catClass = cat.key === 'all' ? '' : ` cat-${cat.key}`;
       const isActive = cat.key === activeProjectCat;
       return `<button type="button" class="project-cat-btn rounded${catClass}${isActive ? ' active' : ''}" data-cat="${cat.key}" data-from-detail="${onDetailPage ? '1' : '0'}">` +
-        `<span class="cat-check">✓</span><span>${cat.label}</span>` +
+        `<span>${cat.label}</span>` +
         `</button>`;
     }).join('');
 
