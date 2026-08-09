@@ -402,7 +402,6 @@
     padding: 0 34px;
     box-sizing:border-box;
   }
-  .about-hero-title .subtitle{ margin-bottom: 0; }
   .about-hero-copy{
     order:2;
     width:100%;
@@ -424,7 +423,7 @@
     margin-bottom: 10px;
   }
   .about-panel .subtitle{
-    color: var(--pink); margin-bottom: 40px;
+    color: var(--pink); margin-bottom: 5px;
     font-size: 1rem;
     font-family: var(--font-heading);
   }
@@ -619,7 +618,6 @@
   }
   .project-client{
     font-size: 0.88rem; color: var(--ink);
-    font-weight: 500;
     margin-bottom: 4px;
   }
   .project-type{
@@ -819,7 +817,7 @@
     .side-links{
       position:absolute;
       top: 110px;
-      right: 24px;
+      right: 24.75px; /* 별(30px)-메일(28.5px) 크기 차이를 보정해 중심을 정확히 맞춤 */
       margin-top: 0;
       gap: 10px; /* 위 하트/별과 인스타/메일이 세로로 열이 맞도록 간격 미세조정 */
       z-index: 6; /* top-icons(z-index:5)보다 위로: 안 그러면 빈 공간이 클릭을 가로챔 */
@@ -827,7 +825,7 @@
     .bizcard-btn{
       position:absolute;
       top: 148px;
-      right: 24px;
+      right: 24.75px; /* 메일 아이콘의 우측 끝과 정확히 맞춤 */
       margin-top: 0;
       z-index: 6; /* 위와 동일한 이유 */
     }
