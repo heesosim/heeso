@@ -680,6 +680,16 @@
   .project-preview-list{
     display:flex; flex-direction:column; gap: 20px;
   }
+  .project-preview-list .preview-heading{
+    font-family: var(--font-heading);
+    font-weight:700; font-size: 1.15rem; /* Concept 제목(h3)과 동일 */
+    color: var(--ink);
+    margin: 8px 0 -4px;
+  }
+  .project-preview-list .preview-caption{
+    font-size: 0.9rem; line-height:1.8; color: var(--ink); /* 본문 설명과 동일 */
+    margin-top: -12px;
+  }
   .project-preview-list .preview-img{
     width:100%;
     border-radius: 4px;
@@ -1804,6 +1814,7 @@
 
   const ACTIVITIES = [
     { id:'a1', name:"청년 활동공간 '청춘삘딩' 청년문화예술인지원사업 '두잇 아트'",
+      thumb: 'assets/activity-a1-01.jpg',
       description:[
         "금천구 청년공간 '청춘삘딩'에서 진행한 청년 예술가 지원 프로젝트 <두잇 아트>에 참여했습니다.",
         "2023년 프로젝트의 주제는 '독산동'으로, 독산동의 풍경을 담은 일러스트 3종과 프로젝트에 참여한 청년 예술가들을 소개하는 메인 포스터 및 청춘삘딩 홍보 포스터를 함께 제작했습니다.",
@@ -1811,21 +1822,44 @@
         "또한 글, 음악, 미디어아트, 회화, 일러스트 등 다양한 분야에서 활동하는 청년 예술가들을 소개하는 포스터를 제작하고, 이를 활용한 청춘삘딩 홍보 포스터를 함께 디자인했습니다.",
         "다양한 예술 분야가 하나의 프로젝트 안에서 어우러진다는 점을 시각적으로 전달할 수 있도록 구성했으며, 방문객들이 참여 예술가들을 쉽고 친근하게 만날 수 있는 디자인을 목표로 했습니다.",
         "[금천구 청년활동공간 청춘삘딩의 2023년 청년시민지원사업 '두잇'의 지원을 받아 제작되었습니다.]"
+      ],
+      previews: [
+        { type:'heading', text:'독산동 일러스트' },
+        { type:'image', src:'assets/activity-a1-02.jpg', caption:'독산동 정훈단지' },
+        { type:'image', src:'assets/activity-a1-03.jpg', caption:'독산도서관' },
+        { type:'image', src:'assets/activity-a1-04.jpg', caption:'금천한내교' },
+        { type:'heading', text:'청년예술인&청춘삘딩 일러스트 포스터' },
+        { type:'image', src:'assets/activity-a1-05.jpg' },
+        { type:'image', src:'assets/activity-a1-06.jpg' },
+        { type:'image', src:'assets/activity-a1-07.jpg' },
+        { type:'image', src:'assets/activity-a1-08.jpg' },
+        { type:'image', src:'assets/activity-a1-09.jpg' }
       ] },
     { id:'a2', name:"서울신용보증재단X청춘삘딩 '로컬 비즈니스 활성화 프로젝트' 청년 예술인",
+      thumb: 'assets/activity-a2-01.jpg',
       description:[
         "'서울신용보증재단'과 금천구 청년공간 '청춘삘딩'이 함께하는 <로컬 비즈니스 활성화 프로젝트>에 청년 예술인으로 참여했습니다.",
         "서울시 금천구 독산동 정훈단지를 대상으로, 과거 활기를 띠었던 지역의 기억과 정서를 재해석한 키비주얼 일러스트를 제작했습니다.",
         "1990년대부터 2000년대 초반까지의 정훈단지 주민들의 일상을 바탕으로 가상의 캐릭터 '정훈'과 '정아'를 기획하고, 당시의 생활 풍경을 담은 키비주얼을 구성했습니다.",
         "사우나, 문구점, 학원, 분식집 등 주민들의 일상적인 공간과 추억을 소재로 지역의 정체성과 향수를 시각적으로 표현했습니다.",
         "완성된 키비주얼 일러스트 4종은 축제 <정훈 이즈 백>의 포토존과 굿즈 등 다양한 홍보 콘텐츠에 활용되었습니다."
+      ],
+      previews: [
+        'assets/activity-a2-02.jpg','assets/activity-a2-03.jpg','assets/activity-a2-04.jpg',
+        'assets/activity-a2-05.jpg','assets/activity-a2-06.jpg','assets/activity-a2-07.jpg',
+        'assets/activity-a2-08.jpg','assets/activity-a2-09.jpg','assets/activity-a2-10.jpg',
+        'assets/activity-a2-11.jpg','assets/activity-a2-12.jpg','assets/activity-a2-13.jpg'
       ] },
     { id:'a3', name:'PREE 7th Exhibition: 뒤죽박죽 전시회',
+      thumb: 'assets/activity-a3-01.jpg',
       description:[
         '예술 커뮤니티 PREE가 주최한 <PREE 7th Exhibition: 뒤죽박죽 전시회>에 참여했습니다.',
         '스튜디오 미개척지에서 열린 이번 전시는 회화, 일러스트, 디지털, 음악, 영상, 조형 등 다양한 분야의 아티스트 40명이 함께한 프로젝트로, 각자의 개성과 표현 방식을 자유롭게 선보이는 전시였습니다.',
         '저는 <별이 쏟아지는 날>을 출품했으며, 별이 쏟아지는 밤, 가장 편안한 나만의 공간에서 책을 읽고 음악을 들으며 온전한 쉼을 누리는 순간을 따뜻한 색감과 아기자기한 오브제로 표현했습니다.',
         '이번 전시를 통해 다양한 분야의 창작자들과 교류하고, 관람객들과 작품을 공유하는 뜻깊은 경험을 쌓았습니다.'
+      ],
+      previews: [
+        'assets/activity-a3-02.jpg','assets/activity-a3-03.jpg','assets/activity-a3-04.jpg','assets/activity-a3-05.jpg'
       ] }
   ];
 
@@ -1892,13 +1926,39 @@
     const preview = document.getElementById('activityDetailPreview');
     preview.innerHTML = '';
     if(a.previews && a.previews.length){
-      a.previews.forEach(src => {
-        const img = document.createElement('img');
-        img.className = 'preview-img';
-        img.src = src;
-        img.alt = a.name;
-        img.loading = 'lazy';
-        preview.appendChild(img);
+      a.previews.forEach(item => {
+        // 문자열이면 기존처럼 단순 이미지
+        if(typeof item === 'string'){
+          const img = document.createElement('img');
+          img.className = 'preview-img';
+          img.src = item;
+          img.alt = a.name;
+          img.loading = 'lazy';
+          preview.appendChild(img);
+          return;
+        }
+        // 객체면 종류에 따라: 소제목(heading) / 캡션 있는 이미지(image)
+        if(item.type === 'heading'){
+          const h = document.createElement('h3');
+          h.className = 'preview-heading';
+          h.textContent = item.text;
+          preview.appendChild(h);
+          return;
+        }
+        if(item.type === 'image'){
+          const img = document.createElement('img');
+          img.className = 'preview-img';
+          img.src = item.src;
+          img.alt = item.caption || a.name;
+          img.loading = 'lazy';
+          preview.appendChild(img);
+          if(item.caption){
+            const cap = document.createElement('p');
+            cap.className = 'preview-caption';
+            cap.textContent = item.caption;
+            preview.appendChild(cap);
+          }
+        }
       });
     }
 
