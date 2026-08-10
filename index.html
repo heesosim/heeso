@@ -514,17 +514,6 @@
     padding: 14px;
     transition: background .2s ease, opacity .2s ease;
   }
-  .grid-multi-badge{
-    position:absolute; top:8px; right:8px;
-    background: rgba(255,255,255,0.92);
-    color: var(--ink);
-    border: 1px solid #715c53;
-    font-size: 0.72rem;
-    font-family: var(--font-heading);
-    padding: 2px 7px;
-    border-radius: 0;
-    pointer-events:none;
-  }
   .grid-box:hover .grid-overlay{
     background: rgba(0,0,0,0.38);
     opacity:1;
@@ -736,26 +725,39 @@
     display:block;
     margin: 0 auto;
   }
-  /* 갤러리 모드: 한 작업물에 이미지가 여러 장일 때, 세로로 쭉 스크롤해서 보기 */
+  /* 갤러리 모드: 한 작업물에 이미지가 여러 장일 때, 좌우 화살표로 넘겨보기 */
   .lightbox-gallery{
     display:none;
-    flex-direction:column;
-    gap: 20px;
-    max-width: 92vw;
-    max-height: 84vh;
-    overflow-y: auto;
-    padding: 4px;
-    cursor: default;
+    position:relative;
+    align-items:center;
+    justify-content:center;
   }
+  .lightbox.gallery-mode .lightbox-inner > img#lightboxImg{ display:none; }
+  .lightbox.gallery-mode .lightbox-gallery{ display:flex; }
   .lightbox-gallery img{
     max-width: 92vw;
-    width:auto;
+    max-height: 84vh;
     display:block;
     margin: 0 auto;
     background:#fff;
   }
-  .lightbox.gallery-mode .lightbox-inner > img#lightboxImg{ display:none; }
-  .lightbox.gallery-mode .lightbox-gallery{ display:flex; }
+  .lightbox-arrow{
+    position:absolute;
+    top:50%;
+    transform: translateY(-50%);
+    width:38px; height:38px;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid #715c53;
+    border-radius: 50%;
+    cursor: url('assets/cursor.png') 8 8, pointer;
+    z-index: 5;
+    padding:0;
+  }
+  .lightbox-arrow:hover{ background:#fff; }
+  .lightbox-arrow-prev{ left: 10px; }
+  .lightbox-arrow-next{ right: 10px; }
+  .lightbox-arrow svg{ width:12px; height:12px; display:block; }
   .lightbox-caption{
     color: var(--ink); margin-top:12px; font-size:0.8rem;
   }
@@ -1120,7 +1122,15 @@
   <span class="lightbox-close" id="lightboxClose">&times;</span>
   <div class="lightbox-inner">
     <img id="lightboxImg" src="" alt="">
-    <div class="lightbox-gallery" id="lightboxGallery"></div>
+    <div class="lightbox-gallery" id="lightboxGallery">
+      <button type="button" class="lightbox-arrow lightbox-arrow-prev" id="lightboxPrev" aria-label="이전 이미지">
+        <svg viewBox="0 0 10 16" fill="#715c53"><polygon points="10,0 0,8 10,16"/></svg>
+      </button>
+      <img id="lightboxGalleryImg" src="" alt="">
+      <button type="button" class="lightbox-arrow lightbox-arrow-next" id="lightboxNext" aria-label="다음 이미지">
+        <svg viewBox="0 0 10 16" fill="#715c53"><polygon points="0,0 10,8 0,16"/></svg>
+      </button>
+    </div>
     <div class="lightbox-caption" id="lightboxCaption"></div>
   </div>
 </div>
@@ -1325,11 +1335,32 @@
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightboxImg');
   const lightboxGallery = document.getElementById('lightboxGallery');
+  const lightboxGalleryImg = document.getElementById('lightboxGalleryImg');
+  const lightboxPrev = document.getElementById('lightboxPrev');
+  const lightboxNext = document.getElementById('lightboxNext');
   const lightboxCaption = document.getElementById('lightboxCaption');
   const lightboxClose = document.getElementById('lightboxClose');
 
-  function openLightbox(src, title){
-    // src가 배열이면 여러 장을 세로로 스크롤하는 갤러리 모드로 연다
+  let galleryFiles = null;
+  let galleryIndex = 0;
+
+  function renderGalleryImage(){
+    if(!galleryFiles) return;
+    lightboxGalleryImg.src = galleryFiles[galleryIndex];
+    lightboxGalleryImg.alt = lightboxCaption.textContent || '';
+    // 이미지가 1장뿐이면 화살표는 굳이 필요 없으니 숨김
+    const showArrows = galleryFiles.length > 1;
+    lightboxPrev.style.display = showArrows ? '' : 'none';
+    lightboxNext.style.display = showArrows ? '' : 'none';
+  }
+  function galleryStep(dir){
+    if(!galleryFiles || galleryFiles.length < 2) return;
+    galleryIndex = (galleryIndex + dir + galleryFiles.length) % galleryFiles.length;
+    renderGalleryImage();
+  }
+
+  function openLightbox(src, title, startIndex){
+    // src가 배열이면 여러 장을 좌우 화살표로 넘겨보는 갤러리 모드로 연다
     const files = Array.isArray(src) ? src : null;
 
     // 팝업을 열기 전, 지금 스크롤 위치를 현재 히스토리 항목에 저장해 둔다 (닫을 때 복원용)
@@ -1337,19 +1368,22 @@
       safeReplaceState(Object.assign({}, history.state, { scrollY: window.scrollY }));
     }
 
+    lightboxCaption.textContent = title || '';
+
     if(files){
       lightbox.classList.add('gallery-mode');
-      lightboxGallery.innerHTML = files.map(f => `<img src="${f}" alt="${title || ''}">`).join('');
+      galleryFiles = files;
+      galleryIndex = (typeof startIndex === 'number' && startIndex >= 0 && startIndex < files.length) ? startIndex : 0;
+      renderGalleryImage();
       lightboxImg.src = '';
     } else {
       lightbox.classList.remove('gallery-mode');
-      lightboxGallery.innerHTML = '';
+      galleryFiles = null;
       lightboxImg.src = src;
       lightboxImg.alt = title || '';
     }
-    lightboxCaption.textContent = title || '';
     lightbox.classList.add('active');
-    safePushState({ lightbox: true, src: files ? null : src, files: files || null, title });
+    safePushState({ lightbox: true, src: files ? null : src, files: files || null, index: files ? galleryIndex : null, title });
   }
   function closeLightbox(){
     if(lightbox.classList.contains('active')){
@@ -1359,10 +1393,12 @@
         lightbox.classList.remove('active');
         lightbox.classList.remove('gallery-mode');
         lightboxImg.src = '';
-        lightboxGallery.innerHTML = '';
+        galleryFiles = null;
       }
     }
   }
+  lightboxPrev.addEventListener('click', () => galleryStep(-1));
+  lightboxNext.addEventListener('click', () => galleryStep(1));
 
   // 홈 화면 대표 작업물 (지정된 순서 그대로 표시, Illustration 페이지의 원본 이미지와 연동)
   const HOME_PICKS = [
@@ -1437,21 +1473,21 @@
       box.innerHTML = `
         <img src="assets/works/${thumbFile}" alt="${work.title}" loading="lazy">
         <div class="grid-overlay"><span class="grid-title">${work.title}</span></div>
-        ${isMulti ? `<span class="grid-multi-badge">+${work.files.length - 1}</span>` : ''}
       `;
       illustrationGrid.appendChild(box);
     });
   }
 
   document.addEventListener('click', (e) => {
-    const previewImg = e.target.closest('.project-preview-list img.preview-img');
-    if(previewImg){
-      openLightbox(previewImg.getAttribute('src'), previewImg.alt);
-      return;
-    }
-    const heroImg = e.target.closest('.project-detail-hero img');
-    if(heroImg){
-      openLightbox(heroImg.getAttribute('src'), heroImg.alt);
+    // 상세페이지(Work/Project) 안의 이미지: 대표 이미지 + 본문 이미지 전체를 한 세트로 묶어서
+    // 어떤 이미지를 눌렀든 그 페이지 안에서 화살표로 앞뒤 이미지를 넘나들 수 있게 함
+    const detailImg = e.target.closest('.project-detail-hero img, .project-preview-list img.preview-img');
+    if(detailImg){
+      const activeView = detailImg.closest('.view');
+      const allImgs = Array.from(activeView.querySelectorAll('.project-detail-hero img, .project-preview-list img.preview-img'));
+      const srcs = allImgs.map(img => img.getAttribute('src'));
+      const idx = allImgs.indexOf(detailImg);
+      openLightbox(srcs, detailImg.alt, idx === -1 ? 0 : idx);
       return;
     }
     const box = e.target.closest('.grid-box');
@@ -2203,17 +2239,19 @@
     const state = e.state;
 
     if(state && state.lightbox){
+      lightboxCaption.textContent = state.title || '';
       if(state.files){
         lightbox.classList.add('gallery-mode');
-        lightboxGallery.innerHTML = state.files.map(f => `<img src="${f}" alt="${state.title || ''}">`).join('');
+        galleryFiles = state.files;
+        galleryIndex = (typeof state.index === 'number') ? state.index : 0;
+        renderGalleryImage();
         lightboxImg.src = '';
       } else {
         lightbox.classList.remove('gallery-mode');
-        lightboxGallery.innerHTML = '';
+        galleryFiles = null;
         lightboxImg.src = state.src;
         lightboxImg.alt = state.title || '';
       }
-      lightboxCaption.textContent = state.title || '';
       lightbox.classList.add('active');
       return;
     }
@@ -2221,7 +2259,7 @@
     if(lightbox.classList.contains('active')){
       lightbox.classList.remove('active');
       lightbox.classList.remove('gallery-mode');
-      lightboxGallery.innerHTML = '';
+      galleryFiles = null;
       lightboxImg.src = '';
     }
 
