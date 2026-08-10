@@ -514,6 +514,17 @@
     padding: 14px;
     transition: background .2s ease, opacity .2s ease;
   }
+  .grid-multi-badge{
+    position:absolute; top:8px; right:8px;
+    background: rgba(255,255,255,0.92);
+    color: var(--ink);
+    border: 1px solid #715c53;
+    font-size: 0.72rem;
+    font-family: var(--font-heading);
+    padding: 2px 7px;
+    border-radius: 0;
+    pointer-events:none;
+  }
   .grid-box:hover .grid-overlay{
     background: rgba(0,0,0,0.38);
     opacity:1;
@@ -725,6 +736,26 @@
     display:block;
     margin: 0 auto;
   }
+  /* 갤러리 모드: 한 작업물에 이미지가 여러 장일 때, 세로로 쭉 스크롤해서 보기 */
+  .lightbox-gallery{
+    display:none;
+    flex-direction:column;
+    gap: 20px;
+    max-width: 92vw;
+    max-height: 84vh;
+    overflow-y: auto;
+    padding: 4px;
+    cursor: default;
+  }
+  .lightbox-gallery img{
+    max-width: 92vw;
+    width:auto;
+    display:block;
+    margin: 0 auto;
+    background:#fff;
+  }
+  .lightbox.gallery-mode .lightbox-inner > img#lightboxImg{ display:none; }
+  .lightbox.gallery-mode .lightbox-gallery{ display:flex; }
   .lightbox-caption{
     color: var(--ink); margin-top:12px; font-size:0.8rem;
   }
@@ -1089,6 +1120,7 @@
   <span class="lightbox-close" id="lightboxClose">&times;</span>
   <div class="lightbox-inner">
     <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-gallery" id="lightboxGallery"></div>
     <div class="lightbox-caption" id="lightboxCaption"></div>
   </div>
 </div>
@@ -1291,19 +1323,32 @@
   // 라이트박스(작업물 팝업) - 여백 없는 원본 비율 이미지 사용
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxGallery = document.getElementById('lightboxGallery');
   const lightboxCaption = document.getElementById('lightboxCaption');
   const lightboxClose = document.getElementById('lightboxClose');
 
   function openLightbox(src, title){
+    // src가 배열이면 여러 장을 세로로 스크롤하는 갤러리 모드로 연다
+    const files = Array.isArray(src) ? src : null;
+
     // 팝업을 열기 전, 지금 스크롤 위치를 현재 히스토리 항목에 저장해 둔다 (닫을 때 복원용)
     if(history.state){
       safeReplaceState(Object.assign({}, history.state, { scrollY: window.scrollY }));
     }
-    lightboxImg.src = src;
-    lightboxImg.alt = title || '';
+
+    if(files){
+      lightbox.classList.add('gallery-mode');
+      lightboxGallery.innerHTML = files.map(f => `<img src="${f}" alt="${title || ''}">`).join('');
+      lightboxImg.src = '';
+    } else {
+      lightbox.classList.remove('gallery-mode');
+      lightboxGallery.innerHTML = '';
+      lightboxImg.src = src;
+      lightboxImg.alt = title || '';
+    }
     lightboxCaption.textContent = title || '';
     lightbox.classList.add('active');
-    safePushState({ lightbox: true, src, title });
+    safePushState({ lightbox: true, src: files ? null : src, files: files || null, title });
   }
   function closeLightbox(){
     if(lightbox.classList.contains('active')){
@@ -1311,7 +1356,9 @@
         history.back();
       } else {
         lightbox.classList.remove('active');
+        lightbox.classList.remove('gallery-mode');
         lightboxImg.src = '';
+        lightboxGallery.innerHTML = '';
       }
     }
   }
@@ -1371,17 +1418,25 @@
   });
 
   // 작업물 그리드 렌더링 (WORKS 배열 기반, 번호 역순 = 최신이 먼저 오도록)
+  // work.file (문자열 1장) 또는 work.files (배열, 여러 장) 둘 다 지원
   const illustrationGrid = document.getElementById('illustrationGrid');
   if(illustrationGrid){
     const orderedWorks = [...WORKS].reverse();
     orderedWorks.forEach((work) => {
       const box = document.createElement('div');
       box.className = 'grid-box';
-      box.dataset.file = work.file;
+      const isMulti = Array.isArray(work.files) && work.files.length > 1;
+      const thumbFile = isMulti ? work.files[0] : work.file;
       box.dataset.title = work.title;
+      if(isMulti){
+        box.dataset.files = JSON.stringify(work.files);
+      } else {
+        box.dataset.file = work.file;
+      }
       box.innerHTML = `
-        <img src="assets/works/${work.file}" alt="${work.title}" loading="lazy">
+        <img src="assets/works/${thumbFile}" alt="${work.title}" loading="lazy">
         <div class="grid-overlay"><span class="grid-title">${work.title}</span></div>
+        ${isMulti ? `<span class="grid-multi-badge">+${work.files.length - 1}</span>` : ''}
       `;
       illustrationGrid.appendChild(box);
     });
@@ -1399,7 +1454,10 @@
       return;
     }
     const box = e.target.closest('.grid-box');
-    if(box && box.dataset.file){
+    if(box && box.dataset.files){
+      const files = JSON.parse(box.dataset.files).map(f => 'assets/works/' + f);
+      openLightbox(files, box.dataset.title);
+    } else if(box && box.dataset.file){
       openLightbox('assets/works/' + box.dataset.file, box.dataset.title);
     }
   });
@@ -1814,7 +1872,7 @@
 
   const ACTIVITIES = [
     { id:'a1', name:"청년 활동공간 '청춘삘딩' 청년문화예술인지원사업 '두잇 아트'",
-      thumb: 'assets/activity-a1-01.jpg',
+      thumb: 'assets/activity/a1-01.jpg',
       description:[
         "금천구 청년공간 '청춘삘딩'에서 진행한 청년 예술가 지원 프로젝트 <두잇 아트>에 참여했습니다.",
         "2023년 프로젝트의 주제는 '독산동'으로, 독산동의 풍경을 담은 일러스트 3종과 프로젝트에 참여한 청년 예술가들을 소개하는 메인 포스터 및 청춘삘딩 홍보 포스터를 함께 제작했습니다.",
@@ -1825,18 +1883,18 @@
       ],
       previews: [
         { type:'heading', text:'독산동 일러스트' },
-        { type:'image', src:'assets/activity-a1-02.jpg', caption:'독산동 정훈단지' },
-        { type:'image', src:'assets/activity-a1-03.jpg', caption:'독산도서관' },
-        { type:'image', src:'assets/activity-a1-04.jpg', caption:'금천한내교' },
+        { type:'image', src:'assets/activity/a1-02.jpg', caption:'독산동 정훈단지' },
+        { type:'image', src:'assets/activity/a1-03.jpg', caption:'독산도서관' },
+        { type:'image', src:'assets/activity/a1-04.jpg', caption:'금천한내교' },
         { type:'heading', text:'청년예술인&청춘삘딩 일러스트 포스터' },
-        { type:'image', src:'assets/activity-a1-05.jpg' },
-        { type:'image', src:'assets/activity-a1-06.jpg' },
-        { type:'image', src:'assets/activity-a1-07.jpg' },
-        { type:'image', src:'assets/activity-a1-08.jpg' },
-        { type:'image', src:'assets/activity-a1-09.jpg' }
+        { type:'image', src:'assets/activity/a1-05.jpg' },
+        { type:'image', src:'assets/activity/a1-06.jpg' },
+        { type:'image', src:'assets/activity/a1-07.jpg' },
+        { type:'image', src:'assets/activity/a1-08.jpg' },
+        { type:'image', src:'assets/activity/a1-09.jpg' }
       ] },
     { id:'a2', name:"서울신용보증재단X청춘삘딩 '로컬 비즈니스 활성화 프로젝트' 청년 예술인",
-      thumb: 'assets/activity-a2-01.jpg',
+      thumb: 'assets/activity/a2-01.jpg',
       description:[
         "'서울신용보증재단'과 금천구 청년공간 '청춘삘딩'이 함께하는 <로컬 비즈니스 활성화 프로젝트>에 청년 예술인으로 참여했습니다.",
         "서울시 금천구 독산동 정훈단지를 대상으로, 과거 활기를 띠었던 지역의 기억과 정서를 재해석한 키비주얼 일러스트를 제작했습니다.",
@@ -1845,13 +1903,13 @@
         "완성된 키비주얼 일러스트 4종은 축제 <정훈 이즈 백>의 포토존과 굿즈 등 다양한 홍보 콘텐츠에 활용되었습니다."
       ],
       previews: [
-        'assets/activity-a2-02.jpg','assets/activity-a2-03.jpg','assets/activity-a2-04.jpg',
-        'assets/activity-a2-05.jpg','assets/activity-a2-06.jpg','assets/activity-a2-07.jpg',
-        'assets/activity-a2-08.jpg','assets/activity-a2-09.jpg','assets/activity-a2-10.jpg',
-        'assets/activity-a2-11.jpg','assets/activity-a2-12.jpg','assets/activity-a2-13.jpg'
+        'assets/activity/a2-02.jpg','assets/activity/a2-03.jpg','assets/activity/a2-04.jpg',
+        'assets/activity/a2-05.jpg','assets/activity/a2-06.jpg','assets/activity/a2-07.jpg',
+        'assets/activity/a2-08.jpg','assets/activity/a2-09.jpg','assets/activity/a2-10.jpg',
+        'assets/activity/a2-11.jpg','assets/activity/a2-12.jpg','assets/activity/a2-13.jpg'
       ] },
     { id:'a3', name:'PREE 7th Exhibition: 뒤죽박죽 전시회',
-      thumb: 'assets/activity-a3-01.jpg',
+      thumb: 'assets/activity/a3-01.jpg',
       description:[
         '예술 커뮤니티 PREE가 주최한 <PREE 7th Exhibition: 뒤죽박죽 전시회>에 참여했습니다.',
         '스튜디오 미개척지에서 열린 이번 전시는 회화, 일러스트, 디지털, 음악, 영상, 조형 등 다양한 분야의 아티스트 40명이 함께한 프로젝트로, 각자의 개성과 표현 방식을 자유롭게 선보이는 전시였습니다.',
@@ -1859,7 +1917,7 @@
         '이번 전시를 통해 다양한 분야의 창작자들과 교류하고, 관람객들과 작품을 공유하는 뜻깊은 경험을 쌓았습니다.'
       ],
       previews: [
-        'assets/activity-a3-02.jpg','assets/activity-a3-03.jpg','assets/activity-a3-04.jpg','assets/activity-a3-05.jpg'
+        'assets/activity/a3-02.jpg','assets/activity/a3-03.jpg','assets/activity/a3-04.jpg','assets/activity/a3-05.jpg'
       ] }
   ];
 
@@ -2144,8 +2202,16 @@
     const state = e.state;
 
     if(state && state.lightbox){
-      lightboxImg.src = state.src;
-      lightboxImg.alt = state.title || '';
+      if(state.files){
+        lightbox.classList.add('gallery-mode');
+        lightboxGallery.innerHTML = state.files.map(f => `<img src="${f}" alt="${state.title || ''}">`).join('');
+        lightboxImg.src = '';
+      } else {
+        lightbox.classList.remove('gallery-mode');
+        lightboxGallery.innerHTML = '';
+        lightboxImg.src = state.src;
+        lightboxImg.alt = state.title || '';
+      }
       lightboxCaption.textContent = state.title || '';
       lightbox.classList.add('active');
       return;
@@ -2153,6 +2219,8 @@
 
     if(lightbox.classList.contains('active')){
       lightbox.classList.remove('active');
+      lightbox.classList.remove('gallery-mode');
+      lightboxGallery.innerHTML = '';
       lightboxImg.src = '';
     }
 
