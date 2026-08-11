@@ -725,26 +725,27 @@
     display:block;
     margin: 0 auto;
   }
-  /* 갤러리 모드: 한 작업물에 이미지가 여러 장일 때, 좌우 화살표로 넘겨보기 */
+  /* 갤러리 모드: 한 작업물에 이미지가 여러 장일 때, 좌우 화살표로 넘겨보기
+     화살표를 그림 위에 겹치지 않도록 flex로 나란히 배치 (그림 옆 바깥쪽에 위치) */
   .lightbox-gallery{
     display:none;
-    position:relative;
     align-items:center;
     justify-content:center;
+    gap: 14px;
+    max-width: 92vw;
   }
   .lightbox.gallery-mode .lightbox-inner > img#lightboxImg{ display:none; }
   .lightbox.gallery-mode .lightbox-gallery{ display:flex; }
   .lightbox-gallery img{
-    max-width: 92vw;
+    max-width: calc(92vw - 120px); /* 양옆 화살표(38px)+간격 자리를 뺀 폭 */
     max-height: 84vh;
     display:block;
-    margin: 0 auto;
     background:#fff;
   }
   .lightbox-arrow{
-    position:absolute;
-    top:50%;
-    transform: translateY(-50%);
+    flex-shrink: 0;
+    position: static;
+    transform: none;
     width:38px; height:38px;
     display:flex; align-items:center; justify-content:center;
     background: rgba(255,255,255,0.9);
@@ -755,8 +756,7 @@
     padding:0;
   }
   .lightbox-arrow:hover{ background:#fff; }
-  .lightbox-arrow-prev{ left: 10px; }
-  .lightbox-arrow-next{ right: 10px; }
+  .lightbox-arrow[hidden]{ display:none; }
   .lightbox-arrow svg{ width:12px; height:12px; display:block; }
   .lightbox-caption{
     color: var(--ink); margin-top:12px; font-size:0.8rem;
@@ -1349,13 +1349,16 @@
     lightboxGalleryImg.src = galleryFiles[galleryIndex];
     lightboxGalleryImg.alt = lightboxCaption.textContent || '';
     // 이미지가 1장뿐이면 화살표는 굳이 필요 없으니 숨김
+    // 여러 장이어도 첫 장에서는 이전 화살표, 마지막 장에서는 다음 화살표를 숨김 (더 앞/뒤가 없으니까)
     const showArrows = galleryFiles.length > 1;
-    lightboxPrev.style.display = showArrows ? '' : 'none';
-    lightboxNext.style.display = showArrows ? '' : 'none';
+    lightboxPrev.style.display = (showArrows && galleryIndex > 0) ? '' : 'none';
+    lightboxNext.style.display = (showArrows && galleryIndex < galleryFiles.length - 1) ? '' : 'none';
   }
   function galleryStep(dir){
     if(!galleryFiles || galleryFiles.length < 2) return;
-    galleryIndex = (galleryIndex + dir + galleryFiles.length) % galleryFiles.length;
+    const next = galleryIndex + dir;
+    if(next < 0 || next > galleryFiles.length - 1) return; // 양 끝에서는 더 넘어가지 않음
+    galleryIndex = next;
     renderGalleryImage();
   }
 
