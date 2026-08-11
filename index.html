@@ -726,26 +726,30 @@
     margin: 0 auto;
   }
   /* 갤러리 모드: 한 작업물에 이미지가 여러 장일 때, 좌우 화살표로 넘겨보기
-     화살표를 그림 위에 겹치지 않도록 flex로 나란히 배치 (그림 옆 바깥쪽에 위치) */
+     이미지 크기가 매번 달라도 위치가 안 흔들리도록, 고정 크기의 "무대" 안에 이미지를 항상 정중앙으로 표시하고
+     화살표는 그 무대 바깥의 고정 좌표에 둔다 (이미지 크기와 무관하게 화살표 위치도 항상 동일) */
   .lightbox-gallery{
     display:none;
+    position:relative;
     align-items:center;
     justify-content:center;
-    gap: 14px;
-    max-width: 92vw;
+    width: min(760px, calc(100vw - 116px));
+    height: min(600px, 78vh);
+    margin: 0 auto;
   }
   .lightbox.gallery-mode .lightbox-inner > img#lightboxImg{ display:none; }
   .lightbox.gallery-mode .lightbox-gallery{ display:flex; }
   .lightbox-gallery img{
-    max-width: calc(92vw - 120px); /* 양옆 화살표(38px)+간격 자리를 뺀 폭 */
-    max-height: 84vh;
+    max-width: 100%;
+    max-height: 100%;
+    width:auto; height:auto;
     display:block;
     background:#fff;
   }
   .lightbox-arrow{
-    flex-shrink: 0;
-    position: static;
-    transform: none;
+    position:absolute;
+    top:50%;
+    transform: translateY(-50%);
     width:38px; height:38px;
     display:flex; align-items:center; justify-content:center;
     background: rgba(255,255,255,0.9);
@@ -755,6 +759,8 @@
     z-index: 5;
     padding:0;
   }
+  .lightbox-arrow-prev{ left: -46px; }
+  .lightbox-arrow-next{ right: -46px; }
   .lightbox-arrow:hover{ background:#fff; }
   .lightbox-arrow[hidden]{ display:none; }
   .lightbox-arrow svg{ width:12px; height:12px; display:block; }
