@@ -219,7 +219,8 @@
   nav.side .sub-nav a.active{ background: #eef9ff; }
 
   .side-links{
-    display:flex; gap: 8px;
+    display:flex; gap: 11.25px; /* 28.5px*3 + 11.25px*2 = 108px = 명함 버튼 폭과 동일 */
+    width: fit-content; /* 부모(nav) 전체 폭으로 늘어나지 않고 아이콘 3개 폭만큼만 차지하게 */
     margin-top: 40px;
   }
   nav.side .side-links a{
@@ -865,13 +866,13 @@
     /* What I do 라벨이 이미지와 겹치지 않도록 절대위치를 풀고 이미지 위에 쌓이게 함 */
     .whatido-label{ position:static; margin-bottom:10px; }
 
-    /* 로고가 커서 하트/별 아이콘 아래 남는 여백에 인스타·메일·명함 버튼을 우측정렬로 배치 */
+    /* 로고가 커서 하트/별 아이콘 아래 남는 여백에 인스타·메일·유튜브·명함 버튼을 우측정렬로 배치
+       (아이콘 3개+간격 폭을 명함 버튼 폭과 동일하게 맞춰서, 우측을 같은 좌표에 두면 좌측도 자동으로 맞음) */
     .side-links{
       position:absolute;
       top: 110px;
-      right: 24.75px; /* 별(30px)-메일(28.5px) 크기 차이를 보정해 중심을 정확히 맞춤 */
+      right: 24.75px;
       margin-top: 0;
-      gap: 10px; /* 위 하트/별과 인스타/메일이 세로로 열이 맞도록 간격 미세조정 */
       z-index: 6; /* top-icons(z-index:5)보다 위로: 안 그러면 빈 공간이 클릭을 가로챔 */
     }
     .bizcard-btn{
@@ -929,6 +930,7 @@
       <div class="side-links">
         <a href="https://instagram.com/heesosim" target="_blank" aria-label="인스타그램"><img src="assets/icon-instagram.svg" alt="Instagram"></a>
         <a href="mailto:bydidi96@daum.net" aria-label="이메일"><img src="assets/icon-mail.svg" alt="Mail"></a>
+        <a href="https://www.youtube.com/@heesosim" target="_blank" aria-label="유튜브"><img src="assets/icon-youtube.svg" alt="YouTube"></a>
       </div>
       <button type="button" id="bizcardBtn" class="rounded bizcard-btn"><img src="assets/bizcard-btn.svg" alt="Download Business Card"></button>
       <div class="print-overlay" id="printOverlay">
