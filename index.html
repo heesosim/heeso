@@ -711,6 +711,7 @@
     display:none; align-items:center; justify-content:center;
     padding: 40px;
     cursor: url('assets/cursor.png') 8 8, pointer;
+    touch-action: manipulation; /* 빠르게 연타할 때 더블탭 확대되는 것 방지 (핀치 확대는 그대로 됨) */
   }
   .lightbox.active{ display:flex; }
   .lightbox-inner{
@@ -750,6 +751,7 @@
     position:absolute;
     top:50%;
     transform: translateY(-50%);
+    touch-action: manipulation;
     width:38px; height:38px;
     display:flex; align-items:center; justify-content:center;
     background: rgba(255,255,255,0.9);
@@ -777,6 +779,7 @@
     font-size:1.3rem; font-weight:300;
     cursor: url('assets/cursor.png') 8 8, pointer;
     line-height:1;
+    touch-action: manipulation;
   }
 
   /* ---------- 명함 인쇄 애니메이션 ---------- */
@@ -1331,9 +1334,14 @@
     }
     renderView(key);
     window.scrollTo(0, 0);
-    const hash = '#' + key + (id ? (':' + id) : '');
+    // 홈은 깔끔한 기본 주소를 유지 (해시 안 붙임), 다른 페이지는 새로고침 시 유지되도록 해시를 붙임
+    const hash = key === 'home' ? '' : ('#' + key + (id ? (':' + id) : ''));
     if(hash !== location.hash){
-      safePushState({ view: key, id: id || null, scrollY: 0 }, hash);
+      if(hash === ''){
+        safePushState({ view: key, id: id || null, scrollY: 0 }, location.pathname + location.search);
+      } else {
+        safePushState({ view: key, id: id || null, scrollY: 0 }, hash);
+      }
     }
   }
 
@@ -2239,7 +2247,11 @@
     safeReplaceState({ view: 'activity-detail', id: initialId, scrollY: 0 }, '#activity-detail:' + initialId);
   } else {
     renderView(startKey);
-    safeReplaceState({ view: startKey, scrollY: 0 }, '#' + startKey);
+    if(startKey === 'home'){
+      safeReplaceState({ view: startKey, scrollY: 0 }, location.pathname + location.search);
+    } else {
+      safeReplaceState({ view: startKey, scrollY: 0 }, '#' + startKey);
+    }
   }
 
   // 뒤로가기/앞으로가기 버튼 대응: 라이트박스가 열려있으면 먼저 닫고,
