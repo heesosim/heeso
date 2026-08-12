@@ -1306,6 +1306,14 @@
   const navLinks = document.querySelectorAll('.nav-link');
   const subContact = document.getElementById('subContact');
 
+  // 내부적으로는 예전부터 'project'=Work 데이터, 'activity'=Project 데이터로 쓰고 있어서
+  // 그대로 두면 주소창 해시가 화면에 보이는 카테고리명과 어긋남 (Work인데 #project, Project인데 #activity).
+  // 그래서 주소(해시)에 노출될 때만 화면 이름 기준으로 바꿔주는 변환表.
+  const INTERNAL_TO_URL_KEY = { project:'work', 'project-detail':'work-detail', activity:'project', 'activity-detail':'project-detail' };
+  const URL_TO_INTERNAL_KEY = { work:'project', 'work-detail':'project-detail', project:'activity', 'project-detail':'activity-detail' };
+  function toUrlKey(key){ return INTERNAL_TO_URL_KEY[key] || key; }
+  function toInternalKey(key){ return URL_TO_INTERNAL_KEY[key] || key; }
+
   function renderView(key){
     views.forEach(v => v.classList.remove('active'));
     navLinks.forEach(l => l.classList.remove('active'));
@@ -1335,7 +1343,9 @@
     renderView(key);
     window.scrollTo(0, 0);
     // 홈은 깔끔한 기본 주소를 유지 (해시 안 붙임), 다른 페이지는 새로고침 시 유지되도록 해시를 붙임
-    const hash = key === 'home' ? '' : ('#' + key + (id ? (':' + id) : ''));
+    // 해시에는 내부 키 대신, 화면에 보이는 카테고리명 기준의 키를 사용
+    const urlKey = toUrlKey(key);
+    const hash = key === 'home' ? '' : ('#' + urlKey + (id ? (':' + id) : ''));
     if(hash !== location.hash){
       if(hash === ''){
         safePushState({ view: key, id: id || null, scrollY: 0 }, location.pathname + location.search);
@@ -2234,23 +2244,25 @@
   document.querySelectorAll('.home-slider-wrap').forEach(initDragScroll);
 
   // 초기 진입: 새로고침 시에도 주소의 해시(#about, #illustration, #project-detail:n05 등)를 읽어 그 페이지를 유지
+  // 해시는 화면에 보이는 카테고리명 기준이므로, 내부 로직에서 쓰는 키로 변환해서 사용
   const validKeys = ['home','about','illustration','project','project-detail','activity','activity-detail','contact','guide'];
   const rawHash = (location.hash || '').replace('#','');
-  const [initialKey, initialId] = rawHash.split(':');
+  const [urlKeyFromHash, initialId] = rawHash.split(':');
+  const initialKey = toInternalKey(urlKeyFromHash);
   const startKey = validKeys.includes(initialKey) ? initialKey : 'home';
 
   if(startKey === 'project-detail' && initialId && PROJECTS.some(p => p.id === initialId)){
     openProjectDetail(initialId);
-    safeReplaceState({ view: 'project-detail', id: initialId, scrollY: 0 }, '#project-detail:' + initialId);
+    safeReplaceState({ view: 'project-detail', id: initialId, scrollY: 0 }, '#' + toUrlKey('project-detail') + ':' + initialId);
   } else if(startKey === 'activity-detail' && initialId && ACTIVITIES.some(a => a.id === initialId)){
     openActivityDetail(initialId);
-    safeReplaceState({ view: 'activity-detail', id: initialId, scrollY: 0 }, '#activity-detail:' + initialId);
+    safeReplaceState({ view: 'activity-detail', id: initialId, scrollY: 0 }, '#' + toUrlKey('activity-detail') + ':' + initialId);
   } else {
     renderView(startKey);
     if(startKey === 'home'){
       safeReplaceState({ view: startKey, scrollY: 0 }, location.pathname + location.search);
     } else {
-      safeReplaceState({ view: startKey, scrollY: 0 }, '#' + startKey);
+      safeReplaceState({ view: startKey, scrollY: 0 }, '#' + toUrlKey(startKey));
     }
   }
 
@@ -2284,7 +2296,7 @@
       lightboxImg.src = '';
     }
 
-    const key = (state && state.view) ? state.view : ((location.hash || '').replace('#','').split(':')[0] || 'home');
+    const key = (state && state.view) ? state.view : toInternalKey((location.hash || '').replace('#','').split(':')[0] || 'home');
     const id = (state && state.id) ? state.id : ((location.hash || '').split(':')[1] || null);
 
     if(key === 'project-detail' && id && PROJECTS.some(p => p.id === id)){
