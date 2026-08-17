@@ -726,6 +726,8 @@
     background:#fff;
     display:block;
     margin: 0 auto;
+    -webkit-user-drag: none;
+    user-select: none;
   }
   /* 갤러리 모드: 한 작업물에 이미지가 여러 장일 때, 좌우 화살표로 넘겨보기
      이미지 크기가 매번 달라도 위치가 안 흔들리도록, 고정 크기의 "무대" 안에 이미지를 항상 정중앙으로 표시하고
@@ -747,6 +749,8 @@
     width:auto; height:auto;
     display:block;
     background:#fff;
+    -webkit-user-drag: none;
+    user-select: none;
   }
   .lightbox-video-wrap{
     display:none;
@@ -1147,12 +1151,12 @@
 <div class="lightbox" id="lightbox">
   <span class="lightbox-close" id="lightboxClose">&times;</span>
   <div class="lightbox-inner">
-    <img id="lightboxImg" src="" alt="">
+    <img id="lightboxImg" src="" alt="" draggable="false">
     <div class="lightbox-gallery" id="lightboxGallery">
       <button type="button" class="lightbox-arrow lightbox-arrow-prev" id="lightboxPrev" aria-label="이전 이미지">
         <svg viewBox="0 0 10 16" fill="#715c53"><polygon points="10,0 0,8 10,16"/></svg>
       </button>
-      <img id="lightboxGalleryImg" src="" alt="">
+      <img id="lightboxGalleryImg" src="" alt="" draggable="false">
       <div class="lightbox-video-wrap" id="lightboxVideoWrap">
         <iframe id="lightboxVideoFrame" src="" title="YouTube video" frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -1279,7 +1283,7 @@
     {file:'098.jpg',title:'나의 작은 옥상 텃밭'},
     {file:'099.jpg',title:'여름 모자'},
     {files:['100-1.jpg','100-2.jpg','100-3.jpg'],title:'여름의 풍경'},
-    {files:['101-0.jpg','101-1.jpg',{video:'KoP0GQKS_-Q'},'101-2.jpg','101-3.jpg'],title:'우리 동네 구경하기'}
+    {files:['101-0.jpg',{video:'KoP0GQKS_-Q'},'101-1.jpg','101-2.jpg','101-3.jpg'],title:'우리 동네 구경하기'}
   ];
 </script>
 
@@ -1449,17 +1453,18 @@
     safePushState({ lightbox: true, src: files ? null : src, files: files || null, index: files ? galleryIndex : null, title });
   }
   function closeLightbox(){
-    if(lightbox.classList.contains('active')){
-      if(history.state && history.state.lightbox){
-        history.back();
-      } else {
-        lightbox.classList.remove('active');
-        lightbox.classList.remove('gallery-mode');
-        lightbox.classList.remove('video-active');
-        lightboxImg.src = '';
-        lightboxVideoFrame.src = '';
-        galleryFiles = null;
-      }
+    if(!lightbox.classList.contains('active')) return;
+    // 먼저 화면에서 즉시(동기적으로) 닫는다 - history.back()의 popstate 처리를 기다리지 않음
+    // (기다리는 방식이었을 때, 타이밍에 따라 첫 클릭에 안 닫히는 문제가 있었음)
+    lightbox.classList.remove('active');
+    lightbox.classList.remove('gallery-mode');
+    lightbox.classList.remove('video-active');
+    lightboxImg.src = '';
+    lightboxVideoFrame.src = '';
+    galleryFiles = null;
+    // 주소(히스토리)에 남아있던 lightbox 상태는 뒤로가기로 정리 (있을 때만)
+    if(history.state && history.state.lightbox){
+      history.back();
     }
   }
   lightboxPrev.addEventListener('click', () => galleryStep(-1));
