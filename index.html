@@ -1398,20 +1398,17 @@
   let galleryFiles = null;
   let galleryIndex = 0;
 
-  // 팝업을 닫을 때 history.back()을 호출하는데, 이게 실제로 반영되기까지(popstate 발생까지)
-  // 아주 짧은 시간이 걸립니다. 그 사이에 다른 이미지를 또 열면(예: 닫히자마자 바로 다른 썸네일 클릭)
-  // history.state가 아직 "닫히기 전" 값을 가리키고 있어서, 팝업 상태가 히스토리에 연속으로
-  // 두 번 쌓이는 문제가 생깁니다. 그러면 이후 뒤로가기/배경 클릭으로 닫을 때마다 그 밑에 깔린
-  // "예전 팝업"이 대신 나타나는 버그로 이어집니다. 이 잠금 플래그로 그 틈을 막습니다.
-  let lightboxNavPending = false;
-
-  // 갤러리에 유튜브 영상이 포함된 경우(<iframe>), 그 영상까지 넘겨서 본 뒤 팝업을 닫으면
-  // 유튜브 iframe이 브라우저 히스토리에 자기 항목을 끼워넣어서(잘 알려진 브라우저 동작),
-  // 팝업을 닫으려고 부른 history.back()이 우리 페이지가 아니라 그 iframe 쪽으로 가버리는 경우가 있다.
-  // 그러면 history.state가 "닫히기 전" 값(lightbox:true)에 그대로 남아있게 되고, 나중에 다른
-  // 이미지를 열 때 그 오염된 값이 재사용되어 엉뚱한(예전) 이미지가 다시 뜨는 버그로 이어진다.
-  // 그래서 팝업을 열 때 "닫으면 돌아가야 할 상태"를 브라우저 히스토리가 아니라 이 변수에
-  // 직접 기억해두고, 혹시 history.back() 이후에도 상태가 정상으로 안 돌아왔으면 강제로 바로잡는다.
+  // 갤러리에 유튜브 영상이 포함되면(<iframe src="...">), iframe.src를 바꿀 때마다
+  // 브라우저의 "joint session history"에 그 iframe만의 탐색 기록이 쌓입니다(잘 알려진 브라우저 동작).
+  // 이 상태에서 팝업을 닫으려고 history.back()을 부르면, 우리 페이지가 아니라 그 iframe 쪽의
+  // 탐색 기록이 대신 소비되어버려 popstate가 아예 안 오거나 엉뚱한 예전 팝업 상태로 튀는 문제가
+  // 있었습니다(영상 없는 다음 팝업을 열고 닫을 때도 한 번 오염되면 계속 이어짐).
+  // 그래서 팝업을 "닫는" 동작은 history.back()으로 브라우저 탐색을 시키는 대신, 지금 히스토리
+  // 항목의 내용을 history.replaceState로 직접 덮어씁니다. replaceState는 실제 이동(navigation)이
+  // 아니라서 iframe이 가로챌 여지가 없습니다. (열려있는 동안 쌓인 히스토리 항목 자체는 남지만,
+  // 내용이 곧바로 "닫힌 상태"로 덮어써지므로 이후 어떤 조작을 해도 옛 팝업 데이터가 다시 나타나지
+  // 않습니다.) 모바일 기기의 물리적 뒤로가기 버튼을 눌러 닫는 경우는 실제 브라우저 탐색이라
+  // 여전히 popstate 리스너에서 처리합니다.
   let lightboxReturnState = null;
 
   function renderGalleryImage(){
@@ -1443,10 +1440,6 @@
   }
 
   function openLightbox(src, title, startIndex){
-    // 팝업이 닫히는 처리(history.back())가 아직 끝나지 않은 틈이라면, 지금 새 팝업을 열지 않는다.
-    // (이 틈에 열면 히스토리에 팝업 상태가 연속으로 쌓여 이후 뒤로가기/닫기가 꼬이게 됨)
-    if(lightboxNavPending) return;
-
     // src가 배열이면 여러 장을 좌우 화살표로 넘겨보는 갤러리 모드로 연다
     const files = Array.isArray(src) ? src : null;
     const wasAlreadyOpen = lightbox.classList.contains('active');
@@ -1487,33 +1480,22 @@
   }
   function closeLightbox(){
     if(!lightbox.classList.contains('active')) return;
-    // 먼저 화면에서 즉시(동기적으로) 닫는다 - history.back()의 popstate 처리를 기다리지 않음
-    // (기다리는 방식이었을 때, 타이밍에 따라 첫 클릭에 안 닫히는 문제가 있었음)
+    // 화면에서 즉시(동기적으로) 닫는다
     lightbox.classList.remove('active');
     lightbox.classList.remove('gallery-mode');
     lightbox.classList.remove('video-active');
     lightboxImg.src = '';
     lightboxVideoFrame.src = '';
     galleryFiles = null;
-    // 주소(히스토리)에 남아있던 lightbox 상태는 뒤로가기로 정리 (있을 때만)
+    // 주소(히스토리)에 남아있던 lightbox 상태를 정리한다. history.back()으로 브라우저를
+    // 실제로 "이동"시키지 않고, 지금 히스토리 항목의 내용을 곧장 되돌아갈 상태로 덮어쓴다
+    // (이유는 위 lightboxReturnState 선언부 주석 참고 - 유튜브 iframe이 back()을 가로채는 문제 방지).
     if(history.state && history.state.lightbox){
-      lightboxNavPending = true;
-      // 정상적인 경우 history.back()이 popstate를 발생시켜 아래 popstate 리스너에서 잠금을 풀어준다.
-      // 하지만 갤러리에 유튜브 영상이 포함돼 있었다면, 그 iframe이 이 back() 자체를 가로채서
-      // popstate가 아예 안 오거나(=우리 페이지의 history.state가 lightbox:true로 오염된 채 남음),
-      // 엉뚱한 상태로 오는 경우가 있다. 그래서 짧은 시간 뒤에도 여전히 lightbox:true인 채로
-      // 남아있다면 우리가 기억해둔 lightboxReturnState로 강제로 바로잡는다.
-      setTimeout(() => {
-        lightboxNavPending = false;
-        if(lightboxReturnState && history.state && history.state.lightbox){
-          safeReplaceState(lightboxReturnState);
-        }
-        lightboxReturnState = null;
-      }, 700);
-      try{ history.back(); }catch(err){ lightboxNavPending = false; }
-    } else {
-      lightboxReturnState = null;
+      const returnState = lightboxReturnState ||
+        Object.assign({}, history.state, { lightbox:false, src:null, files:null, index:null });
+      safeReplaceState(returnState);
     }
+    lightboxReturnState = null;
   }
   lightboxPrev.addEventListener('click', () => {
     galleryStep(-1);
@@ -2377,20 +2359,10 @@
   // 뒤로가기/앞으로가기 버튼 대응: 라이트박스가 열려있으면 먼저 닫고,
   // 그 다음 상태(state)에 저장된 페이지 + 스크롤 위치로 복원합니다.
   window.addEventListener('popstate', (e) => {
-    // 팝업을 닫으려고 history.back()을 부른 상황이었는지 (아래에서 잠금을 풀기 전에 미리 기억해 둔다)
-    const wasClosingLightbox = lightboxNavPending;
-    // 팝업을 닫으며 걸어뒀던 잠금은, 실제 히스토리 이동(popstate)이 일어난 시점에 해제한다.
-    lightboxNavPending = false;
-
+    // 여기 도달했다면 실제 브라우저 탐색(주로 기기의 물리적 뒤로가기 버튼)이 일어난 것이다.
+    // (X 버튼/배경 클릭으로 닫을 때는 closeLightbox()가 history.back()이 아니라
+    // replaceState만 사용하므로 이 리스너를 거치지 않는다.)
     let state = e.state;
-
-    if(wasClosingLightbox && lightboxReturnState && state && state.lightbox){
-      // 팝업을 닫으려고 했는데(=wasClosingLightbox), 유튜브 iframe이 history.back()을 가로채서
-      // popstate가 엉뚱한(예전) 팝업 상태를 들고 와버린 경우: 원래 의도는 "닫기"였으므로,
-      // 우리가 열 때 직접 기억해둔 진짜 복귀 상태(lightboxReturnState)로 강제로 바로잡는다.
-      safeReplaceState(lightboxReturnState);
-      state = lightboxReturnState;
-    }
     lightboxReturnState = null;
 
     if(state && state.lightbox){
