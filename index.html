@@ -908,6 +908,23 @@
     .about-hero-title{ padding: 0 24px; }
     .about-hero-copy{ padding: 8px 24px 0; } /* 5px의 160% */
     .about-illustration{ margin-top: 24px; }
+
+    /* 라이트박스(작업물 팝업) 여러 장 갤러리: 모바일에서는 화살표가 그림 양옆에 있으면
+       그만큼 그림이 좁아져 작아 보이므로, 화살표를 그림 아래쪽 중앙으로 옮긴다.
+       화살표가 옆으로 안 빠져도 되니 무대(.lightbox-gallery) 폭도 더 넓게 쓸 수 있게 함 */
+    .lightbox{ padding: 24px; }
+    .lightbox-gallery{
+      width: calc(100vw - 48px);
+      height: min(560px, 68vh);
+      margin-bottom: 60px; /* 화살표가 놓일 자리 + 여백만큼 아래 캡션과의 공간 확보 */
+    }
+    .lightbox-arrow{
+      top: auto;
+      bottom: -52px; /* 그림(무대) 바로 아래, 살짝 여백을 두고 배치 */
+      transform: none;
+    }
+    .lightbox-arrow-prev{ left: 50%; margin-left: -46px; } /* 가운데 기준 좌측: 폭38px + 가운데 간격8px */
+    .lightbox-arrow-next{ left: 50%; right: auto; margin-left: 8px; }
   }
 </style>
 </head>
