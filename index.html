@@ -1539,17 +1539,9 @@
   }
   lightboxPrev.addEventListener('click', () => {
     galleryStep(-1);
-    // 화살표로 넘긴 뒤 뒤로가기를 누르면 "지금 보고 있던 장"이 아니라 "처음 열었던 장"으로
-    // 인덱스가 어긋나던 문제 방지: 현재 보고 있는 장을 히스토리에도 반영해 둔다.
-    if(history.state && history.state.lightbox){
-      safeReplaceState(Object.assign({}, history.state, { index: galleryIndex }));
-    }
   });
   lightboxNext.addEventListener('click', () => {
     galleryStep(1);
-    if(history.state && history.state.lightbox){
-      safeReplaceState(Object.assign({}, history.state, { index: galleryIndex }));
-    }
   });
 
   // 홈 화면 대표 작업물 (지정된 순서 그대로 표시, Illustration 페이지의 원본 이미지와 연동)
