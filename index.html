@@ -1440,6 +1440,22 @@
   // 여전히 popstate 리스너에서 처리합니다.
   let lightboxReturnState = null;
 
+  // iframe의 src를 "같은 값이어도" 다시 대입하면, 일부 브라우저는 이를 실제 탐색(navigation)으로
+  // 인식해서 뒤로가기 히스토리에 항목을 추가로 쌓아버립니다. 그래서 화살표로 이미지를 넘길 때마다
+  // (영상이 아예 없는 갤러리에서도) 매번 iframe.src를 ''로 재대입하던 게, 넘긴 횟수만큼 뒤로가기를
+  // 더 눌러야 하는 문제의 원인이었습니다. 그래서 "지금 값과 다를 때만" 실제로 바꾸도록 감쌌습니다.
+  function clearVideoFrame(){
+    if(lightboxVideoFrame.getAttribute('src')){
+      lightboxVideoFrame.removeAttribute('src');
+    }
+  }
+  function setVideoFrame(videoId){
+    const url = 'https://www.youtube.com/embed/' + videoId;
+    if(lightboxVideoFrame.getAttribute('src') !== url){
+      lightboxVideoFrame.src = url;
+    }
+  }
+
   function renderGalleryImage(){
     if(!galleryFiles) return;
     const item = galleryFiles[galleryIndex];
@@ -1447,10 +1463,10 @@
 
     if(isVideo){
       lightbox.classList.add('video-active');
-      lightboxVideoFrame.src = 'https://www.youtube.com/embed/' + item.video;
+      setVideoFrame(item.video);
     } else {
       lightbox.classList.remove('video-active');
-      lightboxVideoFrame.src = ''; // 다른 이미지로 넘어가면 영상은 재생 정지
+      clearVideoFrame(); // 다른 이미지로 넘어가면 영상은 재생 정지 (값이 이미 비어있으면 건드리지 않음)
       lightboxGalleryImg.src = item;
       lightboxGalleryImg.alt = lightboxCaption.textContent || '';
     }
@@ -1514,7 +1530,7 @@
     lightbox.classList.remove('gallery-mode');
     lightbox.classList.remove('video-active');
     lightboxImg.src = '';
-    lightboxVideoFrame.src = '';
+    clearVideoFrame();
     galleryFiles = null;
     // 주소(히스토리)에 남아있던 lightbox 상태를 정리한다. history.back()으로 브라우저를
     // 실제로 "이동"시키지 않고, 지금 히스토리 항목의 내용을 곧장 되돌아갈 상태로 덮어쓴다.
@@ -2413,7 +2429,7 @@
       } else {
         lightbox.classList.remove('gallery-mode');
         lightbox.classList.remove('video-active');
-        lightboxVideoFrame.src = '';
+        clearVideoFrame();
         galleryFiles = null;
         lightboxImg.src = state.src;
         lightboxImg.alt = state.title || '';
@@ -2426,7 +2442,7 @@
       lightbox.classList.remove('active');
       lightbox.classList.remove('gallery-mode');
       lightbox.classList.remove('video-active');
-      lightboxVideoFrame.src = '';
+      clearVideoFrame();
       galleryFiles = null;
       lightboxImg.src = '';
     }
