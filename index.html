@@ -1440,11 +1440,7 @@
 
     // src가 배열이면 여러 장을 좌우 화살표로 넘겨보는 갤러리 모드로 연다
     const files = Array.isArray(src) ? src : null;
-
-    // 팝업을 열기 전, 지금 스크롤 위치를 현재 히스토리 항목에 저장해 둔다 (닫을 때 복원용)
-    if(history.state){
-      safeReplaceState(Object.assign({}, history.state, { scrollY: window.scrollY }));
-    }
+    const wasAlreadyOpen = lightbox.classList.contains('active');
 
     lightboxCaption.textContent = title || '';
 
@@ -1461,7 +1457,21 @@
       lightboxImg.alt = title || '';
     }
     lightbox.classList.add('active');
-    safePushState({ lightbox: true, src: files ? null : src, files: files || null, index: files ? galleryIndex : null, title });
+
+    const newState = { lightbox: true, src: files ? null : src, files: files || null, index: files ? galleryIndex : null, title };
+
+    if(wasAlreadyOpen && history.state && history.state.lightbox){
+      // 이미 팝업이 열려있는 상태에서 (예: 팝업 안 어딘가를 클릭해) 또 openLightbox가 호출된 경우:
+      // 히스토리에 새 항목을 쌓지 않고 지금 항목의 내용만 바꿔치기한다.
+      // (여기서 새로 push하면 팝업 상태가 연속으로 쌓여서 이후 뒤로가기/닫기가 꼬이게 됨)
+      safeReplaceState(newState);
+    } else {
+      // 팝업을 열기 전, 지금 스크롤 위치를 현재 히스토리 항목에 저장해 둔다 (닫을 때 복원용)
+      if(history.state){
+        safeReplaceState(Object.assign({}, history.state, { scrollY: window.scrollY }));
+      }
+      safePushState(newState);
+    }
   }
   function closeLightbox(){
     if(!lightbox.classList.contains('active')) return;
@@ -1483,8 +1493,20 @@
       try{ history.back(); }catch(err){ lightboxNavPending = false; }
     }
   }
-  lightboxPrev.addEventListener('click', () => galleryStep(-1));
-  lightboxNext.addEventListener('click', () => galleryStep(1));
+  lightboxPrev.addEventListener('click', () => {
+    galleryStep(-1);
+    // 화살표로 넘긴 뒤 뒤로가기를 누르면 "지금 보고 있던 장"이 아니라 "처음 열었던 장"으로
+    // 인덱스가 어긋나던 문제 방지: 현재 보고 있는 장을 히스토리에도 반영해 둔다.
+    if(history.state && history.state.lightbox){
+      safeReplaceState(Object.assign({}, history.state, { index: galleryIndex }));
+    }
+  });
+  lightboxNext.addEventListener('click', () => {
+    galleryStep(1);
+    if(history.state && history.state.lightbox){
+      safeReplaceState(Object.assign({}, history.state, { index: galleryIndex }));
+    }
+  });
 
   // 홈 화면 대표 작업물 (지정된 순서 그대로 표시, Illustration 페이지의 원본 이미지와 연동)
   const HOME_PICKS = [
@@ -1586,7 +1608,12 @@
   });
   lightboxClose.addEventListener('click', closeLightbox);
   lightbox.addEventListener('click', (e) => {
-    if(e.target === lightbox) closeLightbox();
+    // 갤러리 모드는 이미지 주변에 고정 크기의 "무대"(.lightbox-gallery)가 있어서,
+    // 이미지보다 무대가 큰 경우 그 사이 빈 공간을 클릭하면 e.target이 .lightbox가 아니라
+    // .lightbox-inner/.lightbox-gallery가 되어 배경 클릭으로 인식되지 못하고 안 닫히는 문제가 있었다.
+    // 그래서 "실제 콘텐츠(이미지/영상/화살표/닫기버튼/캡션)를 클릭한 게 아니면" 전부 배경 클릭으로 취급한다.
+    const isRealContent = e.target.closest('#lightboxImg, #lightboxGalleryImg, .lightbox-video-wrap, .lightbox-arrow, #lightboxClose, .lightbox-caption');
+    if(!isRealContent) closeLightbox();
   });
   document.addEventListener('keydown', (e) => {
     if(e.key === 'Escape') closeLightbox();
