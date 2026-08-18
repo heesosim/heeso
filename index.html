@@ -1439,11 +1439,6 @@
   // 않습니다.) 모바일 기기의 물리적 뒤로가기 버튼을 눌러 닫는 경우는 실제 브라우저 탐색이라
   // 여전히 popstate 리스너에서 처리합니다.
   let lightboxReturnState = null;
-  // 지금 열려있는 갤러리 세션에서 유튜브 영상 슬라이드를 실제로 한 번이라도 보여준 적이 있는지.
-  // 영상을 안 본 경우(대부분)는 back()이 iframe에 가로채일 일이 없으므로, 굳이 replaceState로
-  // 우회하지 않고 진짜 history.back()을 써서 히스토리 항목을 정상적으로 소비한다 (그래야 뒤로가기
-  // 버튼을 눌렀을 때 "죽은 항목"이 안 쌓여서, 팝업 닫기·페이지 이동이 항상 한 번에 정상 동작함).
-  let lightboxHadVideo = false;
 
   function renderGalleryImage(){
     if(!galleryFiles) return;
@@ -1453,7 +1448,6 @@
     if(isVideo){
       lightbox.classList.add('video-active');
       lightboxVideoFrame.src = 'https://www.youtube.com/embed/' + item.video;
-      lightboxHadVideo = true;
     } else {
       lightbox.classList.remove('video-active');
       lightboxVideoFrame.src = ''; // 다른 이미지로 넘어가면 영상은 재생 정지
@@ -1478,13 +1472,6 @@
     // src가 배열이면 여러 장을 좌우 화살표로 넘겨보는 갤러리 모드로 연다
     const files = Array.isArray(src) ? src : null;
     const wasAlreadyOpen = lightbox.classList.contains('active');
-
-    // "영상을 본 적 있음" 플래그는 반드시 renderGalleryImage()보다 먼저 초기화해야 한다.
-    // (아래에서 갤러리를 유튜브 영상이 있는 슬라이드로 곧장 열 수도 있는데, renderGalleryImage()가
-    // 그 시점에 이미 true로 세팅해준 값을 여기서 다시 false로 덮어써버리면 안 되기 때문)
-    if(!wasAlreadyOpen){
-      lightboxHadVideo = false;
-    }
 
     lightboxCaption.textContent = title || '';
 
@@ -1529,24 +1516,24 @@
     lightboxImg.src = '';
     lightboxVideoFrame.src = '';
     galleryFiles = null;
+    // 주소(히스토리)에 남아있던 lightbox 상태를 정리한다. history.back()으로 브라우저를
+    // 실제로 "이동"시키지 않고, 지금 히스토리 항목의 내용을 곧장 되돌아갈 상태로 덮어쓴다.
+    //
+    // history.back()을 쓰지 않는 이유는 두 가지다:
+    // 1) 유튜브 iframe이 포함된 갤러리를 본 뒤라면, iframe이 자기 탐색 기록을 히스토리에
+    //    끼워넣어서 back()이 우리 페이지가 아니라 그 iframe 쪽으로 가버릴 수 있다.
+    // 2) history.back()은 비동기다 - 호출한 즉시 히스토리가 바뀌는 게 아니라 브라우저가
+    //    처리를 마칠 때까지 시간이 걸린다. 그 사이에 사용자가 재빨리 다음 이미지를 열면,
+    //    아직 안 바뀐(=방금 닫으려던 갤러리 상태 그대로인) history.state를 그대로 읽어버려서,
+    //    엉뚱한(예전) 갤러리 데이터가 다음 팝업의 "돌아갈 상태"로 잘못 저장되는 문제가 있었다.
+    // replaceState는 즉시·동기적으로 반영되고 실제 이동도 아니므로 이 두 문제 모두에서 자유롭다.
+    // (트레이드오프: 열려있는 동안 쌓인 히스토리 항목 자체는 지워지지 않고 남아있어서,
+    // 물리적 뒤로가기 버튼으로 페이지를 완전히 떠날 때 가끔 한 번 더 눌러야 할 수 있다.
+    // 하지만 팝업이 엉뚱하게 다시 뜨는 것보다는 훨씬 가벼운 문제라 이 방식을 택한다.)
     if(history.state && history.state.lightbox){
-      if(lightboxHadVideo){
-        // 이 세션에서 유튜브 영상을 실제로 봤다면, iframe이 back()을 가로챌 수 있으므로
-        // 실제 이동 없이 지금 히스토리 항목의 내용만 "닫힌 상태"로 덮어쓴다 (안전하지만,
-        // 히스토리 항목 자체는 그대로 남아 이후 뒤로가기 한 번이 더 필요할 수 있음 - 알려진 트레이드오프)
-        const returnState = lightboxReturnState ||
-          Object.assign({}, history.state, { lightbox:false, src:null, files:null, index:null });
-        safeReplaceState(returnState);
-      } else {
-        // 영상을 본 적이 없다면 iframe이 가로챌 일이 없으므로, 진짜 history.back()으로 히스토리
-        // 항목을 정상적으로 소비한다. 이렇게 해야 "죽은" 항목이 안 쌓여서, 다음에 다시 팝업을
-        // 열고 닫거나 페이지를 이동할 때 뒤로가기 버튼이 매번 한 번에 정상 동작한다.
-        try{ history.back(); }catch(err){
-          const returnState = lightboxReturnState ||
-            Object.assign({}, history.state, { lightbox:false, src:null, files:null, index:null });
-          safeReplaceState(returnState);
-        }
-      }
+      const returnState = lightboxReturnState ||
+        Object.assign({}, history.state, { lightbox:false, src:null, files:null, index:null });
+      safeReplaceState(returnState);
     }
     lightboxReturnState = null;
   }
